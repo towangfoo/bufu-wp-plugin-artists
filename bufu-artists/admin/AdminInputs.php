@@ -20,14 +20,22 @@ class AdminInputs
 	}
 
 	/**
-	 * Add all defined custom input fields to the post edit page for the custom post type.
+	 * Add all defined custom input fields to the post edit page for the custom post types.
 	 */
 	public function addAll()
 	{
-		foreach ($this->getInputFields() as $k => $i) {
+		foreach ($this->getInputFieldsArtist() as $k => $i) {
 			$renderMethod = "echoInputHtml" . ucfirst($k);
 			$name = $this->getInputName($k, $i);
-			add_meta_box($name, $i['title'], [ $this, $renderMethod ], $this->getPostType(), "normal", "high");
+			$context = (array_key_exists('context', $i)) ? $i['context'] : 'normal';
+			add_meta_box($name, $i['title'], [ $this, $renderMethod ], $this->getPostTypeArtist(), $context, "high");
+		}
+
+		foreach ($this->getInputFieldsLyric() as $k => $i) {
+			$renderMethod = "echoInputHtml" . ucfirst($k);
+			$name = $this->getInputName($k, $i);
+			$context = (array_key_exists('context', $i)) ? $i['context'] : 'normal';
+			add_meta_box($name, $i['title'], [ $this, $renderMethod ], $this->getPostTypeLyric(), $context, "high");
 		}
 	}
 
@@ -36,17 +44,22 @@ class AdminInputs
 	 */
 	public function savePost()
 	{
-		/* @var $post WP_Post */
-		global $post;
+		$post = $this->getPost();
 
 		// only handle artist-typed posts
-		if ($post->post_type !== $this->getPostType()) {
-			return;
+		if ($post->post_type === $this->getPostTypeArtist()) {
+			foreach ($this->getInputFieldsArtist() as $k => $i) {
+				$name = $this->getInputName($k, $i);
+				update_post_meta($post->ID, $name, $_POST[$name]);
+			}
 		}
 
-		foreach ($this->getInputFields() as $k => $i) {
-			$name = $this->getInputName($k, $i);
-			update_post_meta($post->ID, $name, $_POST[$name]);
+		// only handle lyric-typed posts
+		if ($post->post_type === $this->getPostTypeLyric()) {
+			foreach ($this->getInputFieldsLyric() as $k => $i) {
+				$name = $this->getInputName($k, $i);
+				update_post_meta($post->ID, $name, $_POST[$name]);
+			}
 		}
 	}
 
@@ -59,7 +72,7 @@ class AdminInputs
 	 */
 	public function getInputHtmlWebsite()
 	{
-		return $this->getInputHtml('website');
+		return $this->getInputHtml('website', $this->getInputFieldsArtist());
 	}
 
 	/**
@@ -71,16 +84,76 @@ class AdminInputs
 		echo $this->getInputHtmlWebsite();
 	}
 
+	/**
+	 * Get rendered form element for 'selectArtist' input.
+	 * @return string
+	 */
+	public function getInputHtmlSelectArtist()
+	{
+		// input definition
+		$fields = $this->getInputFieldsLyric();
+		$key    = 'selectArtist';
+		$input  = $fields[$key];
+		$name   = $this->getInputName($key, $input);
 
+		// options
+		$artists = $this->getAvailableArtists();
+		$emptyOption = __("Not selected", 'bufu-artists');
+
+		// current value
+		$custom = $this->getPostCustomFields();
+		$currentValue = (empty($custom[$name][0])) ? null : intval($custom[$name][0], 10);
+
+		// render
+		$html  = "<select name=\"{$name}\">";
+		$html .= "<option>{$emptyOption}</option>";
+		foreach ($artists as $id => $title) {
+			$selected = ($id === $currentValue) ? ' selected="selected"' : '';
+			$html .= "<option value=\"{$id}\"{$selected}>{$title}</option>";
+		}
+		$html .= '</select>';
+
+		return $html;
+	}
+
+	/**
+	 * Echo 'selectArtist' form element.
+	 * @return void
+	 */
+	public function echoInputHtmlSelectArtist()
+	{
+		echo $this->getInputHtmlSelectArtist();
+	}
+
+	/**
+	 * Get rendered form element for 'album' input.
+	 * @return string
+	 */
+	public function getInputHtmlAlbum()
+	{
+		return $this->getInputHtml('album', $this->getInputFieldsLyric());
+	}
+
+	/**
+	 * Echo 'album' form element.
+	 * @return void
+	 */
+	public function echoInputHtmlAlbum()
+	{
+		echo $this->getInputHtmlAlbum();
+	}
+
+	// ------ private methods ------------------------------------------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------------------------
 
 	/**
 	 * @param string $key
+	 * @param array $fields
 	 * @return string html
 	 * @throws Exception
 	 */
-	private function getInputHtml($key)
+	private function getInputHtml($key, array $fields)
 	{
-		$fields = $this->getInputFields();
 		if (!array_key_exists($key, $fields)) {
 			throw new \Exception(sprintf(__('Input with key %s is not defined', 'bufu-artists'), $key));
 		}
@@ -89,9 +162,7 @@ class AdminInputs
 		$input = $fields[$key];
 		$name = $this->getInputName($key, $input);
 
-		/* @var $post WP_Post */
-		global $post;
-		$custom = get_post_custom($post->ID);
+		$custom = $this->getPostCustomFields();
 		$value = $custom[$name][0];
 
 		// render input element
@@ -107,7 +178,7 @@ class AdminInputs
 	 * Define the custom inputs used on the artist post type.
 	 * @return array
 	 */
-	private function getInputFields()
+	private function getInputFieldsArtist()
 	{
 		return [
 			'website' => [
@@ -118,12 +189,40 @@ class AdminInputs
 	}
 
 	/**
+	 * Define the custom inputs used on the lyrics post type.
+	 * @return array
+	 */
+	private function getInputFieldsLyric()
+	{
+		return [
+			'selectArtist' => [
+				'type'    => 'select',
+				'title'   => _n('Artist', 'Artists', 1, 'bufu-artists'),
+//				'context' => 'side'
+			],
+			'album' => [
+				'type'  => 'text',
+				'title' => __('Album name', 'bufu-artists'),
+			]
+		];
+	}
+
+	/**
 	 * Get the post type identifier
 	 * @return string
 	 */
-	private function getPostType()
+	private function getPostTypeArtist()
 	{
-		return $this->config['post_type'];
+		return $this->config['post_type']['artist'];
+	}
+
+	/**
+	 * Get the post type identifier
+	 * @return string
+	 */
+	private function getPostTypeLyric()
+	{
+		return $this->config['post_type']['lyric'];
 	}
 
 	/**
@@ -132,8 +231,46 @@ class AdminInputs
 	 * @param array $data
 	 * @return string
 	 */
-	public function getInputName($key, $data)
+	private function getInputName($key, $data)
 	{
 		return (array_key_exists('name', $data)) ? $data['name'] : "bufu_artist_{$key}";
+	}
+
+	/**
+	 * @return array
+	 */
+	private function getPostCustomFields()
+	{
+		$post = $this->getPost();
+		return get_post_custom($post->ID);
+	}
+
+	/**
+	 * @return WP_Post
+	 */
+	private function getPost()
+	{
+		/* @var $post WP_Post */
+		global $post;
+		return $post;
+	}
+
+	/**
+	 * @return array
+	 */
+	private function getAvailableArtists()
+	{
+		// query for your post type
+		$query  = new WP_Query([
+			'post_type'      => $this->getPostTypeArtist(),
+			'posts_per_page' => -1
+		]);
+
+		$items = $query->posts;
+		if (!is_array($items)) {
+			return [];
+		}
+
+		return wp_list_pluck($items, 'post_title', 'ID');
 	}
 }

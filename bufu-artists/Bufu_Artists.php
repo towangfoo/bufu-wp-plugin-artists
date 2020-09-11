@@ -4,9 +4,11 @@ require_once 'admin/AdminInputs.php';
 
 class Bufu_Artists {
 
-	private static $postTypeName = 'bufu_artist';
+	private static $postTypeNameArtist = 'bufu_artist';
+	private static $postTypeNameLyric  = 'bufu_lyric';
 
-	private static $pluginSlug = 'bufu-artists';
+	private static $pluginSlugArtist = 'bufu-artists';
+	private static $pluginSlugLyric  = 'bufu-lyrics';
 
 	/**
 	 * @var AdminInputs
@@ -19,7 +21,10 @@ class Bufu_Artists {
 	public function __construct()
 	{
 		$this->adminInputs = new AdminInputs([
-			'post_type' => self::$postTypeName,
+			'post_type' => [
+				'artist' => self::$postTypeNameArtist,
+				'lyric'  => self::$postTypeNameLyric,
+			]
 		]);
 	}
 
@@ -36,7 +41,13 @@ class Bufu_Artists {
 	{
 		// register custom post type for artists
 		$err = $this->addCustomPostTypeArtist();
+		if ($err instanceof WP_Error) {
+			echo $this->getErrorMessage($err);
+			return;
+		}
 
+		// register custom post type for lyrics
+		$err = $this->addCustomPostTypeLyric();
 		if ($err instanceof WP_Error) {
 			echo $this->getErrorMessage($err);
 			return;
@@ -93,13 +104,13 @@ class Bufu_Artists {
 	 */
 	private function addCustomPostTypeArtist()
 	{
-		if (post_type_exists(self::$postTypeName)) {
-			return new WP_Error(sprintf(__('Post type already exists: `%s`', 'bufu-artists'), self::$postTypeName));
+		if (post_type_exists(self::$postTypeNameArtist)) {
+			return new WP_Error(sprintf(__('Post type already exists: `%s`', 'bufu-artists'), self::$postTypeNameArtist));
 		}
 
 
 		// register custom post type for artists
-		$postType = register_post_type(self::$postTypeName, [
+		$postType = register_post_type(self::$postTypeNameArtist, [
 			'labels' => [
 				'name'          => _n('Artist', 'Artists', 2, 'bufu-artists'),
 				'singular_name' => _n('Artist', 'Artists', 1, 'bufu-artists')
@@ -121,8 +132,46 @@ class Bufu_Artists {
 				'excerpt',
 				'page-attributes',
 				'thumbnail',
-//				'custom-fields',		// do not show custom fields per se, fields are added vie the AdminInputs class
-				'post-formats'
+			],
+			'capability_type'	=> 'post',
+			'hierarchical' 		=> false,
+		]);
+
+		return ($postType instanceof WP_Error) ? $postType : null;
+	}
+
+	/**
+	 * Add custom post type for lyric.
+	 * @return WP_Error|null
+	 */
+	private function addCustomPostTypeLyric()
+	{
+		if (post_type_exists(self::$postTypeNameLyric)) {
+			return new WP_Error(sprintf(__('Post type already exists: `%s`', 'bufu-artists'), self::$postTypeNameLyric));
+		}
+
+
+		// register custom post type for artists
+		$postType = register_post_type(self::$postTypeNameLyric, [
+			'labels' => [
+				'name'          => _n('Song text', 'Song texts', 2, 'bufu-artists'),
+				'singular_name' => _n('Song text', 'Song texts', 1, 'bufu-artists')
+			],
+			'description'       => __('Manage an artist\'s song texts', 'bufu-artists'),
+			'rewrite'     		=> [ 'slug' => 'lyrics' ],
+			'public'            => true,
+			'publicly_queryable'=> true,
+			'has_archieve'      => true,
+			'show_ui'           => true,
+			'show_in_nav_menus' => false,
+			'show_in_rest'      => true,
+			'supports'          => [
+				'title',
+				'editor',
+				'comments',
+				'revisions',
+				'author',
+				'page-attributes'
 			],
 			'capability_type'	=> 'post',
 			'hierarchical' 		=> false,
@@ -136,7 +185,7 @@ class Bufu_Artists {
 	 */
 	private function addTaxonomyArtistCategories()
 	{
-		register_taxonomy(self::$postTypeName . "_tx", [ self::$postTypeName ], [
+		register_taxonomy(self::$postTypeNameArtist . "_tx", [ self::$postTypeNameArtist ], [
 			"hierarchical" 		=> true,
 			"label" 			=> _n('Artist Category', 'Artists Categories', 2, 'bufu-artists'),
 			"singular_label" 	=> _n('Artist Category', 'Artists Categories', 1, 'bufu-artists'),
@@ -172,6 +221,6 @@ class Bufu_Artists {
 	 */
 	private function loadTranslations()
 	{
-		load_muplugin_textdomain(self::$pluginSlug, self::$pluginSlug . '/languages/');
+		load_muplugin_textdomain(self::$pluginSlugArtist, self::$pluginSlugArtist . '/languages/');
 	}
 }

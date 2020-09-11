@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-08-30 20:23+0200\n"
-"PO-Revision-Date: 2020-08-30 20:28+0200\n"
+"POT-Creation-Date: 2020-09-11 11:53+0200\n"
+"PO-Revision-Date: 2020-09-11 11:54+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -10,46 +10,64 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.1\n"
-"X-Poedit-Basepath: .\n"
+"X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: Bufu_Artists.php:96
+#: Bufu_Artists.php:108 Bufu_Artists.php:150
 #, php-format
 msgid "Post type already exists: `%s`"
 msgstr "Der Post-Type `%s` existiert bereits"
 
-#: Bufu_Artists.php:103 Bufu_Artists.php:104
+#: Bufu_Artists.php:115 Bufu_Artists.php:116 admin/AdminInputs.php:200
 msgid "Artist"
 msgid_plural "Artists"
 msgstr[0] "Künstler"
 msgstr[1] "Künstler"
 
-#: Bufu_Artists.php:106
+#: Bufu_Artists.php:118
 msgid "Manage an artist's portfolio information"
 msgstr "Dieses Plugin wird benötigt, um Künstlerprofile zu verwalten"
 
-#: Bufu_Artists.php:140 Bufu_Artists.php:141
+#: Bufu_Artists.php:157 Bufu_Artists.php:158
+msgid "Song text"
+msgid_plural "Song texts"
+msgstr[0] "Liedtext"
+msgstr[1] "Liedtexte"
+
+#: Bufu_Artists.php:160
+msgid "Manage an artist's song texts"
+msgstr "Dieser Post-Type wird benötigt, um Liedtexte zu verwalten"
+
+#: Bufu_Artists.php:190 Bufu_Artists.php:191
 msgid "Artist Category"
 msgid_plural "Artists Categories"
 msgstr[0] "Künstlerkategorie"
 msgstr[1] "Künstlerkategorien"
 
-#: Bufu_Artists.php:162
+#: Bufu_Artists.php:212
 #, php-format
 msgid "Error in plugin %s: %s"
 msgstr "Fehler im Plugin %s: %s"
 
-#: Bufu_Artists.php:162
+#: Bufu_Artists.php:212
 msgid "BuschFunk Artists"
 msgstr "BuschFunk Künstler"
 
-#: admin/AdminInputs.php:85
+#: admin/AdminInputs.php:101
+msgid "Not selected"
+msgstr "Nicht ausgewählt"
+
+#: admin/AdminInputs.php:158
 #, php-format
 msgid "Input with key %s is not defined"
 msgstr "Input-Element %s ist nicht definiert"
 
-#: admin/AdminInputs.php:115
+#: admin/AdminInputs.php:186
 msgid "Artist website"
 msgstr "Website des Künstlers"
+
+#: admin/AdminInputs.php:205
+msgid "Album name"
+msgstr "Veröffentlicht auf dem Album"
