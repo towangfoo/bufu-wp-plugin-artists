@@ -123,6 +123,7 @@ class Bufu_Artists {
 			'show_ui'           => true,
 			'show_in_nav_menus' => false,
 			'show_in_rest'      => true,
+			'rest_base'         => self::$postTypeNameArtist,
 			'supports'          => [
 				'title',
 				'editor',

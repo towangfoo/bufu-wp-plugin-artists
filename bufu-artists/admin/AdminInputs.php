@@ -143,6 +143,24 @@ class AdminInputs
 		echo $this->getInputHtmlAlbum();
 	}
 
+	/**
+	 * Get rendered form element for 'sortBy' input.
+	 * @return string
+	 */
+	public function getInputHtmlSortBy()
+	{
+		return $this->getInputHtml('sortBy', $this->getInputFieldsArtist());
+	}
+
+	/**
+	 * Echo 'sortBy' form element.
+	 * @return void
+	 */
+	public function echoInputHtmlSortBy()
+	{
+		echo $this->getInputHtmlSortBy();
+	}
+
 	// ------ private methods ------------------------------------------------------------------------------------------
 	// -----------------------------------------------------------------------------------------------------------------
 
@@ -184,6 +202,10 @@ class AdminInputs
 			'website' => [
 				'type'  => 'url',
 				'title' => __('Artist website', 'bufu-artists'),
+			],
+			'sortBy' => [
+				'type'  => 'text',
+				'title' => __('Sort string', 'bufu-artists'),
 			]
 		];
 	}
