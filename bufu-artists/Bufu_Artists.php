@@ -148,7 +148,7 @@ class Bufu_Artists {
 
 		register_post_meta(self::$postTypeNameArtist, 'bufu_artist_sortBy', [
 			'single'       => true,
-			'description'  => __('An internal sort string', 'bufu-artists'),
+			'description'  => __('Internal sort string', 'bufu-artists'),
 			'show_in_rest' => true,
 		]);
 

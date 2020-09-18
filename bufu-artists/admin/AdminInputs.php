@@ -65,6 +65,7 @@ class AdminInputs
 
 	/**
 	 * Add custom meta fields to REST Api.
+	 * Fields names are available in the data object directly (NOT within the meta array).
 	 */
 	public function registerCustomMetaFieldsForApi()
 	{
