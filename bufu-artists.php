@@ -30,5 +30,6 @@ $instance = new Bufu_Artists();
 
 add_action('admin_init', [$instance, 'hook_admin_init']);
 add_action('init', [$instance, 'hook_init']);
-add_action( 'plugins_loaded', [$instance, 'hook_plugins_loaded']);
+add_action('rest_api_init', [$instance, 'hook_rest_api_init']);
+add_action('plugins_loaded', [$instance, 'hook_plugins_loaded']);
 add_action('save_post', [$instance, 'hook_save_post']);

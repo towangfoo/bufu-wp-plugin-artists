@@ -5,6 +5,7 @@
 
 require_once 'DBTable.php';
 require_once 'Filter.php';
+require_once 'State.php';
 require_once 'WPApi.php';
 
 // config
@@ -34,7 +35,12 @@ $config  = [
 	]
 ];
 
-// TODO: get state of last run and mappings, start from there
+$startedAt = new \DateTime();
+
+// get state of last run and mappings, start from there
+$state = new State();
+$stateInfo = $state->loadState();
+
 
 // define item properties
 $artist = new stdClass();
@@ -52,11 +58,20 @@ $wpApi = new WPApi($config['target']['wpapi']);
 
 $filter = new Filter();
 
-$idMapping = [];
-foreach ($table->getRows() as $row) {
+// get artist id mapping from state
+$idMapping = $stateInfo['artists'];
+
+$rows = $table->getRows();
+foreach ($rows as $row) {
 	/** @var $row stdClass */
 
-	// TODO: transform
+	// if the id is known from mapping, update the post instead
+	$wpPostId = null;
+	if (array_key_exists($row->id, $idMapping)) {
+		$wpPostId = $idMapping[$row->id];
+	}
+
+	// create post data
 	$postParams = [
 		'status' => 'publish',
 		'title'   => $row->artistname,
@@ -67,17 +82,29 @@ foreach ($table->getRows() as $row) {
 		]
 	];
 
-	$response = $wpApi->savePost($postParams);
+	$response = $wpApi->savePost($postParams, $wpPostId);
 
 	var_dump($response);
-	exit('testing');
 
-	// TODO: create persistent id mapping from old to new
-	$idMapping[] = [
-		'artist_id' => $row->id,
-		'post_id'   => $post->ID,
-	];
+	if (array_key_exists('id', $response) && array_key_exists('type', $response) && $response['type'] === $config['target']['wpapi']['endpoint']) {
+		// save post id to state mapping
+		$idMapping[$row->id] = intval($response['id'], 10);
+		echo '.';
+	}
+	else {
+		echo 'E';
+	}
 }
 
-// TODO: save state and mappings of this run
-var_dump($idMapping);
+// save state and mappings of this run
+$now     = new \DateTime();
+$diffSec = $startedAt->diff($now, true)->s;
+
+$count = count($rows);
+
+$stateInfo['artists'] = $idMapping;
+$stateInfo['__state']['artists']['lastrun'] = "started: " . $startedAt->format(DATE_ISO8601) . " (took {$diffSec} sec)";
+$stateInfo['__state']['artists']['count']   = $count;
+$state->saveState($stateInfo);
+
+echo PHP_EOL . "Done! Processed {$count} artists, took ${diffSec} seconds." . PHP_EOL;

@@ -64,7 +64,17 @@ class Bufu_Artists {
 	 */
 	public function hook_admin_init()
 	{
-		$this->addAdminInputs();
+		$this->adminInputs->addAll();
+	}
+
+	/**
+	 * Called when the REST API is init.
+	 * Add custom meta fields for post types.
+	 * @return void
+	 */
+	public function hook_rest_api_init()
+	{
+		$this->adminInputs->registerCustomMetaFieldsForApi();
 	}
 
 	/**
@@ -89,14 +99,6 @@ class Bufu_Artists {
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// ----- private methods -------------------------------------------------------------------------------------------
-
-	/**
-	 * @return void
-	 */
-	private function addAdminInputs()
-	{
-		$this->adminInputs->addAll();
-	}
 
 	/**
 	 * Add custom post type for artist.
@@ -138,6 +140,18 @@ class Bufu_Artists {
 			'hierarchical' 		=> false,
 		]);
 
+		register_post_meta(self::$postTypeNameArtist, 'bufu_artist_website', [
+			'single'       => true,
+			'description'  => __('An artist\'s personal website', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+
+		register_post_meta(self::$postTypeNameArtist, 'bufu_artist_sortBy', [
+			'single'       => true,
+			'description'  => __('An internal sort string', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+
 		return ($postType instanceof WP_Error) ? $postType : null;
 	}
 
@@ -176,6 +190,18 @@ class Bufu_Artists {
 			],
 			'capability_type'	=> 'post',
 			'hierarchical' 		=> false,
+		]);
+
+		register_post_meta(self::$postTypeNameLyric, 'bufu_artist_selectArtist', [
+			'single'       => true,
+			'description'  => __('The related artist', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+
+		register_post_meta(self::$postTypeNameLyric, 'bufu_artist_album', [
+			'single'       => true,
+			'description'  => __('The album that first contained this piece', 'bufu-artists'),
+			'show_in_rest' => true,
 		]);
 
 		return ($postType instanceof WP_Error) ? $postType : null;

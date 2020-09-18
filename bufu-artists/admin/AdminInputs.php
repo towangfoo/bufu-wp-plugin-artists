@@ -63,6 +63,42 @@ class AdminInputs
 		}
 	}
 
+	/**
+	 * Add custom meta fields to REST Api.
+	 */
+	public function registerCustomMetaFieldsForApi()
+	{
+		// artist
+		$postType = $this->getPostTypeArtist();
+		foreach ($this->getInputFieldsArtist() as $k => $f) {
+			$name = $this->getInputName($k, $f);
+			register_rest_field($postType, $name, [
+				'get_callback' => function($object, $field) {
+					$post_meta = get_post_meta($object['id']);
+					return $post_meta[$field][0];
+				},
+				'update_callback' => function($value, $object, $field) {
+					return ($value) ? update_post_meta($object->ID, $field, $value) : false;
+				}
+			]);
+		}
+
+		// lyrics
+		$postType = $this->getPostTypeLyric();
+		foreach ($this->getInputFieldsLyric() as $k => $f) {
+			$name = $this->getInputName($k, $f);
+			register_rest_field($postType, $name, [
+				'get_callback' => function($object, $field) {
+					$post_meta = get_post_meta($object['id']);
+					return $post_meta[$field][0];
+				},
+				'update_callback' => function($value, $object, $field) {
+					return ($value) ? update_post_meta($object->ID, $field, $value) : false;
+				}
+			]);
+		}
+	}
+
 	// ------ callbacks for form element rendering ---------------------------------------------------------------------
 	// -----------------------------------------------------------------------------------------------------------------
 

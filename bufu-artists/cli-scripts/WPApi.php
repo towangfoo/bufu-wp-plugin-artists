@@ -21,11 +21,18 @@ class WPApi
 
 	/**
 	 * @param array $params
+	 * @param int $postId [optional]
 	 * @return array|false
 	 */
-	public function savePost(array $params)
+	public function savePost(array $params, $postId = null)
 	{
 		$url = $this->config['url'] . '/' . $this->config['endpoint'];
+
+		// if a post id is given, update that
+		if (is_int($postId) && $postId > 0) {
+			$url .= "/{$postId}";
+		}
+
 		$response = $this->curlPost($url, $params);
 
 		return $response;
