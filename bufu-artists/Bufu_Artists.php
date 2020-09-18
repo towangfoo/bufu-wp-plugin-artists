@@ -96,6 +96,26 @@ class Bufu_Artists {
 		$this->saveAdminInputValues();
 	}
 
+	// -----------------------------------------------------------------------------------------------------------------
+	// ----- filters ---------------------------------------------------------------------------------------------------
+
+	/**
+	 * Order posts by custom fields for our custom post types.
+	 * @param WP_Query $query
+	 * @return void
+	 */
+	public function filter_pre_get_posts(WP_Query $query)
+	{
+		if ( is_admin() && !isset( $_GET['orderby'] ) ) {
+			$postType = $query->query['post_type'];
+
+			if ( $postType === self::$postTypeNameArtist ) {
+				$query->set('orderby', 'meta_value');
+				$query->set('meta_key', 'bufu_artist_sortBy');
+				$query->set('order', 'ASC');
+			}
+		}
+	}
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// ----- private methods -------------------------------------------------------------------------------------------

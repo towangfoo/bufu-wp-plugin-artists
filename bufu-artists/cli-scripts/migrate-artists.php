@@ -83,21 +83,25 @@ foreach ($rows as $row) {
 
 	$response = $wpApi->savePost($postParams, $wpPostId);
 
-	var_dump($response);
-
 	if (array_key_exists('id', $response) && array_key_exists('type', $response) && $response['type'] === $config['target']['wpapi']['endpoint']) {
 		// save post id to state mapping
 		$idMapping[$row->id] = intval($response['id'], 10);
 		echo '.';
 	}
 	else {
+		if (array_key_exists('code', $response)) {
+			// save errors?
+			var_dump($response, $row);
+			exit();
+		}
+
 		echo 'E';
 	}
 }
 
 // save state and mappings of this run
 $now     = new \DateTime();
-$diffSec = $startedAt->diff($now, true)->s;
+$diffSec = $startedAt->diff($now, true)->format("s");
 
 $count = count($rows);
 
