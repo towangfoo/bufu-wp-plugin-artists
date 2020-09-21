@@ -1,6 +1,6 @@
 <?php
 /**
- * Script to migrate artist data from old site to new WP site
+ * Script to migrate news posts data from old site to new WP site
  */
 
 require_once 'DBTable.php';
@@ -17,12 +17,12 @@ $config  = [
 			'password' => 'rootpassword',
 			'db'       => 'verlag_source_test'
 		],
-		'table_name' => 'data_artist',
+		'table_name' => 'data_meldung',
 	],
 	'target' => [
 		'wpapi' => [
 			'url'      => 'https://bufu-verlag-wp.test/wp-json/wp/v2',
-			'endpoint' => 'bufu_artist',
+			'endpoint' => 'posts',
 
 			// requires Basic-Auth plugin to be active
 			// which should not be the case on a production setup!
@@ -41,34 +41,31 @@ $startedAt = new \DateTime();
 $state = new State();
 $stateInfo = $state->loadState();
 
-// init state fields required for artists
-if (!array_key_exists('artists', $stateInfo)) {
-	$stateInfo['artists'] = [];
-	$stateInfo['__state']['artists'] = [
+// init state fields required for news
+if (!array_key_exists('posts', $stateInfo)) {
+	$stateInfo['posts'] = [];
+	$stateInfo['__state']['posts'] = [
 		'lastrun' => null,
 		'count'   => null,
 	];
 }
 
-
 // define item properties
-$artist = new stdClass();
-$artist->id = null;
-$artist->artistname = null;
-$artist->sortierung = null;
-$artist->profiltext = null;
-$artist->homepage = null;
-$artist->shoplinks = null;
+$post = new stdClass();
+$post->id = null;
+$post->headline = null;
+$post->text = null;
+$post->added = null;
 
 $table = new DBTable($config['source']['table_name'], $config['source']['mysql']);
-$table->setHydrateObject($artist);
+$table->setHydrateObject($post);
 
 $wpApi = new WPApi($config['target']['wpapi']);
 
 $filter = new Filter();
 
-// get artist id mapping from state
-$idMapping = $stateInfo['artists'];
+// get posts id mapping from state
+$idMapping = $stateInfo['posts'];
 
 $rows = $table->getRows();
 foreach ($rows as $row) {
@@ -82,17 +79,16 @@ foreach ($rows as $row) {
 
 	// create post data
 	$postParams = [
-		'status' => 'publish',
-		'title'   => $row->artistname,
-		'content' => $filter->createParagraphs($row->profiltext),
-		// custom meta/rest fields
-		'bufu_artist_sortBy'  => $row->sortierung,
-		'bufu_artist_website' => $row->homepage,
+		'status'   => 'publish',
+		'title'    => $row->headline,
+		'content'  => $filter->createParagraphs($row->text),
+		'date'     => $filter->getFormattedDateFromTimestamp($row->added),
+		'date_gmt' => $filter->getFormattedDateFromTimestamp($row->added, new DateTimeZone("UTC")),
 	];
 
 	$response = $wpApi->savePost($postParams, $wpPostId);
 
-	if (array_key_exists('id', $response) && array_key_exists('type', $response) && $response['type'] === $config['target']['wpapi']['endpoint']) {
+	if (array_key_exists('id', $response) && array_key_exists('type', $response) && $response['type'] === 'post') {
 		// save post id to state mapping
 		$idMapping[$row->id] = intval($response['id'], 10);
 		echo '.';
@@ -100,7 +96,7 @@ foreach ($rows as $row) {
 	else {
 		if (array_key_exists('code', $response)) {
 			// save errors?
-			var_dump($response, $row);
+			var_dump($postParams, $response, $row);
 			exit();
 		}
 
@@ -113,9 +109,9 @@ $now     = new \DateTime();
 $diffSec = $now->getTimestamp() - $startedAt->getTimestamp();
 $count   = count($rows);
 
-$stateInfo['artists'] = $idMapping;
-$stateInfo['__state']['artists']['lastrun'] = "started: " . $startedAt->format(DATE_ISO8601) . " (took {$diffSec} sec)";
-$stateInfo['__state']['artists']['count']   = $count;
+$stateInfo['posts'] = $idMapping;
+$stateInfo['__state']['posts']['lastrun'] = "started: " . $startedAt->format(DATE_ISO8601) . " (took {$diffSec} sec)";
+$stateInfo['__state']['posts']['count']   = $count;
 $state->saveState($stateInfo);
 
-echo PHP_EOL . "Done! Processed {$count} artists, took ${diffSec} seconds." . PHP_EOL;
+echo PHP_EOL . "Done! Processed {$count} posts, took ${diffSec} seconds." . PHP_EOL;

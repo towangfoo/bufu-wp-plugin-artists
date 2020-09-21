@@ -24,15 +24,20 @@ class State
 
 	/**
 	 * Get state information from file.
-	 * @return array|null
+	 * @return array
 	 * @throws \RuntimeException
 	 */
 	public function loadState()
 	{
+		// value, when there is no state yet
+		$default = [
+			'__state' => []
+		];
+
 		$file = $this->getFilePath();
 
 		if (!file_exists($file)) {
-			return null;
+			return $default;
 		}
 		$raw = file_get_contents($file);
 		$decoded = json_decode($raw, true);
