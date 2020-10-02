@@ -160,8 +160,8 @@ class AdminInputs
 		$html  = "<select name=\"{$name}\">";
 		$html .= "<option>{$emptyOption}</option>";
 		foreach ($artists as $id => $title) {
-			$selected = ($id === $currentValue) ? ' selected="selected"' : '';
-			$html .= "<option value=\"{$id}\"{$selected}>{$title}</option>";
+			$selected = ($id === $currentValue) ? 'selected="selected"' : '';
+			$html .= "<option value=\"{$id}\" {$selected}>{$title}</option>";
 		}
 		$html .= '</select>';
 
