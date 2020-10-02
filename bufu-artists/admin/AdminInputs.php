@@ -37,6 +37,13 @@ class AdminInputs
 			$context = (array_key_exists('context', $i)) ? $i['context'] : 'normal';
 			add_meta_box($name, $i['title'], [ $this, $renderMethod ], $this->getPostTypeLyric(), $context, "high");
 		}
+
+		foreach ($this->getInputFieldsEvent() as $k => $i) {
+			$renderMethod = "echoInputHtml" . ucfirst($k);
+			$name = $this->getInputName($k, $i);
+			$context = (array_key_exists('context', $i)) ? $i['context'] : 'normal';
+			add_meta_box($name, $i['title'], [ $this, $renderMethod ], $this->getPostTypeEvent(), $context, "high");
+		}
 	}
 
 	/**
@@ -57,6 +64,14 @@ class AdminInputs
 		// only handle lyric-typed posts
 		if ($post->post_type === $this->getPostTypeLyric()) {
 			foreach ($this->getInputFieldsLyric() as $k => $i) {
+				$name = $this->getInputName($k, $i);
+				update_post_meta($post->ID, $name, $_POST[$name]);
+			}
+		}
+
+		// only handle event-typed posts
+		if ($post->post_type === $this->getPostTypeEvent()) {
+			foreach ($this->getInputFieldsEvent() as $k => $i) {
 				$name = $this->getInputName($k, $i);
 				update_post_meta($post->ID, $name, $_POST[$name]);
 			}
@@ -267,7 +282,22 @@ class AdminInputs
 	}
 
 	/**
-	 * Get the post type identifier
+	 * Define the custom inputs used on the lyrics post type.
+	 * @return array
+	 */
+	private function getInputFieldsEvent()
+	{
+		return [
+			'selectArtist' => [
+				'type'    => 'select',
+				'title'   => _n('Artist', 'Artists', 1, 'bufu-artists'),
+//				'context' => 'side'
+			]
+		];
+	}
+
+	/**
+	 * Get the post type identifier for artists
 	 * @return string
 	 */
 	private function getPostTypeArtist()
@@ -276,12 +306,21 @@ class AdminInputs
 	}
 
 	/**
-	 * Get the post type identifier
+	 * Get the post type identifier for lyrics
 	 * @return string
 	 */
 	private function getPostTypeLyric()
 	{
 		return $this->config['post_type']['lyric'];
+	}
+
+	/**
+	 * Get the post type identifier for events
+	 * @return string
+	 */
+	private function getPostTypeEvent()
+	{
+		return $this->config['post_type']['event'];
 	}
 
 	/**

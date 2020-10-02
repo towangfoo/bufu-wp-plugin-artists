@@ -24,6 +24,7 @@ class Bufu_Artists {
 			'post_type' => [
 				'artist' => self::$postTypeNameArtist,
 				'lyric'  => self::$postTypeNameLyric,
+				'event'  => 'tribe_events',
 			]
 		]);
 	}
@@ -52,6 +53,8 @@ class Bufu_Artists {
 			echo $this->getErrorMessage($err);
 			return;
 		}
+
+		$this->addCustomMetaForTribeEvents();
 
 		// create taxonomy for artist categories
 		$this->addTaxonomyArtistCategories();
@@ -96,6 +99,37 @@ class Bufu_Artists {
 		$this->saveAdminInputValues();
 	}
 
+	/**
+	 * Called, when a tribe_event is being saved.
+	 * The v1 API does not handle meta fields in the UPDATE call, so this is done here.
+	 * @param int $eventId
+	 */
+	public function hook_tribe_events_event_save($eventId)
+	{
+		$wp   = $this->getGlobalWP();
+		$data = $_POST;
+
+		// check that we got the event id
+		if (!is_int($eventId) || $eventId < 1) {
+			return;
+		}
+
+		// check that the request was made through the REST v1 API
+		if (strpos($wp->request, 'wp-json/tribe/events/v1') !== 0) {
+			return;
+		}
+
+		// check for meta data in $_POST
+		if (!is_array($data) || !array_key_exists('meta', $data)) {
+			return;
+		}
+
+		// save
+		foreach ($data['meta'] as $f => $v) {
+			update_post_meta($eventId, $f, $v);
+		}
+	}
+
 	// -----------------------------------------------------------------------------------------------------------------
 	// ----- filters ---------------------------------------------------------------------------------------------------
 
@@ -119,6 +153,14 @@ class Bufu_Artists {
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// ----- private methods -------------------------------------------------------------------------------------------
+
+	private function addCustomMetaForTribeEvents() {
+		register_post_meta('tribe_events', 'bufu_artist_selectArtist', [
+			'single'       => true,
+			'description'  => __('The related artist', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+	}
 
 	/**
 	 * Add custom post type for artist.
@@ -269,5 +311,14 @@ class Bufu_Artists {
 	private function loadTranslations()
 	{
 		load_muplugin_textdomain(self::$pluginSlugArtist, self::$pluginSlugArtist . '/languages/');
+	}
+
+	/**
+	 * @return WP
+	 */
+	private function getGlobalWP()
+	{
+		global $wp;
+		return $wp;
 	}
 }

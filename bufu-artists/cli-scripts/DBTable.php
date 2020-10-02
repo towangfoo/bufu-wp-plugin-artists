@@ -60,6 +60,30 @@ class DBTable
 	}
 
 	/**
+	 * @param DateTime $dateTime
+	 * @param string $columnName
+	 * @return stdClass[]
+	 */
+	public function getRowsNewerThan(DateTime $dateTime, $columnName = 'datum')
+	{
+		$timestamp = $dateTime->getTimestamp();
+
+		$connection = $this->getConnection();
+
+		$query = sprintf("SELECT * FROM %s WHERE `%s` > :timestamp", $this->table, $columnName);
+
+		$stmt = $connection->prepare($query);
+		$stmt->execute(['timestamp' => $timestamp]);
+
+		$rows = [];
+		while ($row = $stmt->fetch()) {
+			$rows[] = $this->hydrateItem($row);
+		}
+
+		return $rows;
+	}
+
+	/**
 	 * @return PDO
 	 * @throws PDOException
 	 */
