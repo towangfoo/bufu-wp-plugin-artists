@@ -33,6 +33,7 @@ add_action('init', [$instance, 'hook_init']);
 add_action('rest_api_init', [$instance, 'hook_rest_api_init']);
 add_action('plugins_loaded', [$instance, 'hook_plugins_loaded']);
 add_action('save_post', [$instance, 'hook_save_post']);
+add_action('the_post', [$instance, 'hook_the_post']);
 
 add_filter('pre_get_posts', [$instance, 'filter_pre_get_posts']);
 

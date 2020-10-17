@@ -99,6 +99,11 @@ class Bufu_Artists {
 		$this->saveAdminInputValues();
 	}
 
+	public function hook_the_post(WP_Post $post)
+	{
+		$this->addRelationsToPost($post);
+	}
+
 	/**
 	 * Called, when a tribe_event is being saved.
 	 * The v1 API does not handle meta fields in the UPDATE call, so this is done here.
@@ -134,20 +139,18 @@ class Bufu_Artists {
 	// ----- filters ---------------------------------------------------------------------------------------------------
 
 	/**
-	 * Order posts by custom fields for our custom post types.
+	 * Modify query for posts.
 	 * @param WP_Query $query
 	 * @return void
 	 */
 	public function filter_pre_get_posts(WP_Query $query)
 	{
-		if ( is_admin() && !isset( $_GET['orderby'] ) ) {
-			$postType = $query->query['post_type'];
+		if ( is_admin() && is_main_query() ) {
+			$this->modifyQuery_admin_sortArtistPosts($query);
+		}
 
-			if ( $postType === self::$postTypeNameArtist ) {
-				$query->set('orderby', 'meta_value');
-				$query->set('meta_key', 'bufu_artist_sortBy');
-				$query->set('order', 'ASC');
-			}
+		if ( is_main_query() & is_archive() ) {
+			$this->modifyQuery_archive_sortArtistPosts($query);
 		}
 	}
 
@@ -183,7 +186,7 @@ class Bufu_Artists {
 			'rewrite'     		=> [ 'slug' => 'artists' ],
 			'public'            => true,
 			'publicly_queryable'=> true,
-			'has_archieve'      => true,
+			'has_archive'       => true,
 			'show_ui'           => true,
 			'show_in_nav_menus' => false,
 			'show_in_rest'      => true,
@@ -320,5 +323,46 @@ class Bufu_Artists {
 	{
 		global $wp;
 		return $wp;
+	}
+
+	/**
+	 * @param WP_Query $query
+	 */
+	private function modifyQuery_admin_sortArtistPosts(WP_Query $query)
+	{
+		if ( is_admin() && !isset( $_GET['orderby'] ) ) {
+			$postType = $query->query['post_type'];
+
+			if ( $postType === self::$postTypeNameArtist ) {
+				$query->set('orderby', 'meta_value');
+				$query->set('meta_key', 'bufu_artist_sortBy');
+				$query->set('order', 'ASC');
+			}
+		}
+	}
+
+	/**
+	 * @param WP_Query $query
+	 */
+	private function modifyQuery_archive_sortArtistPosts(WP_Query $query)
+	{
+		$postType = $query->query['post_type'];
+		if ( $postType === self::$postTypeNameArtist ) {
+			$query->set('orderby', 'meta_value');
+			$query->set('meta_key', 'bufu_artist_sortBy');
+			$query->set('order', 'ASC');
+			$query->set('posts_per_page', 20);
+		}
+	}
+
+	private function addRelationsToPost(WP_Post $post)
+	{
+		$selectedArtistId = get_post_meta($post->ID, 'bufu_artist_selectArtist', true);
+		if ($selectedArtistId) {
+			$artist = get_post((int) $selectedArtistId);
+			if ($artist && $artist->post_type === self::$postTypeNameArtist) {
+				$post->bufu_artist = $artist;
+			}
+		}
 	}
 }
