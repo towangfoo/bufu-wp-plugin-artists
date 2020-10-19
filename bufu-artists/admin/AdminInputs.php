@@ -149,7 +149,7 @@ class AdminInputs
 		$name   = $this->getInputName($key, $input);
 
 		// options
-		$artists = $this->getAvailableArtists();
+		$artists = $this->getAllArtistsSelectOptions();
 		$emptyOption = __("Not selected", 'bufu-artists');
 
 		// current value
@@ -356,7 +356,7 @@ class AdminInputs
 	/**
 	 * @return array
 	 */
-	private function getAvailableArtists()
+	public function getAllArtistsSelectOptions()
 	{
 		// query for your post type
 		$query  = new WP_Query([

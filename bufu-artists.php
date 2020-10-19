@@ -26,16 +26,31 @@ if ( !function_exists( 'add_action' ) ) {
 
 require_once('bufu-artists/Bufu_Artists.php');
 
-$instance = new Bufu_Artists();
+$bufuArtistsPluginInstance = new Bufu_Artists();
 
-add_action('admin_init', [$instance, 'hook_admin_init']);
-add_action('init', [$instance, 'hook_init']);
-add_action('rest_api_init', [$instance, 'hook_rest_api_init']);
-add_action('plugins_loaded', [$instance, 'hook_plugins_loaded']);
-add_action('save_post', [$instance, 'hook_save_post']);
-add_action('the_post', [$instance, 'hook_the_post']);
+add_action('admin_init', [$bufuArtistsPluginInstance, 'hook_admin_init']);
+add_action('init', [$bufuArtistsPluginInstance, 'hook_init']);
+add_action('rest_api_init', [$bufuArtistsPluginInstance, 'hook_rest_api_init']);
+add_action('plugins_loaded', [$bufuArtistsPluginInstance, 'hook_plugins_loaded']);
+add_action('save_post', [$bufuArtistsPluginInstance, 'hook_save_post']);
+add_action('the_post', [$bufuArtistsPluginInstance, 'hook_the_post']);
 
-add_filter('pre_get_posts', [$instance, 'filter_pre_get_posts']);
+add_filter('pre_get_posts', [$bufuArtistsPluginInstance, 'filter_pre_get_posts']);
 
-// hook into tribe_events_calendar on saving events
-add_action('tribe_events_event_save', [$instance, 'hook_tribe_events_event_save']);
+// hook into tribe_events_calendar on saving events (data migration)
+// @TODO: remove later, when production is stable
+add_action('tribe_events_event_save', [$bufuArtistsPluginInstance, 'hook_tribe_events_event_save']);
+
+// add custom filter for artists to tribe filert bar
+add_action( 'tribe_events_filters_create_filters', [$bufuArtistsPluginInstance, 'hook_tribe_filter_bar_create_filters'] );
+add_filter( 'tribe_context_locations', [$bufuArtistsPluginInstance, 'hook_tribe_filter_bar_context_locations'] );
+add_filter( 'tribe_events_filter_bar_context_to_filter_map', [$bufuArtistsPluginInstance, 'hook_tribe_filter_bar_map'] );
+
+// ---------------------------------------------------------------------------------------------------------------------
+// ----- theme/public methods ------------------------------------------------------------------------------------------
+
+function bufu_artists_get_artists_for_select()
+{
+	global $bufuArtistsPluginInstance;
+	return $bufuArtistsPluginInstance->getAllArtists_selectOptions();
+}

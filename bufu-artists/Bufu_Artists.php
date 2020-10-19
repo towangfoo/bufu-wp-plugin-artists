@@ -104,8 +104,12 @@ class Bufu_Artists {
 		$this->addRelationsToPost($post);
 	}
 
+	// -----------------------------------------------------------------------------------------------------------------
+	// ----- hooks into Tribe Events / Filter Bar plugins  -------------------------------------------------------------
+
 	/**
-	 * Called, when a tribe_event is being saved.
+	 * Called, when a tribe_event is being saved through the v1 REST API.
+	 * This should only happen upon data migration.
 	 * The v1 API does not handle meta fields in the UPDATE call, so this is done here.
 	 * @param int $eventId
 	 */
@@ -135,6 +139,41 @@ class Bufu_Artists {
 		}
 	}
 
+	public function hook_tribe_filter_bar_create_filters()
+	{
+		if ( ! class_exists( 'Tribe__Events__Filterbar__Filter' ) ) {
+			return;
+		}
+
+		include_once __DIR__ . '/tribe-events/filter/class-custom-filter-artist.php';
+
+		new Artist_Custom_Filter(
+			_n('Artist', 'Artists', 2, 'bufu-artists'),
+			'bufu_artist_filter'
+		);
+	}
+
+	public function hook_tribe_filter_bar_context_locations( array $locations )
+	{
+		// Read the filter selected values, if any, from the URL request vars.
+		$locations['bufu_artist_filter'] = [ 'read' => [ Tribe__Context::REQUEST_VAR => 'bufuartist' ], ];
+
+		return $locations;
+	}
+
+	public function hook_tribe_filter_bar_map( array $map )
+	{
+		if ( ! class_exists( 'Tribe__Events__Filterbar__Filter' ) ) {
+			return $map;
+		}
+
+		include_once __DIR__ . '/tribe-events/filter/class-custom-filter-artist.php';
+
+		$map['bufu_artist_filter'] = 'Artist_Custom_Filter';
+
+		return $map;
+	}
+	
 	// -----------------------------------------------------------------------------------------------------------------
 	// ----- filters ---------------------------------------------------------------------------------------------------
 
@@ -152,6 +191,14 @@ class Bufu_Artists {
 		if ( is_main_query() & is_archive() ) {
 			$this->modifyQuery_archive_sortArtistPosts($query);
 		}
+	}
+
+	// -----------------------------------------------------------------------------------------------------------------
+	// ----- theme/public methods --------------------------------------------------------------------------------------
+
+	public function getAllArtists_selectOptions()
+	{
+		return $this->adminInputs->getAllArtistsSelectOptions();
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
