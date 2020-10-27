@@ -1,11 +1,13 @@
 <?php
 
+require_once 'Bufu_Artists_ThemeHelper.php';
 require_once 'admin/AdminInputs.php';
 
 class Bufu_Artists {
 
-	private static $postTypeNameArtist = 'bufu_artist';
-	private static $postTypeNameLyric  = 'bufu_lyric';
+	public static $postTypeNameArtist = 'bufu_artist';
+	public static $postTypeNameLyric  = 'bufu_lyric';
+	public static $postTypeNameEvent  = 'tribe_events';
 
 	private static $pluginSlugArtist = 'bufu-artists';
 	private static $pluginSlugLyric  = 'bufu-lyrics';
@@ -16,6 +18,11 @@ class Bufu_Artists {
 	private $adminInputs;
 
 	/**
+	 * @var Bufu_Artists_ThemeHelper
+	 */
+	private $themeHelper;
+
+	/**
 	 * Bufu_Artists constructor.
 	 */
 	public function __construct()
@@ -24,7 +31,7 @@ class Bufu_Artists {
 			'post_type' => [
 				'artist' => self::$postTypeNameArtist,
 				'lyric'  => self::$postTypeNameLyric,
-				'event'  => 'tribe_events',
+				'event'  => self::$postTypeNameEvent,
 			]
 		]);
 	}
@@ -56,18 +63,35 @@ class Bufu_Artists {
 
 		$this->addCustomMetaForTribeEvents();
 
+		$this->addCustomMetaForFrontPage();
+
 		// create taxonomy for artist categories
 		$this->addTaxonomyArtistCategories();
 	}
 
 	/**
-	 * Called upon to the admin_init event.
+	 * Called upon to the add_meta_boxes event.
 	 * Add input fields to the bufu_artist post type.
+	 * @return void
+	 */
+	public function hook_admin_add_meta_boxes()
+	{
+		$this->adminInputs->addAll();
+	}
+
+	/**
+	 * Called upon to the admin_init event.
 	 * @return void
 	 */
 	public function hook_admin_init()
 	{
-		$this->adminInputs->addAll();
+
+	}
+
+	public function hook_admin_enqueue_scripts()
+	{
+		$this->adminInputs->enqueueScripts();
+		$this->adminInputs->enqueueStyles();
 	}
 
 	/**
@@ -194,11 +218,26 @@ class Bufu_Artists {
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
-	// ----- theme/public methods --------------------------------------------------------------------------------------
+	// ----- ThemeHelper, class hierarchy access -----------------------------------------------------------------------
 
-	public function getAllArtists_selectOptions()
+	/**
+	 * @return Bufu_Artists_ThemeHelper
+	 */
+	public function getThemeHelper()
 	{
-		return $this->adminInputs->getAllArtistsSelectOptions();
+		if ( !$this->themeHelper ) {
+			$this->themeHelper = new Bufu_Artists_ThemeHelper($this);
+		}
+
+		return $this->themeHelper;
+	}
+
+	/**
+	 * @return AdminInputs
+	 */
+	public function getAdminInputs()
+	{
+		return $this->adminInputs;
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -209,6 +248,14 @@ class Bufu_Artists {
 			'single'       => true,
 			'description'  => __('The related artist', 'bufu-artists'),
 			'show_in_rest' => true,
+		]);
+	}
+
+	private function addCustomMetaForFrontPage() {
+		register_post_meta('post', 'bufu_artist_selectArtist', [
+			'single'       => true,
+			'description'  => __('Featured artists', 'bufu-artists'),
+			'show_in_rest' => false,
 		]);
 	}
 
@@ -261,6 +308,12 @@ class Bufu_Artists {
 		register_post_meta(self::$postTypeNameArtist, 'bufu_artist_sortBy', [
 			'single'       => true,
 			'description'  => __('Internal sort string', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+
+		register_post_meta(self::$postTypeNameArtist, 'bufu_artist_stageImage', [
+			'single'       => true,
+			'description'  => __('Profile stage image', 'bufu-artists'),
 			'show_in_rest' => true,
 		]);
 

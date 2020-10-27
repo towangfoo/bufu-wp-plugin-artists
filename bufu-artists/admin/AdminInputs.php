@@ -1,5 +1,10 @@
 <?php
 
+require_once 'InputInterface.php';
+require_once 'InputMedia.php';
+require_once 'InputSelect.php';
+require_once 'InputText.php';
+
 /**
  * Define and interact with admin input fields for artists post type.
  */
@@ -24,25 +29,31 @@ class AdminInputs
 	 */
 	public function addAll()
 	{
-		foreach ($this->getInputFieldsArtist() as $k => $i) {
-			$renderMethod = "echoInputHtml" . ucfirst($k);
-			$name = $this->getInputName($k, $i);
-			$context = (array_key_exists('context', $i)) ? $i['context'] : 'normal';
-			add_meta_box($name, $i['title'], [ $this, $renderMethod ], $this->getPostTypeArtist(), $context, "high");
-		}
+		$thePostType = get_post_type();
 
-		foreach ($this->getInputFieldsLyric() as $k => $i) {
-			$renderMethod = "echoInputHtml" . ucfirst($k);
-			$name = $this->getInputName($k, $i);
-			$context = (array_key_exists('context', $i)) ? $i['context'] : 'normal';
-			add_meta_box($name, $i['title'], [ $this, $renderMethod ], $this->getPostTypeLyric(), $context, "high");
-		}
+		$inputs = [
+			$this->getPostTypeArtist() => $this->getInputFieldsArtist(),
+			$this->getPostTypeLyric()  => $this->getInputFieldsLyric(),
+			$this->getPostTypeEvent()  => $this->getInputFieldsEvent(),
+		];
 
-		foreach ($this->getInputFieldsEvent() as $k => $i) {
-			$renderMethod = "echoInputHtml" . ucfirst($k);
-			$name = $this->getInputName($k, $i);
-			$context = (array_key_exists('context', $i)) ? $i['context'] : 'normal';
-			add_meta_box($name, $i['title'], [ $this, $renderMethod ], $this->getPostTypeEvent(), $context, "high");
+		$inputReferences = [];
+
+		if ( $this->isFrontPagePost() ) {
+			foreach ($this->getInputFieldsFrontPage() as $key => $options) {
+				$name = $this->getInputName($key, $options);
+				$options['screen'] = null;
+				$input = $this->createInput($name, $options);
+				$inputReferences[] = $input;
+			}
+		}
+		else if (array_key_exists($thePostType, $inputs)) {
+			foreach ($inputs[$thePostType] as $key => $options) {
+				$name = $this->getInputName($key, $options);
+				$options['post_type'] = $thePostType;
+				$input = $this->createInput($name, $options);
+				$inputReferences[] = $input;
+			}
 		}
 	}
 
@@ -53,8 +64,16 @@ class AdminInputs
 	{
 		$post = $this->getPost();
 
+		// only handle front-page attributes
+		if ( $this->isFrontPagePost() ) {
+			foreach ($this->getInputFieldsFrontPage() as $k => $i) {
+				$name = $this->getInputName($k, $i);
+				update_post_meta($post->ID, $name, $_POST[$name]);
+			}
+		}
+
 		// only handle artist-typed posts
-		if ($post->post_type === $this->getPostTypeArtist()) {
+		else if ($post->post_type === $this->getPostTypeArtist()) {
 			foreach ($this->getInputFieldsArtist() as $k => $i) {
 				$name = $this->getInputName($k, $i);
 				update_post_meta($post->ID, $name, $_POST[$name]);
@@ -62,7 +81,7 @@ class AdminInputs
 		}
 
 		// only handle lyric-typed posts
-		if ($post->post_type === $this->getPostTypeLyric()) {
+		else if ($post->post_type === $this->getPostTypeLyric()) {
 			foreach ($this->getInputFieldsLyric() as $k => $i) {
 				$name = $this->getInputName($k, $i);
 				update_post_meta($post->ID, $name, $_POST[$name]);
@@ -70,7 +89,7 @@ class AdminInputs
 		}
 
 		// only handle event-typed posts
-		if ($post->post_type === $this->getPostTypeEvent()) {
+		else if ($post->post_type === $this->getPostTypeEvent()) {
 			foreach ($this->getInputFieldsEvent() as $k => $i) {
 				$name = $this->getInputName($k, $i);
 				update_post_meta($post->ID, $name, $_POST[$name]);
@@ -115,134 +134,78 @@ class AdminInputs
 		}
 	}
 
-	// ------ callbacks for form element rendering ---------------------------------------------------------------------
+	/**
+	 * Add scripts required for media upload meta fields in artist edit page
+	 */
+	public function enqueueScripts()
+	{
+		$thePostType = get_post_type();
+
+		$postTypesToInlcudeOn = [
+			$this->getPostTypeArtist(),
+			'page',
+		];
+
+		if( in_array($thePostType, $postTypesToInlcudeOn) ) {
+			// enqueue media uploader scripts
+			wp_enqueue_media();
+
+			wp_register_script( 'bufu-artist-admin-meta-media-upload', plugins_url( 'assets/js/media-uploader.js' , __FILE__ ), array( 'jquery' ) );
+			wp_localize_script( 'bufu-artist-admin-meta-media-upload', 'bufu_artist_admin_meta_media_upload',
+				[
+					'title'  => __( 'Choose or Upload Image', 'bufu-artists' ),
+					'button' => __( 'Use this image', 'bufu-artists' ),
+				]
+			);
+
+			wp_enqueue_script( 'bufu-artist-admin-meta-media-upload' );
+		}
+	}
+
+	/**
+	 * Add scripts required for media upload meta fields in artist edit page
+	 */
+	public function enqueueStyles()
+	{
+		$thePostType = get_post_type();
+
+		$postTypesToInlcudeOn = [
+			$this->getPostTypeArtist(),
+			$this->getPostTypeEvent(),
+			$this->getPostTypeLyric(),
+			'page',
+		];
+
+		if( in_array($thePostType, $postTypesToInlcudeOn) ) {
+			wp_enqueue_script('bufu-artists-admin-scripts', plugins_url( 'assets/js/bufu-admin.js' , __FILE__ ));
+			wp_enqueue_style('bufu-artists-admin-styles', plugins_url( 'assets/admin.css' , __FILE__ ));
+		}
+	}
+
+	// ------ public callbacks for form element and option -------------------------------------------------------------
 	// -----------------------------------------------------------------------------------------------------------------
 
 	/**
-	 * Get rendered form element for 'website' input.
-	 * @return string
+	 * @return array
 	 */
-	public function getInputHtmlWebsite()
+	public function getAllArtistsSelectOptions()
 	{
-		return $this->getInputHtml('website', $this->getInputFieldsArtist());
-	}
+		// query for your post type
+		$query  = new WP_Query([
+			'post_type'      => $this->getPostTypeArtist(),
+			'posts_per_page' => -1
+		]);
 
-	/**
-	 * Echo 'website' form element.
-	 * @return void
-	 */
-	public function echoInputHtmlWebsite()
-	{
-		echo $this->getInputHtmlWebsite();
-	}
-
-	/**
-	 * Get rendered form element for 'selectArtist' input.
-	 * @return string
-	 */
-	public function getInputHtmlSelectArtist()
-	{
-		// input definition
-		$fields = $this->getInputFieldsLyric();
-		$key    = 'selectArtist';
-		$input  = $fields[$key];
-		$name   = $this->getInputName($key, $input);
-
-		// options
-		$artists = $this->getAllArtistsSelectOptions();
-		$emptyOption = __("Not selected", 'bufu-artists');
-
-		// current value
-		$custom = $this->getPostCustomFields();
-		$currentValue = (empty($custom[$name][0])) ? null : intval($custom[$name][0], 10);
-
-		// render
-		$html  = "<select name=\"{$name}\">";
-		$html .= "<option>{$emptyOption}</option>";
-		foreach ($artists as $id => $title) {
-			$selected = ($id === $currentValue) ? 'selected="selected"' : '';
-			$html .= "<option value=\"{$id}\" {$selected}>{$title}</option>";
+		$items = $query->posts;
+		if (!is_array($items)) {
+			return [];
 		}
-		$html .= '</select>';
 
-		return $html;
+		return wp_list_pluck($items, 'post_title', 'ID');
 	}
-
-	/**
-	 * Echo 'selectArtist' form element.
-	 * @return void
-	 */
-	public function echoInputHtmlSelectArtist()
-	{
-		echo $this->getInputHtmlSelectArtist();
-	}
-
-	/**
-	 * Get rendered form element for 'album' input.
-	 * @return string
-	 */
-	public function getInputHtmlAlbum()
-	{
-		return $this->getInputHtml('album', $this->getInputFieldsLyric());
-	}
-
-	/**
-	 * Echo 'album' form element.
-	 * @return void
-	 */
-	public function echoInputHtmlAlbum()
-	{
-		echo $this->getInputHtmlAlbum();
-	}
-
-	/**
-	 * Get rendered form element for 'sortBy' input.
-	 * @return string
-	 */
-	public function getInputHtmlSortBy()
-	{
-		return $this->getInputHtml('sortBy', $this->getInputFieldsArtist());
-	}
-
-	/**
-	 * Echo 'sortBy' form element.
-	 * @return void
-	 */
-	public function echoInputHtmlSortBy()
-	{
-		echo $this->getInputHtmlSortBy();
-	}
-
+	
 	// ------ private methods ------------------------------------------------------------------------------------------
 	// -----------------------------------------------------------------------------------------------------------------
-
-	/**
-	 * @param string $key
-	 * @param array $fields
-	 * @return string html
-	 * @throws Exception
-	 */
-	private function getInputHtml($key, array $fields)
-	{
-		if (!array_key_exists($key, $fields)) {
-			throw new \Exception(sprintf(__('Input with key %s is not defined', 'bufu-artists'), $key));
-		}
-
-		// input definition
-		$input = $fields[$key];
-		$name = $this->getInputName($key, $input);
-
-		$custom = $this->getPostCustomFields();
-		$value = $custom[$name][0];
-
-		// render input element
-		$html = '';
-		if (in_array($input['type'], ['text', 'email', 'date', 'url'])) {
-			$html = "<input type=\"{$input['type']}\" name=\"{$name}\" value=\"{$value}\" />";
-		}
-
-		return $html;
-	}
 
 	/**
 	 * Define the custom inputs used on the artist post type.
@@ -258,7 +221,12 @@ class AdminInputs
 			'sortBy' => [
 				'type'  => 'text',
 				'title' => __('Sort string', 'bufu-artists'),
-			]
+			],
+			'stageImage' => [
+				'type'     => 'media_upload',
+				'title'    => __('Profile stage image', 'bufu-artists'),
+				'context'  => 'side'
+			],
 		];
 	}
 
@@ -272,6 +240,7 @@ class AdminInputs
 			'selectArtist' => [
 				'type'    => 'select',
 				'title'   => _n('Artist', 'Artists', 1, 'bufu-artists'),
+				'value_options' => $this->getAllArtistsSelectOptions(),
 //				'context' => 'side'
 			],
 			'album' => [
@@ -291,8 +260,42 @@ class AdminInputs
 			'selectArtist' => [
 				'type'    => 'select',
 				'title'   => _n('Artist', 'Artists', 1, 'bufu-artists'),
+				'value_options' => $this->getAllArtistsSelectOptions(),
 //				'context' => 'side'
 			]
+		];
+	}
+
+	/**
+	 * Define the custom inputs used on the front page.
+	 * @return array
+	 */
+	private function getInputFieldsFrontPage()
+	{
+		return [
+			'imgArtistsReel' => [
+				'type'     => 'media_upload',
+				'title'    => __('Artists slider images', 'bufu-artists'),
+				'multiple' => true,
+				'min'      => 1,
+				'max'      => 5,
+			],
+			'imgConcerts'  => [
+				'type'     => 'media_upload',
+				'title'    => __('Concerts link image', 'bufu-artists'),
+			],
+			'imgShop' => [
+				'type'     => 'media_upload',
+				'title'    => __('Shop link image', 'bufu-artists'),
+			],
+			'selectArtist' => [
+				'type'     => 'select',
+				'title'    => __('Featured artists', 'bufu-artists'),
+				'value_options' => $this->getAllArtistsSelectOptions(),
+				'multiple' => true,
+				'min'      => 3,
+				'max'      => 6,
+			],
 		];
 	}
 
@@ -354,21 +357,79 @@ class AdminInputs
 	}
 
 	/**
-	 * @return array
+	 * Check whether a given post is the front page.
+	 *
+	 * @return bool
 	 */
-	public function getAllArtistsSelectOptions()
+	private function isFrontPagePost()
 	{
-		// query for your post type
-		$query  = new WP_Query([
-			'post_type'      => $this->getPostTypeArtist(),
-			'posts_per_page' => -1
-		]);
+		$type = get_post_type();
+		$postId = get_the_ID();
+		$fpId = (int) get_option('page_on_front');
 
-		$items = $query->posts;
-		if (!is_array($items)) {
-			return [];
+		if (! $postId || $type !== 'page') {
+			return false;
 		}
 
-		return wp_list_pluck($items, 'post_title', 'ID');
+		return $postId === $fpId;
+	}
+
+	/**
+	 * @param $name
+	 * @param $options
+	 * @return InputInterface|WP_Error
+	 */
+	private function createInput($name, $options)
+	{
+		if (!array_key_exists('type', $options)) {
+			return new WP_Error(sprintf(__('Missing required option: `%s`', 'bufu-artists'), 'type'));
+		}
+
+		$input = null;
+		switch ($options['type']) {
+			case 'text':
+			case 'email':
+			case 'date':
+			case 'url':
+				$input = InputText::create($name, $options);
+				break;
+			case 'select':
+				$input = InputSelect::create($name, $options);
+				break;
+			case 'media_upload':
+				$input = InputMedia::create($name, $options);
+				break;
+			default:
+				return new WP_Error(sprintf(__('Unknown input type: `%s`', 'bufu-artists'), $options['type']));
+		}
+
+		if ($input instanceof InputInterface) {
+
+			$custom = $this->getPostCustomFields();
+			if (array_key_exists($name, $custom)) {
+
+				$rawValue = $custom[$name][0];
+				$value    = null;
+
+				if ($input->isMultiple()) {
+					$value = [];
+					if (!empty($rawValue)) {
+						$unserialized = unserialize($custom[$name][0]);
+						if (is_array($unserialized)) {
+							$value = $unserialized;
+						}
+					}
+				}
+				else {
+					$value = $rawValue;
+				}
+
+				$input->setValue($value);
+			}
+
+			$input->addMetaBox();
+		}
+
+		return $input;
 	}
 }

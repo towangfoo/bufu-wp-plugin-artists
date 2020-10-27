@@ -28,6 +28,7 @@ require_once('bufu-artists/Bufu_Artists.php');
 
 $bufuArtistsPluginInstance = new Bufu_Artists();
 
+add_action('add_meta_boxes', [$bufuArtistsPluginInstance, 'hook_admin_add_meta_boxes']);
 add_action('admin_init', [$bufuArtistsPluginInstance, 'hook_admin_init']);
 add_action('init', [$bufuArtistsPluginInstance, 'hook_init']);
 add_action('rest_api_init', [$bufuArtistsPluginInstance, 'hook_rest_api_init']);
@@ -41,16 +42,25 @@ add_filter('pre_get_posts', [$bufuArtistsPluginInstance, 'filter_pre_get_posts']
 // @TODO: remove later, when production is stable
 add_action('tribe_events_event_save', [$bufuArtistsPluginInstance, 'hook_tribe_events_event_save']);
 
-// add custom filter for artists to tribe filert bar
+// add custom filter for artists to tribe filter bar
 add_action( 'tribe_events_filters_create_filters', [$bufuArtistsPluginInstance, 'hook_tribe_filter_bar_create_filters'] );
 add_filter( 'tribe_context_locations', [$bufuArtistsPluginInstance, 'hook_tribe_filter_bar_context_locations'] );
 add_filter( 'tribe_events_filter_bar_context_to_filter_map', [$bufuArtistsPluginInstance, 'hook_tribe_filter_bar_map'] );
 
+// add plugin assets
+add_action( 'admin_enqueue_scripts', [$bufuArtistsPluginInstance, 'hook_admin_enqueue_scripts'] );
+
 // ---------------------------------------------------------------------------------------------------------------------
 // ----- theme/public methods ------------------------------------------------------------------------------------------
 
-function bufu_artists_get_artists_for_select()
+/**
+ * get the ThemeHelper class
+ *
+ * @return Bufu_Artists_ThemeHelper
+ */
+function bufu_artists()
 {
 	global $bufuArtistsPluginInstance;
-	return $bufuArtistsPluginInstance->getAllArtists_selectOptions();
+	return $bufuArtistsPluginInstance->getThemeHelper();
+//	return $bufuArtistsPluginInstance->getAllArtists_selectOptions();
 }

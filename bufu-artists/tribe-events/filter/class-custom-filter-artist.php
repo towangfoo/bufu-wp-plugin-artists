@@ -19,7 +19,7 @@ class Artist_Custom_Filter extends Tribe__Events__Filterbar__Filter {
 	 */
 	protected function get_values() {
 		$values = [];
-		foreach (bufu_artists_get_artists_for_select() as $id => $name) {
+		foreach (bufu_artists()->getArtistsSelectOptions() as $id => $name) {
 			$values[] = [
 				'name' => $name,
 				'value' => $id,
