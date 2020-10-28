@@ -49,4 +49,55 @@ class Bufu_Artists_ThemeHelper
 
 		return $events;
 	}
+
+	/**
+	 * Get artist posts in the order of IDs in the input array
+	 *
+	 * @param array $artistIds
+	 * @return WP_Post[]
+	 */
+	public function loadArtistsById(array $artistIds = [])
+	{
+		if (empty($artistIds)) {
+			return [];
+		}
+
+		$query = new WP_Query([
+			'post_type' => Bufu_Artists::$postTypeNameArtist,
+			'post__in'  => $artistIds
+		]);
+
+
+		$out = [];
+
+		// sort by order of IDs in input array
+		foreach ($query->posts as $artist) {
+			$out[array_search($artist->ID, $artistIds, false)] = $artist;
+		}
+
+		ksort($out);
+
+		return $out;
+	}
+
+	/**
+	 * @param int $num
+	 * @param string|null $categorySlug
+	 * @return int[]|WP_Post[]
+	 */
+	public function loadRecentPosts($num, $categorySlug = null)
+	{
+		$params = [
+			'numberposts' => $num,
+			'orderby'     => 'date',
+			'order'       => 'DESC',
+			'post_type'   => 'post',
+		];
+
+		if ($categorySlug) {
+			$params['category_name'] = $categorySlug;
+		}
+
+		return get_posts($params);
+	}
 }
