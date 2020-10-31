@@ -33,7 +33,7 @@ class AdminInputs
 
 		$inputs = [
 			$this->getPostTypeArtist() => $this->getInputFieldsArtist(),
-			$this->getPostTypeLyric()  => $this->getInputFieldsLyric(),
+			$this->getPostTypeAlbum()  => $this->getInputFieldsAlbum(),
 			$this->getPostTypeEvent()  => $this->getInputFieldsEvent(),
 		];
 
@@ -81,8 +81,8 @@ class AdminInputs
 		}
 
 		// only handle lyric-typed posts
-		else if ($post->post_type === $this->getPostTypeLyric()) {
-			foreach ($this->getInputFieldsLyric() as $k => $i) {
+		else if ($post->post_type === $this->getPostTypeAlbum()) {
+			foreach ($this->getInputFieldsAlbum() as $k => $i) {
 				$name = $this->getInputName($k, $i);
 				update_post_meta($post->ID, $name, $_POST[$name]);
 			}
@@ -119,8 +119,8 @@ class AdminInputs
 		}
 
 		// lyrics
-		$postType = $this->getPostTypeLyric();
-		foreach ($this->getInputFieldsLyric() as $k => $f) {
+		$postType = $this->getPostTypeAlbum();
+		foreach ($this->getInputFieldsAlbum() as $k => $f) {
 			$name = $this->getInputName($k, $f);
 			register_rest_field($postType, $name, [
 				'get_callback' => function($object, $field) {
@@ -137,7 +137,7 @@ class AdminInputs
 	/**
 	 * Add scripts required for media upload meta fields in artist edit page
 	 */
-	public function enqueueScripts()
+	public function enqueueMediaUploadScripts()
 	{
 		$thePostType = get_post_type();
 
@@ -163,16 +163,16 @@ class AdminInputs
 	}
 
 	/**
-	 * Add scripts required for media upload meta fields in artist edit page
+	 * Add scripts and styles required for artist module's functionality in admin GUI
 	 */
-	public function enqueueStyles()
+	public function enqueueModuleScripts()
 	{
 		$thePostType = get_post_type();
 
 		$postTypesToInlcudeOn = [
 			$this->getPostTypeArtist(),
 			$this->getPostTypeEvent(),
-			$this->getPostTypeLyric(),
+			$this->getPostTypeAlbum(),
 			'page',
 		];
 
@@ -231,10 +231,10 @@ class AdminInputs
 	}
 
 	/**
-	 * Define the custom inputs used on the lyrics post type.
+	 * Define the custom inputs used on the album post type.
 	 * @return array
 	 */
-	private function getInputFieldsLyric()
+	private function getInputFieldsAlbum()
 	{
 		return [
 			'selectArtist' => [
@@ -243,9 +243,21 @@ class AdminInputs
 				'value_options' => $this->getAllArtistsSelectOptions(),
 //				'context' => 'side'
 			],
-			'album' => [
+			'albumRelease' => [
+				'type'  => 'date',
+				'title' => __('Release date', 'bufu-artists'),
+			],
+			'albumLabel' => [
 				'type'  => 'text',
-				'title' => __('Album name', 'bufu-artists'),
+				'title' => __('Release Label', 'bufu-artists'),
+			],
+			'tracks' => [
+				'type'  => 'tracks',
+				'title' => __('Track list', 'bufu-artists'),
+			],
+			'lyrics' => [
+				'type'  => 'lyrics',
+				'title' => __('Track lyrics', 'bufu-artists'),
 			]
 		];
 	}
@@ -309,12 +321,12 @@ class AdminInputs
 	}
 
 	/**
-	 * Get the post type identifier for lyrics
+	 * Get the post type identifier for albums
 	 * @return string
 	 */
-	private function getPostTypeLyric()
+	private function getPostTypeAlbum()
 	{
-		return $this->config['post_type']['lyric'];
+		return $this->config['post_type']['album'];
 	}
 
 	/**

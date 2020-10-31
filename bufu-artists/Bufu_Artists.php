@@ -7,11 +7,10 @@ require_once 'widgets/Bufu_Widget_EventsByArtist.php';
 class Bufu_Artists {
 
 	public static $postTypeNameArtist = 'bufu_artist';
-	public static $postTypeNameLyric  = 'bufu_lyric';
+	public static $postTypeNameAlbum  = 'bufu_album';
 	public static $postTypeNameEvent  = 'tribe_events';
 
-	private static $pluginSlugArtist = 'bufu-artists';
-	private static $pluginSlugLyric  = 'bufu-lyrics';
+	private static $translationSlug = 'bufu-artists';
 
 	/**
 	 * @var AdminInputs
@@ -31,7 +30,7 @@ class Bufu_Artists {
 		$this->adminInputs = new AdminInputs([
 			'post_type' => [
 				'artist' => self::$postTypeNameArtist,
-				'lyric'  => self::$postTypeNameLyric,
+				'album'  => self::$postTypeNameAlbum,
 				'event'  => self::$postTypeNameEvent,
 			]
 		]);
@@ -55,8 +54,8 @@ class Bufu_Artists {
 			return;
 		}
 
-		// register custom post type for lyrics
-		$err = $this->addCustomPostTypeLyric();
+		// register custom post type for albums
+		$err = $this->addCustomPostTypeAlbum();
 		if ($err instanceof WP_Error) {
 			echo $this->getErrorMessage($err);
 			return;
@@ -89,10 +88,13 @@ class Bufu_Artists {
 
 	}
 
+	/**
+	 * Add scripts and styles to the admin GUI.
+	 */
 	public function hook_admin_enqueue_scripts()
 	{
-		$this->adminInputs->enqueueScripts();
-		$this->adminInputs->enqueueStyles();
+		$this->adminInputs->enqueueMediaUploadScripts();
+		$this->adminInputs->enqueueModuleScripts();
 	}
 
 	/**
@@ -198,6 +200,11 @@ class Bufu_Artists {
 		return $locations;
 	}
 
+	/**
+	 * Add custom filter to filter bar, allowing to filter events by artist.
+	 * @param array $map
+	 * @return array
+	 */
 	public function hook_tribe_filter_bar_map( array $map )
 	{
 		if ( ! class_exists( 'Tribe__Events__Filterbar__Filter' ) ) {
@@ -268,6 +275,21 @@ class Bufu_Artists {
 		register_post_meta('post', 'bufu_artist_selectArtist', [
 			'single'       => true,
 			'description'  => __('Featured artists', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+		register_post_meta('post', 'bufu_artist_imgArtistsReel', [
+			'single'       => true,
+			'description'  => __('Artists slider images', 'bufu-artists'),
+			'show_in_rest' => false,
+		]);
+		register_post_meta('post', 'bufu_artist_imgConcerts', [
+			'single'       => true,
+			'description'  => __('Concerts link image', 'bufu-artists'),
+			'show_in_rest' => false,
+		]);
+		register_post_meta('post', 'bufu_artist_imgShop', [
+			'single'       => true,
+			'description'  => __('Shop link image', 'bufu-artists'),
 			'show_in_rest' => false,
 		]);
 	}
@@ -337,26 +359,26 @@ class Bufu_Artists {
 	 * Add custom post type for lyric.
 	 * @return WP_Error|null
 	 */
-	private function addCustomPostTypeLyric()
+	private function addCustomPostTypeAlbum()
 	{
-		if (post_type_exists(self::$postTypeNameLyric)) {
-			return new WP_Error(sprintf(__('Post type already exists: `%s`', 'bufu-artists'), self::$postTypeNameLyric));
+		if ( post_type_exists(self::$postTypeNameAlbum) ) {
+			return new WP_Error(sprintf(__('Post type already exists: `%s`', 'bufu-artists'), self::$postTypeNameAlbum));
 		}
 
 
 		// register custom post type for artists
-		$postType = register_post_type(self::$postTypeNameLyric, [
+		$postType = register_post_type(self::$postTypeNameAlbum, [
 			'labels' => [
-				'name'          => _n('Song text', 'Song texts', 2, 'bufu-artists'),
-				'singular_name' => _n('Song text', 'Song texts', 1, 'bufu-artists')
+				'name'          => _n('Album', 'Albums', 2, 'bufu-artists'),
+				'singular_name' => _n('Album', 'Albums', 1, 'bufu-artists')
 			],
-			'description'       => __('Manage an artist\'s song texts', 'bufu-artists'),
-			'rewrite'     		=> [ 'slug' => 'lyrics' ],
+			'description'       => __('Manage an album', 'bufu-artists'),
+			'rewrite'     		=> [ 'slug' => 'albums' ],
 			'public'            => true,
 			'publicly_queryable'=> true,
-			'has_archieve'      => true,
-			'show_ui'           => true,
-			'show_in_nav_menus' => false,
+			'has_archive'       => true,
+			'show_ui'           => false, // WIP
+			'show_in_nav_menus' => false, // WIP
 			'show_in_rest'      => true,
 			'supports'          => [
 				'title',
@@ -364,21 +386,40 @@ class Bufu_Artists {
 				'comments',
 				'revisions',
 				'author',
-				'page-attributes'
+				'page-attributes',
+				'thumbnail'
 			],
 			'capability_type'	=> 'post',
 			'hierarchical' 		=> false,
 		]);
 
-		register_post_meta(self::$postTypeNameLyric, 'bufu_artist_selectArtist', [
+		register_post_meta(self::$postTypeNameAlbum, 'bufu_artist_selectArtist', [
 			'single'       => true,
 			'description'  => __('The related artist', 'bufu-artists'),
 			'show_in_rest' => true,
 		]);
 
-		register_post_meta(self::$postTypeNameLyric, 'bufu_artist_album', [
+		register_post_meta(self::$postTypeNameAlbum, 'bufu_artist_albumRelease', [
 			'single'       => true,
-			'description'  => __('The album that first contained this piece', 'bufu-artists'),
+			'description'  => __('The album release date', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+
+		register_post_meta(self::$postTypeNameAlbum, 'bufu_artist_albumLabel', [
+			'single'       => true,
+			'description'  => __('At which label was the album released', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+
+		register_post_meta(self::$postTypeNameAlbum, 'bufu_artist_tracks', [
+			'single'       => false,
+			'description'  => __('The list of tracks', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+
+		register_post_meta(self::$postTypeNameAlbum, 'bufu_artist_lyrics', [
+			'single'       => false,
+			'description'  => __('The list of tracks', 'bufu-artists'),
 			'show_in_rest' => true,
 		]);
 
@@ -426,7 +467,7 @@ class Bufu_Artists {
 	 */
 	private function loadTranslations()
 	{
-		load_muplugin_textdomain(self::$pluginSlugArtist, self::$pluginSlugArtist . '/languages/');
+		load_muplugin_textdomain(self::$translationSlug, self::$translationSlug . '/languages/');
 	}
 
 	/**
