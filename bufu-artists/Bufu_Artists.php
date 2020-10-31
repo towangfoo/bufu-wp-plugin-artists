@@ -2,6 +2,7 @@
 
 require_once 'Bufu_Artists_ThemeHelper.php';
 require_once 'admin/AdminInputs.php';
+require_once 'widgets/Bufu_Widget_EventsByArtist.php';
 
 class Bufu_Artists {
 
@@ -123,9 +124,21 @@ class Bufu_Artists {
 		$this->saveAdminInputValues();
 	}
 
+	/**
+	 * When retrieving a single post.
+	 * @param WP_Post $post
+	 */
 	public function hook_the_post(WP_Post $post)
 	{
 		$this->addRelationsToPost($post);
+	}
+
+	/**
+	 * When initializing widgets.
+	 */
+	public function hook_widgets_init()
+	{
+		register_widget( new Bufu_Widget_EventsByArtist() );
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------

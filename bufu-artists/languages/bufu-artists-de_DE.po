@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-10-27 09:46+0100\n"
-"PO-Revision-Date: 2020-10-27 09:49+0100\n"
+"POT-Creation-Date: 2020-10-31 20:53+0100\n"
+"PO-Revision-Date: 2020-10-31 20:54+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -15,68 +15,68 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e;_n:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: Bufu_Artists.php:168 Bufu_Artists.php:254 Bufu_Artists.php:255
+#: Bufu_Artists.php:188 Bufu_Artists.php:289 Bufu_Artists.php:290
 #: admin/AdminInputs.php:242 admin/AdminInputs.php:262
 msgid "Artist"
 msgid_plural "Artists"
 msgstr[0] "Künstler"
 msgstr[1] "Künstler"
 
-#: Bufu_Artists.php:227 Bufu_Artists.php:340
+#: Bufu_Artists.php:262 Bufu_Artists.php:375
 msgid "The related artist"
 msgstr "Der Künstler/Autor/Interpret"
 
-#: Bufu_Artists.php:235 admin/AdminInputs.php:293
+#: Bufu_Artists.php:270 admin/AdminInputs.php:293
 msgid "Featured artists"
 msgstr "Hervorgehobene Künstler"
 
-#: Bufu_Artists.php:247 Bufu_Artists.php:308
+#: Bufu_Artists.php:282 Bufu_Artists.php:343
 #, php-format
 msgid "Post type already exists: `%s`"
 msgstr "Der Post-Type `%s` existiert bereits"
 
-#: Bufu_Artists.php:257
+#: Bufu_Artists.php:292
 msgid "Manage an artist's portfolio information"
 msgstr "Dieses Plugin wird benötigt, um Künstlerprofile zu verwalten"
 
-#: Bufu_Artists.php:282
+#: Bufu_Artists.php:317
 msgid "An artist's personal website"
 msgstr "Website des Künstlers"
 
-#: Bufu_Artists.php:288
+#: Bufu_Artists.php:323
 msgid "Internal sort string"
 msgstr "Interner Sortierwert"
 
-#: Bufu_Artists.php:294 admin/AdminInputs.php:227
+#: Bufu_Artists.php:329 admin/AdminInputs.php:227
 msgid "Profile stage image"
 msgstr "Profilbühne Bild"
 
-#: Bufu_Artists.php:315 Bufu_Artists.php:316
+#: Bufu_Artists.php:350 Bufu_Artists.php:351
 msgid "Song text"
 msgid_plural "Song texts"
 msgstr[0] "Liedtext"
 msgstr[1] "Liedtexte"
 
-#: Bufu_Artists.php:318
+#: Bufu_Artists.php:353
 msgid "Manage an artist's song texts"
 msgstr "Dieser Post-Type wird benötigt, um Liedtexte zu verwalten"
 
-#: Bufu_Artists.php:346
+#: Bufu_Artists.php:381
 msgid "The album that first contained this piece"
 msgstr "Das Album, das dieses Stück zuerst enthielt"
 
-#: Bufu_Artists.php:360 Bufu_Artists.php:361
+#: Bufu_Artists.php:395 Bufu_Artists.php:396
 msgid "Artist Category"
 msgid_plural "Artists Categories"
 msgstr[0] "Künstlerkategorie"
 msgstr[1] "Künstlerkategorien"
 
-#: Bufu_Artists.php:382
+#: Bufu_Artists.php:417
 #, php-format
 msgid "Error in plugin %s: %s"
 msgstr "Fehler im Plugin %s: %s"
 
-#: Bufu_Artists.php:382
+#: Bufu_Artists.php:417
 msgid "BuschFunk Artists"
 msgstr "BuschFunk Künstler"
 
@@ -139,13 +139,33 @@ msgstr "Unknown input type: `%s`"
 msgid "Input `%s` missing required option: `%s`"
 msgstr "Input `%s` missing required option: `%s`"
 
-#: admin/InputMedia.php:92
+#: admin/InputMedia.php:93
 msgid "Choose image"
 msgstr "Bild wählen"
 
 #: admin/InputSelect.php:98
 msgid "Not selected"
 msgstr "Nicht ausgewählt"
+
+#: widgets/Bufu_Widget_EventsByArtist.php:14
+msgid "Events by Artist"
+msgstr "Events eines Künstlers"
+
+#: widgets/Bufu_Widget_EventsByArtist.php:17
+msgid "Show upcoming events of the current artist"
+msgstr "Zeigt die nächsten Veranstaltungen zum aktuellen Künstler an"
+
+#: widgets/Bufu_Widget_EventsByArtist.php:72
+msgid "Order tickets"
+msgstr "Tickets bestellen"
+
+#: widgets/Bufu_Widget_EventsByArtist.php:88
+msgid "Events"
+msgstr "Events"
+
+#: widgets/Bufu_Widget_EventsByArtist.php:94
+msgid "Title:"
+msgstr "Titel:"
 
 #, php-format
 #~ msgid "Input with key %s is not defined"

@@ -35,6 +35,7 @@ add_action('rest_api_init', [$bufuArtistsPluginInstance, 'hook_rest_api_init']);
 add_action('plugins_loaded', [$bufuArtistsPluginInstance, 'hook_plugins_loaded']);
 add_action('save_post', [$bufuArtistsPluginInstance, 'hook_save_post']);
 add_action('the_post', [$bufuArtistsPluginInstance, 'hook_the_post']);
+add_action( 'widgets_init', [$bufuArtistsPluginInstance, 'hook_widgets_init'] );
 
 add_filter('pre_get_posts', [$bufuArtistsPluginInstance, 'filter_pre_get_posts']);
 
