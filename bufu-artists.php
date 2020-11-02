@@ -2,19 +2,19 @@
 /**
  * Artists post type and admin interface for managing BuschFunk artists
  *
- * @author            Steffen Muecke
+ * @author            Steffen Muecke <mail@quellkunst.de>
  * @copyright         2020 quellkunst multimedia
  * @license           GPL-2.0-or-later
  *
  * @wordpress-plugin
  * Plugin Name:       BuschFunk Artists
- * Description:       Plugin to manage BuschFunk artist portfolio.
+ * Description:       Adds all artist-related features: profiles, relations to events, albums and more content.
  * Version:           0.1.0
  * Text Domain:       bufu-artists
  * Domain Path:       /languages
  * Requires at least: 5.5
  * Requires PHP:      7.2
- * Author:            Steffen Muecke
+ * Author:            Steffen Muecke, quellkunst multimedia
  * Author URI:        https://quellkunst.de/
  * License:           GPL v2 or later
  */

@@ -114,7 +114,7 @@ foreach ($rows as $row) {
 		],
 		'featured' => ((int) $row->tipp === 1) ? true : false,
 		'meta' => [
-			'bufu_artist_selectArtist' => (array_key_exists($row->artist_id, $stateInfo['artists'])) ? $stateInfo['artists'][$row->artist_id] : '',
+			'_bufu_artist_selectArtist' => (array_key_exists($row->artist_id, $stateInfo['artists'])) ? $stateInfo['artists'][$row->artist_id] : '',
 		],
 	];
 

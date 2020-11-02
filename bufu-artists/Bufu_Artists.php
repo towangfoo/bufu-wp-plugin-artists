@@ -455,7 +455,7 @@ class Bufu_Artists {
 	private function getErrorMessage(WP_Error $err)
 	{
 		$html = '<div class="error"><p>';
-		$html .= sprintf(__('Error in plugin %s: %s', 'bufu-artists'), __('BuschFunk Artists', 'bufu-artists'), $err->get_error_message());
+		$html .= sprintf(__('Error in plugin %s: %s', 'bufu-artists'), 'BuschFunk Artists', $err->get_error_message());
 		$html .= '</div></p>';
 
 		return $html;

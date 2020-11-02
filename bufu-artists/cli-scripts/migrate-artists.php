@@ -86,8 +86,8 @@ foreach ($rows as $row) {
 		'title'   => $row->artistname,
 		'content' => $filter->createParagraphs($row->profiltext),
 		// custom meta/rest fields
-		'bufu_artist_sortBy'  => $row->sortierung,
-		'bufu_artist_website' => $row->homepage,
+		'_bufu_artist_sortBy'  => $row->sortierung,
+		'_bufu_artist_website' => $row->homepage,
 	];
 
 	$response = $wpApi->savePost($postParams, $wpPostId);
