@@ -58,15 +58,16 @@ class Bufu_Widget_EventsByArtist extends WP_Widget
 		echo '<ul class="nav flex-column">';
 
 		$dateFormat = get_option( 'date_format' );
+		$tz = get_option( 'timezone_string' );
 
 		foreach ($events as $event) {
-			/** @var $startDate Tribe__Date_Utils */
-			$startDate = $event->dates->start;
+			$startDate = new \DateTime( $event->start_date, new \DateTimeZone($tz) );
+			$dateFormatted =  wp_date( $dateFormat, $startDate->getTimestamp() );
 			$venue = $event->venues[0];
 			$ticketUrl = tribe_get_event_website_url( $event );
 
 			echo '<li class="nav-item">';
-			echo '<span class="date">'. $startDate->format($dateFormat) .'</span>';
+			echo '<span class="date">'. $dateFormatted .'</span>';
 			echo '<span class="city">'. esc_html( $venue->city ) .'</span>';
 			if ( $ticketUrl ) {
 				echo '<a href="'. $ticketUrl .'" target="_blank" class="tickets">'. __("Order tickets", 'bufu-theme') .'</a>';
