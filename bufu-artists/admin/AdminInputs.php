@@ -340,13 +340,14 @@ class AdminInputs
 
 	/**
 	 * Get the name for an input element.
+	 * Corresponds to the custom meta key.
 	 * @param string $key
 	 * @param array $data
 	 * @return string
 	 */
 	private function getInputName($key, $data)
 	{
-		return (array_key_exists('name', $data)) ? $data['name'] : "bufu_artist_{$key}";
+		return (array_key_exists('name', $data)) ? $data['name'] : "_bufu_artist_{$key}";
 	}
 
 	/**

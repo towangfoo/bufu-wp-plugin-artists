@@ -264,7 +264,7 @@ class Bufu_Artists {
 	// ----- private methods -------------------------------------------------------------------------------------------
 
 	private function addCustomMetaForTribeEvents() {
-		register_post_meta('tribe_events', 'bufu_artist_selectArtist', [
+		register_post_meta('tribe_events', '_bufu_artist_selectArtist', [
 			'single'       => true,
 			'description'  => __('The related artist', 'bufu-artists'),
 			'show_in_rest' => true,
@@ -272,22 +272,22 @@ class Bufu_Artists {
 	}
 
 	private function addCustomMetaForFrontPage() {
-		register_post_meta('post', 'bufu_artist_selectArtist', [
+		register_post_meta('post', '_bufu_artist_selectArtist', [
 			'single'       => true,
 			'description'  => __('Featured artists', 'bufu-artists'),
 			'show_in_rest' => true,
 		]);
-		register_post_meta('post', 'bufu_artist_imgArtistsReel', [
+		register_post_meta('post', '_bufu_artist_imgArtistsReel', [
 			'single'       => true,
 			'description'  => __('Artists slider images', 'bufu-artists'),
 			'show_in_rest' => false,
 		]);
-		register_post_meta('post', 'bufu_artist_imgConcerts', [
+		register_post_meta('post', '_bufu_artist_imgConcerts', [
 			'single'       => true,
 			'description'  => __('Concerts link image', 'bufu-artists'),
 			'show_in_rest' => false,
 		]);
-		register_post_meta('post', 'bufu_artist_imgShop', [
+		register_post_meta('post', '_bufu_artist_imgShop', [
 			'single'       => true,
 			'description'  => __('Shop link image', 'bufu-artists'),
 			'show_in_rest' => false,
@@ -334,19 +334,19 @@ class Bufu_Artists {
 			'hierarchical' 		=> false,
 		]);
 
-		register_post_meta(self::$postTypeNameArtist, 'bufu_artist_website', [
+		register_post_meta(self::$postTypeNameArtist, '_bufu_artist_website', [
 			'single'       => true,
 			'description'  => __('An artist\'s personal website', 'bufu-artists'),
 			'show_in_rest' => true,
 		]);
 
-		register_post_meta(self::$postTypeNameArtist, 'bufu_artist_sortBy', [
+		register_post_meta(self::$postTypeNameArtist, '_bufu_artist_sortBy', [
 			'single'       => true,
 			'description'  => __('Internal sort string', 'bufu-artists'),
 			'show_in_rest' => true,
 		]);
 
-		register_post_meta(self::$postTypeNameArtist, 'bufu_artist_stageImage', [
+		register_post_meta(self::$postTypeNameArtist, '_bufu_artist_stageImage', [
 			'single'       => true,
 			'description'  => __('Profile stage image', 'bufu-artists'),
 			'show_in_rest' => true,
@@ -393,31 +393,31 @@ class Bufu_Artists {
 			'hierarchical' 		=> false,
 		]);
 
-		register_post_meta(self::$postTypeNameAlbum, 'bufu_artist_selectArtist', [
+		register_post_meta(self::$postTypeNameAlbum, '_bufu_artist_selectArtist', [
 			'single'       => true,
 			'description'  => __('The related artist', 'bufu-artists'),
 			'show_in_rest' => true,
 		]);
 
-		register_post_meta(self::$postTypeNameAlbum, 'bufu_artist_albumRelease', [
+		register_post_meta(self::$postTypeNameAlbum, '_bufu_artist_albumRelease', [
 			'single'       => true,
 			'description'  => __('The album release date', 'bufu-artists'),
 			'show_in_rest' => true,
 		]);
 
-		register_post_meta(self::$postTypeNameAlbum, 'bufu_artist_albumLabel', [
+		register_post_meta(self::$postTypeNameAlbum, '_bufu_artist_albumLabel', [
 			'single'       => true,
 			'description'  => __('At which label was the album released', 'bufu-artists'),
 			'show_in_rest' => true,
 		]);
 
-		register_post_meta(self::$postTypeNameAlbum, 'bufu_artist_tracks', [
+		register_post_meta(self::$postTypeNameAlbum, '_bufu_artist_tracks', [
 			'single'       => false,
 			'description'  => __('The list of tracks', 'bufu-artists'),
 			'show_in_rest' => true,
 		]);
 
-		register_post_meta(self::$postTypeNameAlbum, 'bufu_artist_lyrics', [
+		register_post_meta(self::$postTypeNameAlbum, '_bufu_artist_lyrics', [
 			'single'       => false,
 			'description'  => __('The list of tracks', 'bufu-artists'),
 			'show_in_rest' => true,
@@ -489,7 +489,7 @@ class Bufu_Artists {
 
 			if ( $postType === self::$postTypeNameArtist ) {
 				$query->set('orderby', 'meta_value');
-				$query->set('meta_key', 'bufu_artist_sortBy');
+				$query->set('meta_key', '_bufu_artist_sortBy');
 				$query->set('order', 'ASC');
 			}
 		}
@@ -503,7 +503,7 @@ class Bufu_Artists {
 		$postType = $query->query['post_type'];
 		if ( $postType === self::$postTypeNameArtist ) {
 			$query->set('orderby', 'meta_value');
-			$query->set('meta_key', 'bufu_artist_sortBy');
+			$query->set('meta_key', '_bufu_artist_sortBy');
 			$query->set('order', 'ASC');
 			$query->set('posts_per_page', 20);
 		}
@@ -511,7 +511,7 @@ class Bufu_Artists {
 
 	private function addRelationsToPost(WP_Post $post)
 	{
-		$selectedArtistId = get_post_meta($post->ID, 'bufu_artist_selectArtist', true);
+		$selectedArtistId = get_post_meta($post->ID, '_bufu_artist_selectArtist', true);
 		if ($selectedArtistId) {
 			$artist = get_post((int) $selectedArtistId);
 			if ($artist && $artist->post_type === self::$postTypeNameArtist) {

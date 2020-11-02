@@ -38,7 +38,7 @@ class Bufu_Widget_EventsByArtist extends WP_Widget
 		$events = tribe_events()
 			->where('status', 'publish')
 			->where('starts_after', $from->format("Y-m-d 00:00:00"))
-			->where('meta_equals', 'bufu_artist_selectArtist', $artist->ID ) // works despite the obvious API inconsistency
+			->where('meta_equals', '_bufu_artist_selectArtist', $artist->ID ) // works despite the obvious API inconsistency
 			->order_by('start_date', "ASC")
 			->per_page($args['limit'])
 			->page(1)

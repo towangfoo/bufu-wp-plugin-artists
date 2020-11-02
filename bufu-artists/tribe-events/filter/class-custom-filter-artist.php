@@ -42,7 +42,7 @@ class Artist_Custom_Filter extends Tribe__Events__Filterbar__Filter {
 
 		// Use a LEFT JOIN here to have `null` `post_id` results we'll be able to look up in the WHERE clause.
 		$this->joinClause .= " LEFT JOIN {$wpdb->postmeta} AS bufu_artist " .
-			"ON ( {$wpdb->posts}.ID = bufu_artist.post_id AND bufu_artist.meta_key = 'bufu_artists_selectArtist' )";
+			"ON ( {$wpdb->posts}.ID = bufu_artist.post_id AND bufu_artist.meta_key = '_bufu_artists_selectArtist' )";
 	}
 
 	/**
