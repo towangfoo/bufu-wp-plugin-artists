@@ -140,7 +140,10 @@ class Bufu_Artists {
 	 */
 	public function hook_widgets_init()
 	{
-		register_widget( new Bufu_Widget_EventsByArtist() );
+		$eventsWidget = new Bufu_Widget_EventsByArtist();
+		$eventsWidget->setThemeHelper($this->getThemeHelper());
+
+		register_widget( $eventsWidget );
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------

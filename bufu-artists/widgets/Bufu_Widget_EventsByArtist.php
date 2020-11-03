@@ -5,6 +5,11 @@
  */
 class Bufu_Widget_EventsByArtist extends WP_Widget
 {
+    /**
+     * @var Bufu_Artists_ThemeHelper
+     */
+    private $themeHelper;
+
 	function __construct() {
 		parent::__construct(
 			// Base ID of your widget
@@ -16,6 +21,14 @@ class Bufu_Widget_EventsByArtist extends WP_Widget
 			// Widget description
 			array( 'description' => __( 'Show upcoming events of the current artist.', 'bufu-artists' ), )
 		);
+	}
+
+	/**
+	 * @param Bufu_Artists_ThemeHelper $themeHelper
+	 */
+	public function setThemeHelper(Bufu_Artists_ThemeHelper $themeHelper)
+	{
+        $this->themeHelper = $themeHelper;
 	}
 
 	/**
@@ -33,16 +46,7 @@ class Bufu_Widget_EventsByArtist extends WP_Widget
 			$args['limit'] = 10;
         }
 
-		// query tribe_events plugin API
-		$from = new DateTime();
-		$events = tribe_events()
-			->where('status', 'publish')
-			->where('starts_after', $from->format("Y-m-d 00:00:00"))
-			->where('meta_equals', '_bufu_artist_selectArtist', $artist->ID ) // works despite the obvious API inconsistency
-			->order_by('start_date', "ASC")
-			->per_page($args['limit'])
-			->page(1)
-			->all();
+		$events = $this->themeHelper->loadNextConcerts($artist, $args['limit']);
 
 		if (count($events) < 1) {
 		    return;
@@ -64,11 +68,14 @@ class Bufu_Widget_EventsByArtist extends WP_Widget
 			$startDate = new \DateTime( $event->start_date, new \DateTimeZone($tz) );
 			$dateFormatted =  wp_date( $dateFormat, $startDate->getTimestamp() );
 			$venue = $event->venues[0];
+			$eventUrl = get_permalink( $event );
 			$ticketUrl = tribe_get_event_website_url( $event );
 
 			echo '<li class="nav-item">';
+			echo '<a href="'. $eventUrl .'">';
 			echo '<span class="date">'. $dateFormatted .'</span>';
 			echo '<span class="city">'. esc_html( $venue->city ) .'</span>';
+			echo '</a>';
 			if ( $ticketUrl ) {
 				echo '<a href="'. $ticketUrl .'" target="_blank" class="tickets">'. __("Order tickets", 'bufu-theme') .'</a>';
 			}

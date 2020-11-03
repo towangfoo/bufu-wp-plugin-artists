@@ -28,26 +28,31 @@ class Bufu_Artists_ThemeHelper
 
 	/**
 	 * Get a list of next upcoming concerts.
+	 * If an artist is given in the first argument, only load concerts of that artist.
+	 * @param WP_Post|null $artist
 	 * @param int $num
 	 * @param DateTime|null $from
 	 * @return WP_Post[]
 	 */
-	public function loadNextConcerts($num, \DateTime $from = null)
+	public function loadNextConcerts(WP_Post $artist = null, $num = 10, \DateTime $from = null)
 	{
 		if ( !$from ) {
 			$from = new \DateTime();
 		}
 
-		// query tribe_events plugin API
-		$events = tribe_events()
+		$query = tribe_events()
 			->where('status', 'publish')
-			->where('starts_after', $from->format("Y-m-d 00:00:00"))
-			->order_by('start_date', "ASC")
-			->per_page($num)
-			->page(1)
-			->all();
+			->where('starts_after', $from->format("Y-m-d 00:00:00"));
 
-		return $events;
+		if ( $artist instanceof WP_Post && $artist->ID > 0 ) {
+			$query->where('meta_equals', '_bufu_artist_selectArtist', $artist->ID ); // works despite the obvious API inconsistency
+		}
+
+		$query->order_by('event_date', "ASC")
+			->per_page($num)
+			->page(1);
+
+		return $query->all();
 	}
 
 	/**
