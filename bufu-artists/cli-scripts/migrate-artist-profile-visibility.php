@@ -98,11 +98,12 @@ foreach ($rows as $row) {
 		if (array_key_exists('code', $response)) {
 			if ($response['code'] === 'rest_post_invalid_id') {
 				echo '-';
+				continue;
 			}
 			else {
 				// save errors?
-				var_dump($response, $row);
-				exit();
+//				var_dump($response, $row);
+//				exit();
 			}
 		}
 
