@@ -538,7 +538,7 @@ class Bufu_Artists {
 		// add custom meta filter
 		$queryMeta[] = array(
 			'key'		=> '_bufu_artist_profileVisible',
-			'value'		=> '1',
+			'value'		=> 'yes',
 			'compare'	=> '=',
 		);
 

@@ -1,10 +1,9 @@
 <?php
 /**
- * Script to migrate artist data from old site to new WP site
+ * Script to migrate artist profile visibility from old site to new WP site
  */
 
 require_once 'DBTable.php';
-require_once 'Filter.php';
 require_once 'State.php';
 require_once 'WPApi.php';
 
@@ -25,8 +24,8 @@ $config  = [
 	],
 	'target' => [
 		'wpapi' => [
-			'url'      => $settings['migrate_artists']['target']['url'],
-			'endpoint' => $settings['migrate_artists']['target']['endpoint'],
+			'url'      => $settings['migrate_artist_profile_visibility']['target']['url'],
+			'endpoint' => $settings['migrate_artist_profile_visibility']['target']['endpoint'],
 
 			// requires Basic-Auth plugin to be active
 			// which should not be the case on a production setup!
@@ -37,7 +36,6 @@ $config  = [
 			]
 		]
 	],
-	'skipExisting' => $settings['migrate_artists']['skip_existing'],
 ];
 
 $startedAt = new \DateTime();
@@ -49,7 +47,9 @@ $stateInfo = $state->loadState();
 // init state fields required for artists
 if (!array_key_exists('artists', $stateInfo)) {
 	$stateInfo['artists'] = [];
-	$stateInfo['__state']['artists'] = [
+}
+if (!array_key_exists('artist_profile_visibility', $stateInfo)) {
+	$stateInfo['__state']['artist_profile_visibility'] = [
 		'lastrun' => null,
 		'count'   => null,
 	];
@@ -59,19 +59,12 @@ if (!array_key_exists('artists', $stateInfo)) {
 // define item properties
 $artist = new stdClass();
 $artist->id = null;
-$artist->artistname = null;
-$artist->sortierung = null;
-$artist->profiltext = null;
-$artist->homepage = null;
-$artist->shoplinks = null;
 $artist->showinprofile = null;
 
 $table = new DBTable($config['source']['table_name'], $config['source']['mysql']);
 $table->setHydrateObject($artist);
 
 $wpApi = new WPApi($config['target']['wpapi']);
-
-$filter = new Filter();
 
 // get artist id mapping from state
 $idMapping = $stateInfo['artists'];
@@ -83,37 +76,34 @@ foreach ($rows as $row) {
 	// if the id is known from mapping, update the post instead
 	$wpPostId = null;
 	if (array_key_exists($row->id, $idMapping)) {
-		if ($config['skipExisting']) {
-			echo "s";
-			continue;
-		}
-
 		$wpPostId = $idMapping[$row->id];
 	}
 
-	// create post data
+	if ( !$wpPostId ) {
+		echo 's';
+		continue;
+	}
+
+	// post data
 	$postParams = [
-		'status' => 'publish',
-		'title'   => $row->artistname,
-		'content' => $filter->createParagraphs($row->profiltext),
-		// custom meta/rest fields
-		'_bufu_artist_sortBy'  => $row->sortierung,
-		'_bufu_artist_website' => $row->homepage,
 		'_bufu_artist_profileVisible' => ($row->showinprofile === "1") ? "yes" : "no",
 	];
 
 	$response = $wpApi->savePost($postParams, $wpPostId);
 
 	if (array_key_exists('id', $response) && array_key_exists('type', $response) && $response['type'] === $config['target']['wpapi']['endpoint']) {
-		// save post id to state mapping
-		$idMapping[$row->id] = intval($response['id'], 10);
 		echo '.';
 	}
 	else {
 		if (array_key_exists('code', $response)) {
-			// save errors?
-			var_dump($response, $row);
-			exit();
+			if ($response['code'] === 'rest_post_invalid_id') {
+				echo '-';
+			}
+			else {
+				// save errors?
+				var_dump($response, $row);
+				exit();
+			}
 		}
 
 		echo 'E';
@@ -125,9 +115,8 @@ $now     = new \DateTime();
 $diffSec = $now->getTimestamp() - $startedAt->getTimestamp();
 $count   = count($rows);
 
-$stateInfo['artists'] = $idMapping;
-$stateInfo['__state']['artists']['lastrun'] = "started: " . $startedAt->format(DATE_ISO8601) . " (took {$diffSec} sec)";
-$stateInfo['__state']['artists']['count']   = $count;
+$stateInfo['__state']['artist_profile_visibility']['lastrun'] = "started: " . $startedAt->format(DATE_ISO8601) . " (took {$diffSec} sec)";
+$stateInfo['__state']['artist_profile_visibility']['count']   = $count;
 $state->saveState($stateInfo);
 
 echo PHP_EOL . "Done! Processed {$count} artists, took ${diffSec} seconds." . PHP_EOL;

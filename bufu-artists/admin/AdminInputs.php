@@ -241,8 +241,8 @@ class AdminInputs
 				'title'     => __('Display profile page', 'bufu-artists'),
 				'context'   => 'side',
 				'labelText' => sprintf(__('Display a profile page for %s', 'bufu-artist'), $artistName),
-				'value_on'  => '1',
-				'value_off'  => '0',
+				'value_on'  => 'yes',
+				'value_off' => 'no',
 			],
 		];
 	}
