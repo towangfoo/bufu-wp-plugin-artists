@@ -37,6 +37,7 @@ add_action('save_post', [$bufuArtistsPluginInstance, 'hook_save_post']);
 add_action('the_post', [$bufuArtistsPluginInstance, 'hook_the_post']);
 add_action( 'widgets_init', [$bufuArtistsPluginInstance, 'hook_widgets_init'] );
 
+// hook into query creation using filters
 add_filter('pre_get_posts', [$bufuArtistsPluginInstance, 'filter_pre_get_posts']);
 
 // hook into tribe_events_calendar on saving events (data migration)

@@ -4,10 +4,8 @@ require_once 'AbstractInput.php';
 require_once 'InputInterface.php';
 
 /**
- * Created by PhpStorm.
- * User: towangfoo
- * Date: 24.10.20
- * Time: 11:54
+ * Media upload input element, using the Wordpress media features.
+ * @author Steffen Muecke <mail@quellkunst.de
  */
 class InputMedia extends AbstractInput implements InputInterface
 {

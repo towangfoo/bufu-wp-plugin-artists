@@ -1,6 +1,7 @@
 <?php
 
 require_once 'InputInterface.php';
+require_once 'InputCheckbox.php';
 require_once 'InputMedia.php';
 require_once 'InputSelect.php';
 require_once 'InputText.php';
@@ -213,6 +214,14 @@ class AdminInputs
 	 */
 	private function getInputFieldsArtist()
 	{
+		$post = $this->getPost();
+		if ($post && $post->post_type === $this->getPostTypeArtist()) {
+			$artistName = $post->post_title;
+		}
+		else {
+			$artistName = __("this artist", 'bufu-artist');
+		}
+
 		return [
 			'website' => [
 				'type'  => 'url',
@@ -226,6 +235,14 @@ class AdminInputs
 				'type'     => 'media_upload',
 				'title'    => __('Profile stage image', 'bufu-artists'),
 				'context'  => 'side'
+			],
+			'profileVisible' => [
+				'type'      => 'checkbox',
+				'title'     => __('Display profile page', 'bufu-artists'),
+				'context'   => 'side',
+				'labelText' => sprintf(__('Display a profile page for %s', 'bufu-artist'), $artistName),
+				'value_on'  => '1',
+				'value_off'  => '0',
 			],
 		];
 	}
@@ -408,6 +425,9 @@ class AdminInputs
 				break;
 			case 'select':
 				$input = InputSelect::create($name, $options);
+				break;
+			case 'checkbox':
+				$input = InputCheckbox::create($name, $options);
 				break;
 			case 'media_upload':
 				$input = InputMedia::create($name, $options);

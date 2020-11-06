@@ -237,6 +237,7 @@ class Bufu_Artists {
 
 		if ( is_main_query() & is_archive() ) {
 			$this->modifyQuery_archive_sortArtistPosts($query);
+			$this->modifyQuery_artists_WhereProfileIsVisible($query);
 		}
 	}
 
@@ -352,6 +353,12 @@ class Bufu_Artists {
 		register_post_meta(self::$postTypeNameArtist, '_bufu_artist_stageImage', [
 			'single'       => true,
 			'description'  => __('Profile stage image', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+
+		register_post_meta(self::$postTypeNameArtist, '_bufu_artist_profileVisible', [
+			'single'       => true,
+			'description'  => __('Display profile page', 'bufu-artists'),
 			'show_in_rest' => true,
 		]);
 
@@ -508,8 +515,34 @@ class Bufu_Artists {
 			$query->set('orderby', 'meta_value');
 			$query->set('meta_key', '_bufu_artist_sortBy');
 			$query->set('order', 'ASC');
-			$query->set('posts_per_page', 20);
+//			$query->set('posts_per_page', 20);
 		}
+	}
+
+	/**
+	 * @param WP_Query $query
+	 * @return void
+	 */
+	private function modifyQuery_artists_WhereProfileIsVisible(WP_Query $query)
+	{
+		// only apply to artist archive queries on the public site
+		if ( $query->query['post_type'] !== self::$postTypeNameArtist || !$query->is_archive() || $query->is_admin ) {
+			return;
+		}
+
+		$queryMeta = $query->get('meta_query');
+		if (!is_array($queryMeta)) {
+			$queryMeta = [];
+		}
+
+		// add custom meta filter
+		$queryMeta[] = array(
+			'key'		=> '_bufu_artist_profileVisible',
+			'value'		=> '1',
+			'compare'	=> '=',
+		);
+
+		$query->set('meta_query', $queryMeta);
 	}
 
 	private function addRelationsToPost(WP_Post $post)
