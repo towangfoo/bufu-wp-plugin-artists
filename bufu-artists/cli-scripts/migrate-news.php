@@ -8,38 +8,43 @@ require_once 'Filter.php';
 require_once 'State.php';
 require_once 'WPApi.php';
 
-// config
+// load settings
+$settingsStr = file_get_contents(dirname(__FILE__) . '/settings.json');
+$settings = json_decode($settingsStr, true);
+
+// build config
 $config  = [
 	'source' => [
 		'mysql' => [
-			'hostname' => 'verlag_db',
-			'username' => 'root',
-			'password' => 'rootpassword',
-			'db'       => 'verlag_source_test'
+			'hostname' => $settings['source']['mysql']['hostname'],
+			'username' => $settings['source']['mysql']['username'],
+			'password' => $settings['source']['mysql']['password'],
+			'db'       => $settings['source']['mysql']['db']
 		],
 		'table_name' => [
-			'meldung' => 'data_meldung',
-			'planung' => 'data_planung',
+			'meldung' => $settings['migrate_news']['source']['table_names']['meldung'],
+			'planung' => $settings['migrate_news']['source']['table_names']['planung'],
 		],
 	],
 	'target' => [
 		'wpapi' => [
-			'url'      => 'https://bufu-verlag-wp.test/wp-json/wp/v2',
-			'endpoint' => 'posts',
+			'url'      => $settings['migrate_news']['target']['url'],
+			'endpoint' => $settings['migrate_news']['target']['endpoint'],
 
 			// requires Basic-Auth plugin to be active
 			// which should not be the case on a production setup!
 			// Use for development/ setup purpose only
 			'authorization' => [
-				'username' => 'admin',
-				'password' => 'password',
+				'username' => $settings['target']['wpapi_auth']['username'],
+				'password' => $settings['target']['wpapi_auth']['password'],
 			]
 		],
 		'categories' => [
-			'meldung' => 1,
-			'planung' => 5,
+			'meldung' => $settings['migrate_news']['categories']['meldung'],
+			'planung' => $settings['migrate_news']['categories']['planung'],
 		]
-	]
+	],
+	'skipExisting' => $settings['migrate_news']['skip_existing'],
 ];
 
 $startedAt = new \DateTime();
@@ -90,6 +95,11 @@ foreach ($rows1 as $row) {
 	else if (array_key_exists($mappingPrefix.$row->id, $idMapping)) {
 		$wpPostId = $idMapping[$mappingPrefix.$row->id];
 	}
+	if ( $wpPostId && $config['skipExisting'] ) {
+		echo "s";
+		continue;
+	}
+
 
 	// create post data
 	$postParams = [
@@ -131,6 +141,11 @@ foreach ($rows2 as $row) {
 	$wpPostId = null;
 	if (array_key_exists($mappingPrefix.$row->id, $idMapping)) {
 		$wpPostId = $idMapping[$mappingPrefix.$row->id];
+	}
+
+	if ( $wpPostId && $config['skipExisting'] ) {
+		echo "s";
+		continue;
 	}
 
 	// create post data

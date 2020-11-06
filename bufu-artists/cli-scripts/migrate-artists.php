@@ -8,31 +8,36 @@ require_once 'Filter.php';
 require_once 'State.php';
 require_once 'WPApi.php';
 
-// config
+// load settings
+$settingsStr = file_get_contents(dirname(__FILE__) . '/settings.json');
+$settings = json_decode($settingsStr, true);
+
+// build config
 $config  = [
 	'source' => [
 		'mysql' => [
-			'hostname' => 'verlag_db',
-			'username' => 'root',
-			'password' => 'rootpassword',
-			'db'       => 'verlag_source_test'
+			'hostname' => $settings['source']['mysql']['hostname'],
+			'username' => $settings['source']['mysql']['username'],
+			'password' => $settings['source']['mysql']['password'],
+			'db'       => $settings['source']['mysql']['db']
 		],
-		'table_name' => 'data_artist',
+		'table_name' => $settings['migrate_artists']['source']['table_name'],
 	],
 	'target' => [
 		'wpapi' => [
-			'url'      => 'https://bufu-verlag-wp.test/wp-json/wp/v2',
-			'endpoint' => 'bufu_artist',
+			'url'      => $settings['migrate_artists']['target']['url'],
+			'endpoint' => $settings['migrate_artists']['target']['endpoint'],
 
 			// requires Basic-Auth plugin to be active
 			// which should not be the case on a production setup!
 			// Use for development/ setup purpose only
 			'authorization' => [
-				'username' => 'admin',
-				'password' => 'password',
+				'username' => $settings['target']['wpapi_auth']['username'],
+				'password' => $settings['target']['wpapi_auth']['password'],
 			]
 		]
-	]
+	],
+	'skipExisting' => $settings['migrate_artists']['skip_existing'],
 ];
 
 $startedAt = new \DateTime();
@@ -77,6 +82,11 @@ foreach ($rows as $row) {
 	// if the id is known from mapping, update the post instead
 	$wpPostId = null;
 	if (array_key_exists($row->id, $idMapping)) {
+		if ($config['skipExisting']) {
+			echo "s";
+			continue;
+		}
+
 		$wpPostId = $idMapping[$row->id];
 	}
 

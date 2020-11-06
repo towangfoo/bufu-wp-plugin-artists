@@ -8,33 +8,37 @@ require_once 'Filter.php';
 require_once 'State.php';
 require_once 'WPApi.php';
 
+// load settings
+$settingsStr = file_get_contents(dirname(__FILE__) . '/settings.json');
+$settings = json_decode($settingsStr, true);
+
 // config
 $config  = [
 	'source' => [
 		'mysql' => [
-			'hostname' => 'verlag_db',
-			'username' => 'root',
-			'password' => 'rootpassword',
-			'db'       => 'verlag_source_test'
+			'hostname' => $settings['source']['mysql']['hostname'],
+			'username' => $settings['source']['mysql']['username'],
+			'password' => $settings['source']['mysql']['password'],
+			'db'       => $settings['source']['mysql']['db']
 		],
-		'table_name' => 'data_konzerte',
+		'table_name' => $settings['migrate_events']['source']['table_name'],
 	],
 	'target' => [
 		'wpapi' => [
-			'url'      => 'https://bufu-verlag-wp.test/wp-json/tribe/events/v1',
-			'endpoint' => 'events',
+			'url'      => $settings['migrate_events']['target']['url'],
+			'endpoint' => $settings['migrate_events']['target']['endpoint'],
 
 			// requires Basic-Auth plugin to be active
 			// which should not be the case on a production setup!
 			// Use for development/ setup purpose only
 			'authorization' => [
-				'username' => 'admin',
-				'password' => 'password',
+				'username' => $settings['target']['wpapi_auth']['username'],
+				'password' => $settings['target']['wpapi_auth']['password'],
 			]
 		]
 	],
-	'startFrom' => '- 1 year', // modify for production!
-	'skipExisting' => false,
+	'startFrom' => $settings['migrate_events']['start_from'],
+	'skipExisting' => $settings['migrate_events']['skip_existing'],
 ];
 
 $startedAt = new \DateTime();
