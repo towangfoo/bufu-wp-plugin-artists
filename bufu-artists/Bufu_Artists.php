@@ -3,6 +3,7 @@
 require_once 'Bufu_Artists_ThemeHelper.php';
 require_once 'admin/AdminInputs.php';
 require_once 'widgets/Bufu_Widget_EventsByArtist.php';
+require_once 'widgets/Bufu_Widget_ArtistsWall.php';
 
 class Bufu_Artists {
 
@@ -142,8 +143,11 @@ class Bufu_Artists {
 	{
 		$eventsWidget = new Bufu_Widget_EventsByArtist();
 		$eventsWidget->setThemeHelper($this->getThemeHelper());
-
 		register_widget( $eventsWidget );
+
+		$artistsWallWidget = new Bufu_Widget_ArtistsWall();
+		$artistsWallWidget->setThemeHelper($this->getThemeHelper());
+		register_widget( $artistsWallWidget );
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------

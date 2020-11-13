@@ -86,6 +86,39 @@ class Bufu_Artists_ThemeHelper
 	}
 
 	/**
+	 * Get a lst of all visible artists.
+	 * @return WP_Post[]
+	 */
+	public function loadAllVisibleArtists($random = false)
+	{
+		$query = new WP_Query([
+			'post_type'      => Bufu_Artists::$postTypeNameArtist,
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'meta_query'     => [
+				[
+					'key'		=> '_bufu_artist_profileVisible',
+					'value'		=> 'yes',
+					'compare'	=> '=',
+				]
+			]
+		]);
+
+		$query->set('limit', -1);
+
+		if ($random) {
+			$query->set('orderby', 'rand');
+		}
+		else {
+			$query->set('orderby', 'meta_value');
+			$query->set('meta_key', '_bufu_artist_sortBy');
+			$query->set('order', 'ASC');
+		}
+
+		return $query->get_posts();
+	}
+
+	/**
 	 * @param int $num
 	 * @param string|null $categorySlug
 	 * @return int[]|WP_Post[]
