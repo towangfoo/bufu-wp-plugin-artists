@@ -23,8 +23,6 @@ $config  = [
 		],
 		'table_name' => [
 			'zeitstrahl' => $settings['migrate_zeitstrahl']['source']['table_names']['zeitstrahl'],
-			'zs_2_media' => $settings['migrate_zeitstrahl']['source']['table_names']['zeitstrahl_2_media'],
-			'media'      => $settings['migrate_zeitstrahl']['source']['table_names']['media'],
 		],
 	],
 	'target' => [
