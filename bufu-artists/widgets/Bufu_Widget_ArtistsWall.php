@@ -38,7 +38,10 @@ class Bufu_Widget_ArtistsWall extends WP_Widget
 	 */
 	public function widget( $args, $instance )
     {
-		$artists = $this->themeHelper->loadAllVisibleArtists(true);
+		$showThumbnailPlaceholder = (array_key_exists('placeholders', $instance) && $instance['placeholders'] === 'yes');
+		$showRandomOrder = (array_key_exists('random', $instance) && $instance['random'] === 'yes');
+
+		$artists = $this->themeHelper->loadAllVisibleArtists( $showRandomOrder );
 
 		if (count($artists) < 1) {
 		    return;
@@ -62,6 +65,10 @@ class Bufu_Widget_ArtistsWall extends WP_Widget
 		    $artistName = $artist->post_title;
 		    $artistUrl = get_permalink( $artist );
 		    $thumbnail = get_the_post_thumbnail( $artist, [150, 150] );
+
+		    if ( !$showThumbnailPlaceholder && !$thumbnail ) {
+		        continue;
+            }
 
 			if ( $i > 0 && $i % 4 === 0 ) {
 				echo '</div>';
@@ -99,14 +106,24 @@ class Bufu_Widget_ArtistsWall extends WP_Widget
 			$title = $instance[ 'title' ];
 		}
 		else {
-			$title = __( 'Artists', 'bufu-artists' );
+			$title = _n('Artist', 'Artists', 2, 'bufu-artists' );
 		}
+
+		$checkedPlaceholders = (isset($instance['placeholders']) && $instance['placeholders'] === 'yes') ? ' checked="checked"' : '';
+		$checkedRandom       = (isset($instance['random']) && $instance['random'] === 'yes') ? ' checked="checked"' : '';
 
 		?>
 		<p>
 			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
 			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
 		</p>
+        <p>
+            <input class="checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'placeholders' ); ?>" name="<?php echo $this->get_field_name( 'placeholders' ); ?>" value="yes"<?= $checkedPlaceholders ?>>
+            <label for="<?php echo $this->get_field_id( 'placeholders' ); ?>"><?php _e( 'Show placeholder when there is no thumbnail' ); ?></label>
+            <br/>
+            <input class="checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'random' ); ?>" name="<?php echo $this->get_field_name( 'random' ); ?>" value="yes"<?= $checkedRandom ?>>
+            <label for="<?php echo $this->get_field_id( 'random' ); ?>"><?php _e( 'Show artists in random order' ); ?></label>
+        </p>
 		<?php
 	}
 
@@ -120,6 +137,8 @@ class Bufu_Widget_ArtistsWall extends WP_Widget
     {
 		$instance = array();
 		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+		$instance['placeholders'] = ( ! empty( $new_instance['placeholders'] ) ) ? strip_tags( $new_instance['placeholders'] ) : 'no';
+		$instance['random'] = ( ! empty( $new_instance['random'] ) ) ? strip_tags( $new_instance['random'] ) : 'no';
 		return $instance;
 	}
 }

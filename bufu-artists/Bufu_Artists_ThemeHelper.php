@@ -91,29 +91,30 @@ class Bufu_Artists_ThemeHelper
 	 */
 	public function loadAllVisibleArtists($random = false)
 	{
-		$query = new WP_Query([
+		$params = [
 			'post_type'      => Bufu_Artists::$postTypeNameArtist,
 			'post_status'    => 'publish',
-			'posts_per_page' => -1,
+			'nopaging'       => true,
 			'meta_query'     => [
 				[
 					'key'		=> '_bufu_artist_profileVisible',
 					'value'		=> 'yes',
 					'compare'	=> '=',
 				]
-			]
-		]);
+			],
+			'order' => 'ASC',
+		];
 
-		$query->set('limit', -1);
-
+		// how to order
 		if ($random) {
-			$query->set('orderby', 'rand');
+			$params['orderby'] = 'rand';
 		}
 		else {
-			$query->set('orderby', 'meta_value');
-			$query->set('meta_key', '_bufu_artist_sortBy');
-			$query->set('order', 'ASC');
+			$params['orderby']  = 'meta_value';
+			$params['meta_key'] = '_bufu_artist_sortBy';
 		}
+
+		$query = new WP_Query($params);
 
 		return $query->get_posts();
 	}
