@@ -247,6 +247,19 @@ class Bufu_Artists {
 		}
 	}
 
+	/**
+	 * Modify date format in tribe Events Schedule Block (Single Event page).
+	 *
+	 * @param array $settings
+	 * @return array
+	 */
+	public function filter_tribe_events_event_schedule_details_formatting(array $settings = [])
+	{
+		return array_merge($settings, [
+			'show_end_time' => false,
+		]);
+	}
+
 	// -----------------------------------------------------------------------------------------------------------------
 	// ----- ThemeHelper, class hierarchy access -----------------------------------------------------------------------
 

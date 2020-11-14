@@ -38,11 +38,14 @@ add_action('the_post', [$bufuArtistsPluginInstance, 'hook_the_post']);
 add_action( 'widgets_init', [$bufuArtistsPluginInstance, 'hook_widgets_init'] );
 
 // hook into query creation using filters
-add_filter('pre_get_posts', [$bufuArtistsPluginInstance, 'filter_pre_get_posts']);
+add_filter( 'pre_get_posts', [$bufuArtistsPluginInstance, 'filter_pre_get_posts'] );
 
 // hook into tribe_events_calendar on saving events (data migration)
 // @TODO: remove later, when production is stable
-add_action('tribe_events_event_save', [$bufuArtistsPluginInstance, 'hook_tribe_events_event_save']);
+add_action( 'tribe_events_event_save', [$bufuArtistsPluginInstance, 'hook_tribe_events_event_save'] );
+
+// add filter for custom date formatting settings
+add_filter( 'tribe_events_event_schedule_details_formatting', [$bufuArtistsPluginInstance, 'filter_tribe_events_event_schedule_details_formatting'] );
 
 // add custom filter for artists to tribe filter bar
 add_action( 'tribe_events_filters_create_filters', [$bufuArtistsPluginInstance, 'hook_tribe_filter_bar_create_filters'] );

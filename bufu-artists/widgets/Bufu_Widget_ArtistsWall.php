@@ -119,10 +119,10 @@ class Bufu_Widget_ArtistsWall extends WP_Widget
 		</p>
         <p>
             <input class="checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'placeholders' ); ?>" name="<?php echo $this->get_field_name( 'placeholders' ); ?>" value="yes"<?= $checkedPlaceholders ?>>
-            <label for="<?php echo $this->get_field_id( 'placeholders' ); ?>"><?php _e( 'Show placeholder when there is no thumbnail' ); ?></label>
+            <label for="<?php echo $this->get_field_id( 'placeholders' ); ?>"><?php _e( 'Show placeholder when there is no thumbnail', 'bufu-artists' ); ?></label>
             <br/>
             <input class="checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'random' ); ?>" name="<?php echo $this->get_field_name( 'random' ); ?>" value="yes"<?= $checkedRandom ?>>
-            <label for="<?php echo $this->get_field_id( 'random' ); ?>"><?php _e( 'Show artists in random order' ); ?></label>
+            <label for="<?php echo $this->get_field_id( 'random' ); ?>"><?php _e( 'Show artists in random order', 'bufu-artists' ); ?></label>
         </p>
 		<?php
 	}
