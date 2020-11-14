@@ -14,8 +14,11 @@ class Filter
 	 */
 	public function createParagraphs($text)
 	{
+		$openP  = "<p>";
+		$closeP = "</p>";
+
 		$parts = preg_split("/\r?\n\r?\n/", $text);
-		return "<p>" . join("</p><p>", $parts) . "</p>";
+		return $openP . join($closeP . $openP, $parts) . $closeP;
 	}
 
 	/**
@@ -48,5 +51,16 @@ class Filter
 		}
 
 		return $dt->format("Y-m-d\TH:i:s");
+	}
+
+	/**
+	 * @param string $ipt
+	 * @return string
+	 */
+	public function convertMarkdown($ipt)
+	{
+		$ipt = str_replace(['[fett]', '[/fett]'], ['<b>', '</b>'], $ipt);
+
+		return $ipt;
 	}
 }

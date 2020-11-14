@@ -66,6 +66,8 @@ class Bufu_Artists {
 
 		$this->addCustomMetaForFrontPage();
 
+		$this->addCustomMetaForPages();
+
 		// create taxonomy for artist categories
 		$this->addTaxonomyArtistCategories();
 	}
@@ -276,6 +278,14 @@ class Bufu_Artists {
 			'single'       => true,
 			'description'  => __('The related artist', 'bufu-artists'),
 			'show_in_rest' => true,
+		]);
+	}
+
+	private function addCustomMetaForPages()
+	{
+		register_post_meta('page', '_bufu_artist_pageShowChildren', [
+			'single'      => true,
+			'description' => __('Show links to child pages', 'bufu-artists'),
 		]);
 	}
 

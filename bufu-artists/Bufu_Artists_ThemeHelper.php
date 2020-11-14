@@ -138,4 +138,39 @@ class Bufu_Artists_ThemeHelper
 
 		return get_posts($params);
 	}
+
+	/**
+	 * Echo a list of links to children of the passed page.
+	 * @param int|WP_Post $pageId
+	 */
+	public function echoChildPagesLinks( $pageId )
+	{
+		if ( $pageId instanceof WP_Post ) {
+			$pageId = $pageId->ID;
+		}
+
+		$showChildren = get_post_meta( $pageId, '_bufu_artist_pageShowChildren', true );
+		if ( $showChildren !== '1' ) {
+			return;
+		}
+
+		$children = get_children([
+			'post_status' => 'publish' ,
+			'post_parent' => $pageId,
+			'orderby' => 'post_title',
+			'order' => 'ASC'
+		]);
+		if ( count($children) < 1 ) {
+			return;
+		}
+
+		echo '<ul class="page-children">';
+		foreach ($children as $page) {
+			/** @var $page WP_Post */
+			echo '<li>';
+			echo '<a href="'. get_permalink($page) .'">' . get_the_title($page) . '</a>';
+			echo '</li>';
+		}
+		echo '</ul>';
+	}
 }

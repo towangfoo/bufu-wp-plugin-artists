@@ -42,11 +42,16 @@ class DBTable
 	/**
 	 * @return stdClass[]
 	 */
-	public function getRows()
+	public function getRows($query = null)
 	{
 		$connection = $this->getConnection();
 
-		$query = sprintf("SELECT * FROM %s", $this->table);
+		if ( null === $query ) {
+			$query = sprintf("SELECT * FROM %s", $this->table);
+		}
+		else {
+			$query = str_replace("%TABLE%", $this->table, $query);
+		}
 
 		$stmt = $connection->prepare($query);
 		$stmt->execute();
