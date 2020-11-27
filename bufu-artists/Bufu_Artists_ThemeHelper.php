@@ -12,6 +12,12 @@ class Bufu_Artists_ThemeHelper
 	 */
 	private $bufuArtists;
 
+	/**
+	 * Instance cache
+	 * @var array
+	 */
+	private $_artistsSelectOptions;
+
 	public function __construct(Bufu_Artists $mainClass)
 	{
 		$this->bufuArtists = $mainClass;
@@ -23,7 +29,10 @@ class Bufu_Artists_ThemeHelper
 	 */
 	public function getArtistsSelectOptions()
 	{
-		return $this->bufuArtists->getAdminInputs()->getAllArtistsSelectOptions();
+		if (!$this->_artistsSelectOptions) {
+			$this->_artistsSelectOptions = $this->bufuArtists->getAdminInputs()->getAllArtistsSelectOptions();
+		}
+		return $this->_artistsSelectOptions;
 	}
 
 	/**

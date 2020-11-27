@@ -226,6 +226,31 @@ class Bufu_Artists {
 
 		return $map;
 	}
+
+	/**
+	 * Populate custom columns in post list for bufu_album anf tribe_events
+	 * @param $column
+	 * @param $postId
+	 */
+	public function hook_manage_posts_custom_column( $column, $postId )
+	{
+		if ( $column === 'artist' ) {
+			$artistId = get_post_meta($postId, '_bufu_artist_selectArtist', true);
+			$artistList = $this->getThemeHelper()->getArtistsSelectOptions();
+			if (array_key_exists($artistId, $artistList)) {
+				echo "<a href=\"/wp-admin/post.php?post={$artistId}&action=edit\">{$artistList[$artistId]}</a>";
+			}
+			else {
+				echo '--';
+			}
+		}
+		elseif ( $column === 'release' ) {
+			echo get_post_meta($postId, '_bufu_artist_albumRelease', true);
+		}
+		elseif ( $column === 'publisher' ) {
+			echo get_post_meta($postId, '_bufu_artist_albumLabel', true);
+		}
+	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
 	// ----- filters ---------------------------------------------------------------------------------------------------
@@ -238,10 +263,25 @@ class Bufu_Artists {
 	public function filter_pre_get_posts(WP_Query $query)
 	{
 		if ( is_admin() && is_main_query() ) {
-			$this->modifyQuery_admin_sortArtistPosts($query);
+			if ('artist_name'  === $query->get('orderby')) {
+				// when using the sort-by `artist` feature in post list column (e.g. albums and events)
+				// @TODO: Implement - Need to join artist post and order by custom field `_bufu_artist_sortBy` ASC
+			}
+			elseif ('publisher'  === $query->get('orderby')) {
+				// when using the sort-by `publisher` feature in post list column (e.g. albums and events)
+				$this->modifyQuery_admin_sortPostsListBy($query, $this::$postTypeNameAlbum, '_bufu_artist_albumLabel');
+			}
+			elseif ('release'  === $query->get('orderby')) {
+				// when using the sort-by `release` feature in post list column (e.g. albums and events)
+				$this->modifyQuery_admin_sortPostsListBy($query, $this::$postTypeNameAlbum, '_bufu_artist_albumRelease');
+			}
+			else {
+				$this->modifyQuery_admin_sortArtistPosts($query);
+			}
+
 		}
 
-		if ( is_main_query() & is_archive() ) {
+		if ( is_archive() && is_main_query() ) {
 			$this->modifyQuery_archive_sortArtistPosts($query);
 			$this->modifyQuery_artists_WhereProfileIsVisible($query);
 		}
@@ -258,6 +298,49 @@ class Bufu_Artists {
 		return array_merge($settings, [
 			'show_end_time' => false,
 		]);
+	}
+
+	/**
+	 * Custom columns for list of albums
+	 */
+	public function filter_manage_bufu_album_posts_columns( $columns )
+	{
+		$columns = [
+			'cb'        => $columns['cb'],
+			'title'     => $columns['title'],
+			'artist'    => _n('Artist', 'Artists', 1, 'bufu-artists'),
+			'release'   => __('Release date', 'bufu-artists'),
+			'publisher' => __('Release Label', 'bufu-artists'),
+			'comments'  => $columns['comments'],
+//			'author'    => $columns['author'],
+			'date'      => $columns['date'],
+		];
+
+		return $columns;
+	}
+
+	/**
+	 * Custom columns for list of events
+	 */
+	public function filter_manage_tribe_events_posts_columns( $columns )
+	{
+		$columns['artist'] = _n('Artist', 'Artists', 1, 'bufu-artists');
+
+		return $columns;
+	}
+
+	/**
+	 * Make artist column sortable.
+	 * @param $columns
+	 * @return mixed
+	 */
+	public function hook_register_sortable_columns( $columns )
+	{
+		$columns['artist']    = 'artist_name';
+		$columns['publisher'] = 'publisher';
+		$columns['release']   = 'release';
+
+		return $columns;
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -414,8 +497,8 @@ class Bufu_Artists {
 			'public'            => true,
 			'publicly_queryable'=> true,
 			'has_archive'       => true,
-			'show_ui'           => false, // WIP
-			'show_in_nav_menus' => false, // WIP
+			'show_ui'           => true,
+			'show_in_nav_menus' => true,
 			'show_in_rest'      => true,
 			'supports'          => [
 				'title',
@@ -448,15 +531,9 @@ class Bufu_Artists {
 			'show_in_rest' => true,
 		]);
 
-		register_post_meta(self::$postTypeNameAlbum, '_bufu_artist_tracks', [
+		register_post_meta(self::$postTypeNameAlbum, '_bufu_artist_shopUrl', [
 			'single'       => false,
-			'description'  => __('The list of tracks', 'bufu-artists'),
-			'show_in_rest' => true,
-		]);
-
-		register_post_meta(self::$postTypeNameAlbum, '_bufu_artist_lyrics', [
-			'single'       => false,
-			'description'  => __('The list of tracks', 'bufu-artists'),
+			'description'  => __('Product URL', 'bufu-artists'),
 			'show_in_rest' => true,
 		]);
 
@@ -529,6 +606,23 @@ class Bufu_Artists {
 				$query->set('meta_key', '_bufu_artist_sortBy');
 				$query->set('order', 'ASC');
 			}
+		}
+	}
+
+	/**
+	 * Sort a posts list page by a custom column value
+	 * @param WP_Query $query
+	 * @param $postType
+	 * @param $customField
+	 */
+	private function modifyQuery_admin_sortPostsListBy(WP_Query $query, $postType, $customField) {
+		$postTypeOfQuery = $query->query['post_type'];
+		$order = strtoupper($query->get('order'));
+
+		if ( $postTypeOfQuery === $postType ) {
+			$query->set('orderby', 'meta_value');
+			$query->set('meta_key', $customField);
+			$query->set('order', ($order === 'DESC') ? "DESC" : "ASC");
 		}
 	}
 

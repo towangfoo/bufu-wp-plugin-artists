@@ -38,6 +38,7 @@ class AdminInputs
 			$this->getPostTypeEvent()  => $this->getInputFieldsEvent(),
 		];
 
+		$inputErrors     = [];
 		$inputReferences = [];
 
 		if ( $this->isFrontPagePost() ) {
@@ -45,7 +46,12 @@ class AdminInputs
 				$name = $this->getInputName($key, $options);
 				$options['screen'] = null;
 				$input = $this->createInput($name, $options);
-				$inputReferences[] = $input;
+				if ($input instanceof WP_Error) {
+					$inputErrors[] = $input;
+				}
+				else {
+					$inputReferences[] = $input;
+				}
 			}
 		}
 		else if (array_key_exists($thePostType, $inputs)) {
@@ -53,8 +59,18 @@ class AdminInputs
 				$name = $this->getInputName($key, $options);
 				$options['post_type'] = $thePostType;
 				$input = $this->createInput($name, $options);
-				$inputReferences[] = $input;
+				if ($input instanceof WP_Error) {
+					$inputErrors[] = $input;
+				}
+				else {
+					$inputReferences[] = $input;
+				}
 			}
+		}
+
+		if (count($inputErrors) > 0) {
+			var_dump($inputErrors);
+			exit();
 		}
 	}
 
@@ -268,13 +284,9 @@ class AdminInputs
 				'type'  => 'text',
 				'title' => __('Release Label', 'bufu-artists'),
 			],
-			'tracks' => [
-				'type'  => 'tracks',
-				'title' => __('Track list', 'bufu-artists'),
-			],
-			'lyrics' => [
-				'type'  => 'lyrics',
-				'title' => __('Track lyrics', 'bufu-artists'),
+			'shopUrl' => [
+				'type'  => 'url',
+				'title' => __('Product URL', 'bufu-artists'),
 			]
 		];
 	}
