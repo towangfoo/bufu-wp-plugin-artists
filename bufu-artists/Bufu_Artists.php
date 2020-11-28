@@ -263,28 +263,61 @@ class Bufu_Artists {
 	public function filter_pre_get_posts(WP_Query $query)
 	{
 		if ( is_admin() && is_main_query() ) {
-			if ('artist_name'  === $query->get('orderby')) {
+			if ('artist_name' === $query->get('orderby')) {
 				// when using the sort-by `artist` feature in post list column (e.g. albums and events)
-				// @TODO: Implement - Need to join artist post and order by custom field `_bufu_artist_sortBy` ASC
+				// set a flag in the query - see self::filter_join_clauses() for implementation
+				$query->set('bufu_artist_join_artist_sortBy', true);
 			}
-			elseif ('publisher'  === $query->get('orderby')) {
-				// when using the sort-by `publisher` feature in post list column (e.g. albums and events)
+			elseif ('publisher' === $query->get('orderby')) {
+				// when using the sort-by `publisher` feature in post list column (albums)
 				$this->modifyQuery_admin_sortPostsListBy($query, $this::$postTypeNameAlbum, '_bufu_artist_albumLabel');
 			}
-			elseif ('release'  === $query->get('orderby')) {
-				// when using the sort-by `release` feature in post list column (e.g. albums and events)
+			elseif ('release' === $query->get('orderby')) {
+				// when using the sort-by `release` feature in post list column (albums)
 				$this->modifyQuery_admin_sortPostsListBy($query, $this::$postTypeNameAlbum, '_bufu_artist_albumRelease');
 			}
 			else {
+				// sort artist list by sorting field
 				$this->modifyQuery_admin_sortArtistPosts($query);
 			}
-
 		}
 
 		if ( is_archive() && is_main_query() ) {
 			$this->modifyQuery_archive_sortArtistPosts($query);
 			$this->modifyQuery_artists_WhereProfileIsVisible($query);
 		}
+	}
+
+	/**
+	 * Manually modify query parts after the intended query has been constructed in WP.
+	 * This filter should be used with caution, to not affect any unintended queries!
+	 * @param array $clauses
+	 * @param WP_Query $query
+	 * @return array
+	 */
+	public function filter_posts_clauses( array $clauses, WP_Query $query )
+	{
+		global $wpdb;
+
+		// add artist sortBy custom field `_bufu_artist_sortBy` into select and order by that
+		if ($query->get('bufu_artist_join_artist_sortBy') === true) {
+			$fields = &$clauses['fields'];
+			if (!empty($fields)) $fields .= ', ';
+			$fields .= "ARTISTMETASORT.meta_value AS ArtistSortBy";
+
+			$join = &$clauses['join'];
+			if (!empty($join)) $join .= ' ';
+			// add relation to artist post from postmeta
+			$join .= "LEFT JOIN {$wpdb->postmeta} ARTISTMETAID ON ARTISTMETAID.post_id = {$wpdb->posts}.ID AND ARTISTMETAID.meta_key = '_bufu_artist_selectArtist'";
+			$join .= ' ';
+			// join `_bufu_artist_sortBy` value from postmeta
+			$join .= "LEFT JOIN {$wpdb->postmeta} ARTISTMETASORT ON ARTISTMETASORT.post_id = ARTISTMETAID.meta_value and ARTISTMETASORT.meta_key = '_bufu_artist_sortBy'";
+
+			$orderby = &$clauses['orderby'];
+			$orderby = "ArtistSortBy ASC, {$wpdb->posts}.post_title ASC";
+		}
+
+		return $clauses;
 	}
 
 	/**

@@ -46,11 +46,12 @@ add_action( 'tribe_events_event_save', [$bufuArtistsPluginInstance, 'hook_tribe_
 
 // display custom columns in admin post lists
 add_filter( 'manage_bufu_album_posts_columns', [$bufuArtistsPluginInstance, 'filter_manage_bufu_album_posts_columns'] );
-add_filter( 'manage_tribe_events_posts_columns', [$bufuArtistsPluginInstance, 'filter_manage_tribe_events_posts_columns'], 10 );
+add_filter( 'manage_tribe_events_posts_columns', [$bufuArtistsPluginInstance, 'filter_manage_tribe_events_posts_columns'] );
 add_action( 'manage_bufu_album_posts_custom_column', [$bufuArtistsPluginInstance, 'hook_manage_posts_custom_column'], 10, 2 );
 add_action( 'manage_tribe_events_posts_custom_column', [$bufuArtistsPluginInstance, 'hook_manage_posts_custom_column'], 10, 2 );
 add_action( 'manage_edit-bufu_album_sortable_columns', [$bufuArtistsPluginInstance, 'hook_register_sortable_columns'], 10, 2 );
 add_action( 'manage_edit-tribe_events_sortable_columns', [$bufuArtistsPluginInstance, 'hook_register_sortable_columns'] );
+add_filter( 'posts_clauses', [$bufuArtistsPluginInstance, 'filter_posts_clauses'], 1000, 2 ); // we need to be last on this filter (i.e. after the-events-calendar plugin)
 
 // add filter for custom date formatting settings
 add_filter( 'tribe_events_event_schedule_details_formatting', [$bufuArtistsPluginInstance, 'filter_tribe_events_event_schedule_details_formatting'] );
