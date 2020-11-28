@@ -150,6 +150,43 @@ class Bufu_Artists_ThemeHelper
 	}
 
 	/**
+	 * @param $postId
+	 * @param string $order ['release', 'title']
+	 * @return WP_Post[]
+	 */
+	public function loadAlbumsOfArtist( $postId, $order = 'release')
+	{
+		// now, this dows not work together!
+		// adding a meta_query for one field in the where, and sorting by another meta field
+		$params = [
+			'post_type'      => Bufu_Artists::$postTypeNameAlbum,
+			'post_status'    => 'publish',
+			'nopaging'       => true,
+			'meta_query'     => [
+				[
+					'key'		=> '_bufu_artist_selectArtist',
+					'value'		=> $postId,
+					'compare'	=> '=',
+				]
+			],
+			'order' => 'ASC',
+		];
+
+		// how to order
+		if ($order === 'release') {
+			$params['orderby']  = 'meta_value';
+			$params['meta_key'] = '_bufu_artist_albumRelease';
+		}
+		else {
+			$params['orderby']  = 'title';
+		}
+
+		$query = new WP_Query($params);
+
+		return $query->get_posts();
+	}
+
+	/**
 	 * Echo a list of links to children of the passed page.
 	 * @param int|WP_Post $pageId
 	 */

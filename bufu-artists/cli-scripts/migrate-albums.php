@@ -140,8 +140,13 @@ foreach ($albumRrows as $row) {
 		// custom meta/rest fields
 		'_bufu_artist_albumRelease' => trim($row->jahr),
 		'_bufu_artist_albumLabel'   => trim($row->label),
-		'_bufu_artist_shopUrl'      => str_replace('http://', 'https://', trim($row->shoplink)),
 	];
+
+	// some albums have empty shop links
+	$shopLink = str_replace('http://', 'https://', trim($row->shoplink));
+	if (strlen($shopLink) > strlen("https://")) {
+		$postParams['_bufu_artist_shopUrl'] = $shopLink;
+	}
 
 	if (array_key_exists($row->artistid, $artistIdMapping)) {
 		$postParams['_bufu_artist_selectArtist'] = $artistIdMapping[$row->artistid];

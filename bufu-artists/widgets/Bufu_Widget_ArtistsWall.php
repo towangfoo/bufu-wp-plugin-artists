@@ -49,7 +49,7 @@ class Bufu_Widget_ArtistsWall extends WP_Widget
 
 		$title = apply_filters( 'widget_title', $instance['title'] );
 
-		$noThumbnail = '<span class="no-thumbnail-available"></span>';
+		$noThumbnail = '<span class="no-thumbnail-available"><span></span></span>';
 
         echo $args['before_widget'];
 

@@ -262,6 +262,7 @@ class Bufu_Artists {
 	 */
 	public function filter_pre_get_posts(WP_Query $query)
 	{
+		// admin lists - handle sorting params
 		if ( is_admin() && is_main_query() ) {
 			if ('artist_name' === $query->get('orderby')) {
 				// when using the sort-by `artist` feature in post list column (e.g. albums and events)
