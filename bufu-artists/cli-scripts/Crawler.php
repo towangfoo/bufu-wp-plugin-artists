@@ -18,18 +18,9 @@ class Crawler
 	public function getCoverImageURLFromProductPage($url)
 	{
 		$html = @file_get_contents($url);
-		if ($html === false) {
-			return null;
-		}
-		/**
-		 * @var array $http_response_header materializes out of thin air
-		 */
-		$status_line = $http_response_header[0];
-		$match = [];
-		preg_match('{HTTP\/\S*\s(\d{3})}', $status_line, $match);
 
-		// check HTTP response code to be OK
-		if ($match[1] !== "200") {
+		// check html response to be OK
+		if ($html === false) {
 			return null;
 		}
 
@@ -43,7 +34,7 @@ class Crawler
 
 		$imageUrl = null;
 
-		if (isset($imageContainer->childNodes) && is_array($imageContainer->childNodes)) {
+		if (isset($imageContainer->childNodes)) {
 			foreach ($imageContainer->childNodes as $c) {
 				/** @var $c DOMElement */
 				if ($c->nodeName === 'a') {

@@ -124,7 +124,11 @@ foreach ($idMapping as $albumId) {
 	}
 
 	// set attachment properties
-	$title = $config['labelPrefix'] . $albumData['post_title'] . $config['labelSuffix'];
+	$albumTitle = $albumData['title'];
+	if (is_array($albumTitle)) {
+		$albumTitle = (array_key_exists('rendered', $albumTitle)) ? $albumTitle['rendered'] : current($albumTitle);
+	}
+	$title = $config['labelPrefix'] . $albumTitle . $config['labelSuffix'];
 
 	$attachmentFields = [
 		'title'   => $title,
