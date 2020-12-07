@@ -37,6 +37,48 @@ class Bufu_Artists {
 		]);
 	}
 
+	/**
+	 * Hook into WP.
+	 */
+	public function initHooks()
+	{
+		add_action('add_meta_boxes', [$this, 'hook_admin_add_meta_boxes']);
+		add_action('admin_init', [$this, 'hook_admin_init']);
+		add_action('init', [$this, 'hook_init']);
+		add_action('rest_api_init', [$this, 'hook_rest_api_init']);
+		add_action('plugins_loaded', [$this, 'hook_plugins_loaded']);
+		add_action('save_post', [$this, 'hook_save_post']);
+		add_action('the_post', [$this, 'hook_the_post']);
+		add_action( 'widgets_init', [$this, 'hook_widgets_init'] );
+
+		// hook into query creation using filters
+		add_filter( 'pre_get_posts', [$this, 'filter_pre_get_posts'] );
+
+		// hook into tribe_events_calendar on saving events (data migration)
+		// @TODO: remove later, when production is stable
+		add_action( 'tribe_events_event_save', [$this, 'hook_tribe_events_event_save'] );
+
+		// display custom columns in admin post lists
+		add_filter( 'manage_bufu_album_posts_columns', [$this, 'filter_manage_bufu_album_posts_columns'] );
+		add_filter( 'manage_tribe_events_posts_columns', [$this, 'filter_manage_tribe_events_posts_columns'] );
+		add_action( 'manage_bufu_album_posts_custom_column', [$this, 'hook_manage_posts_custom_column'], 10, 2 );
+		add_action( 'manage_tribe_events_posts_custom_column', [$this, 'hook_manage_posts_custom_column'], 10, 2 );
+		add_action( 'manage_edit-bufu_album_sortable_columns', [$this, 'hook_register_sortable_columns'], 10, 2 );
+		add_action( 'manage_edit-tribe_events_sortable_columns', [$this, 'hook_register_sortable_columns'] );
+		add_filter( 'posts_clauses', [$this, 'filter_posts_clauses'], 1000, 2 ); // we need to be last on this filter (i.e. after the-events-calendar plugin)
+
+		// add filter for custom date formatting settings
+		add_filter( 'tribe_events_event_schedule_details_formatting', [$this, 'filter_tribe_events_event_schedule_details_formatting'] );
+
+		// add custom filter for artists to tribe filter bar
+		add_action( 'tribe_events_filters_create_filters', [$this, 'hook_tribe_filter_bar_create_filters'] );
+		add_filter( 'tribe_context_locations', [$this, 'hook_tribe_filter_bar_context_locations'] );
+		add_filter( 'tribe_events_filter_bar_context_to_filter_map', [$this, 'hook_tribe_filter_bar_map'] );
+
+		// add plugin assets
+		add_action( 'admin_enqueue_scripts', [$this, 'hook_admin_enqueue_scripts'] );
+	}
+
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// ----- hooks into WP ---------------------------------------------------------------------------------------------

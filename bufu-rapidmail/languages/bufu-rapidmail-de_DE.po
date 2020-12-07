@@ -1,0 +1,313 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2020-12-07 11:00+0100\n"
+"PO-Revision-Date: 2020-12-07 11:34+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: Bufu_Rapidmail_Admin.php:44
+msgid "API Username"
+msgstr "API Benutzername"
+
+#: Bufu_Rapidmail_Admin.php:53
+msgid "API Password"
+msgstr "API Passwort"
+
+#: Bufu_Rapidmail_Admin.php:62
+msgid "Recipient list"
+msgstr "Empfängerliste"
+
+#: Bufu_Rapidmail_Admin.php:76 Bufu_Rapidmail_Admin.php:77
+msgid "Rapidmail"
+msgstr "Rapidmail"
+
+#: Bufu_Rapidmail_Admin.php:94
+#, php-format
+msgid "Settings %s Rapidmail"
+msgstr "Einstellungen %s Rapidmail"
+
+#: Bufu_Rapidmail_Admin.php:99 Bufu_Rapidmail_Admin.php:162
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
+#: Bufu_Rapidmail_Admin.php:120
+msgid "Valid credentials"
+msgstr "Gültige Zugangsdaten"
+
+#: Bufu_Rapidmail_Admin.php:123
+msgid "Invalid credentials"
+msgstr "Ungültige Zugangsdaten"
+
+#: Bufu_Rapidmail_Admin.php:153
+msgid "Please choose"
+msgstr "Bitte wählen"
+
+#: Bufu_Rapidmail_Admin.php:162
+#, php-format
+msgid "Please provide valid credentials in the fields above and press `%s`"
+msgstr "Bitte geben Sie gültige Zugangsdaten für die API an und drücken dann `%s`"
+
+#: Bufu_Rapidmail_Client.php:88
+#, php-format
+msgid "Missing required subscriber field `%s`"
+msgstr ""
+
+#: Bufu_Rapidmail_Form.php:48
+msgid "Sign up"
+msgstr "Anmelden"
+
+#: Bufu_Rapidmail_Form.php:84
+msgid "First name"
+msgstr "Vorname"
+
+#: Bufu_Rapidmail_Form.php:88
+msgid "Last name"
+msgstr "Nachname"
+
+#: Bufu_Rapidmail_Form.php:92
+msgid "Email address"
+msgstr "Emailadresse"
+
+#: Bufu_Rapidmail_Form.php:96
+msgid "I want to hear about:"
+msgstr "Mich interessieren folgende Themen:"
+
+#: Bufu_Rapidmail_Form.php:98
+msgid "News"
+msgstr "News"
+
+#: Bufu_Rapidmail_Form.php:101
+msgid "Medien Print"
+msgstr "Medien Print"
+
+#: Bufu_Rapidmail_Form.php:102
+msgid "Medien Radio"
+msgstr "Medien Radio"
+
+#: Bufu_Rapidmail_Form.php:103
+msgid "Medien Fernsehen"
+msgstr "Medien Fernsehen"
+
+#: Bufu_Rapidmail_Form.php:104
+msgid "Veranstalter Kirchen"
+msgstr "Veranstalter Kirchen"
+
+#: Bufu_Rapidmail_Form.php:105
+msgid "Veranstalter"
+msgstr "Veranstalter"
+
+#: Bufu_Rapidmail_Form.php:150
+#, php-format
+msgid "Missing value for %s"
+msgstr "%s fehlt"
+
+#: Bufu_Rapidmail_Form.php:156
+msgid "Invalid email address"
+msgstr "Ungültige Emailadresse"
+
+#: Bufu_Rapidmail_Form.php:161
+msgid "Select at least one topic"
+msgstr "Mind. ein Thema auswählen"
+
+#: Bufu_Rapidmail_Form.php:191
+msgid "Sorry, an error occurred while signing you up"
+msgstr "Entschuldigung, bei der Anmeldung trat ein Fehler auf"
+
+#: templates/form.php:23
+msgid "Thanks for subscribing to our newsletter. And welcome onboard!"
+msgstr "Herzlich willkommen! Vielen Dank für Ihre Anmeldung zum Newsletter."
+
+#~ msgid "I take interest in:"
+#~ msgstr "Ich interessiere mich für:"
+
+#~ msgid "Interests"
+#~ msgstr "Interessen"
+
+#~ msgid "Gerhard Schöne"
+#~ msgstr "Gerhard Schöne"
+
+#~ msgid "Gerhard Gundermann"
+#~ msgstr "Gerhard Gundermann"
+
+#~ msgid "Artist"
+#~ msgid_plural "Artists"
+#~ msgstr[0] "Künstler"
+#~ msgstr[1] "Künstler"
+
+#~ msgid "The related artist"
+#~ msgstr "Der Künstler/Autor/Interpret"
+
+#~ msgid "Show links to child pages"
+#~ msgstr "Zeige Links zu untergeordneten Seiten"
+
+#~ msgid "Featured artists"
+#~ msgstr "Hervorgehobene Künstler"
+
+#~ msgid "Artists slider images"
+#~ msgstr "Künstler Slider Bilder"
+
+#~ msgid "Concerts link image"
+#~ msgstr "Konzertbereich Bild"
+
+#~ msgid "Shop link image"
+#~ msgstr "Shopbereich Bereich"
+
+#, php-format
+#~ msgid "Post type already exists: `%s`"
+#~ msgstr "Der Post-Type `%s` existiert bereits"
+
+#~ msgid "Manage an artist's portfolio information"
+#~ msgstr "Dieses Plugin wird benötigt, um Künstlerprofile zu verwalten"
+
+#~ msgid "An artist's personal website"
+#~ msgstr "Website des Künstlers"
+
+#~ msgid "Internal sort string"
+#~ msgstr "Interner Sortierwert"
+
+#~ msgid "Profile stage image"
+#~ msgstr "Profilbühne Bild"
+
+#~ msgid "Display profile page"
+#~ msgstr "Profilseite anzeigen"
+
+#~ msgid "Album"
+#~ msgid_plural "Albums"
+#~ msgstr[0] "Album"
+#~ msgstr[1] "Alben"
+
+#~ msgid "Manage an album"
+#~ msgstr "Album verwalten"
+
+#~ msgid "The album release date"
+#~ msgstr "Das Release-Datum"
+
+#~ msgid "At which label was the album released"
+#~ msgstr "Auf welchem Label wurde das Album veröffentlicht"
+
+#~ msgid "The list of tracks"
+#~ msgstr "Die Liste der Tracks"
+
+#~ msgid "Artist Category"
+#~ msgid_plural "Artists Categories"
+#~ msgstr[0] "Künstlerkategorie"
+#~ msgstr[1] "Künstlerkategorien"
+
+#, php-format
+#~ msgid "Error in plugin %s: %s"
+#~ msgstr "Fehler im Plugin %s: %s"
+
+#~ msgid "Remove item"
+#~ msgstr "Eintrag entfernen"
+
+#~ msgid "Remove"
+#~ msgstr "Entfernen"
+
+#~ msgid "Add item"
+#~ msgstr "Hinzufügen"
+
+#~ msgid "Choose or Upload Image"
+#~ msgstr "Bild wählen oder hochladen"
+
+#~ msgid "Use this image"
+#~ msgstr "Bild verwenden"
+
+#~ msgid "this artist"
+#~ msgstr "Dieser Künstler"
+
+#~ msgid "Artist website"
+#~ msgstr "Website des Künstlers"
+
+#~ msgid "Sort string"
+#~ msgstr "Sortierwert (für Künstlerliste)"
+
+#, php-format
+#~ msgid "Display a profile page for %s"
+#~ msgstr "Zeige die Profilseite von %s an"
+
+#~ msgid "Release date"
+#~ msgstr "Release-Datum"
+
+#~ msgid "Release Label"
+#~ msgstr "Release Label / Publisher"
+
+#~ msgid "Track list"
+#~ msgstr "Trackliste"
+
+#~ msgid "Track lyrics"
+#~ msgstr "Liedtexte"
+
+#, php-format
+#~ msgid "Unknown input type: `%s`"
+#~ msgstr "Unknown input type: `%s`"
+
+#, php-format
+#~ msgid "Input `%s` missing required option: `%s`"
+#~ msgstr "Input `%s` missing required option: `%s`"
+
+#~ msgid "Choose image"
+#~ msgstr "Bild wählen"
+
+#~ msgid "Not selected"
+#~ msgstr "Nicht ausgewählt"
+
+#~ msgid "Artists Wall"
+#~ msgstr "Künstlerwand"
+
+#~ msgid "Show a wall of artist's thumbnails linked to their profile page."
+#~ msgstr "Zeige eine Wand mit Künstlerbildern, die auf deren Profilseite verlinkt."
+
+#~ msgid "Title:"
+#~ msgstr "Titel:"
+
+#~ msgid "Show placeholder when there is no thumbnail"
+#~ msgstr "Zeige Platzhalter, wenn kein Bild vorhanden"
+
+#~ msgid "Show artists in random order"
+#~ msgstr "Zufällige Reihenfolge"
+
+#~ msgid "Events by Artist"
+#~ msgstr "Events eines Künstlers"
+
+#~ msgid "Show upcoming events of the current artist."
+#~ msgstr "Zeige die nächsten Veranstaltungen zum aktuellen Künstler an."
+
+#~ msgid "Order tickets"
+#~ msgstr "Tickets bestellen"
+
+#~ msgid "Events"
+#~ msgstr "Events"
+
+#, fuzzy
+#~| msgid "Artist"
+#~| msgid_plural "Artists"
+#~ msgid "Artists"
+#~ msgstr "Künstler"
+
+#~ msgid "Song text"
+#~ msgid_plural "Song texts"
+#~ msgstr[0] "Liedtext"
+#~ msgstr[1] "Liedtexte"
+
+#~ msgid "Manage an artist's song texts"
+#~ msgstr "Dieser Post-Type wird benötigt, um Liedtexte zu verwalten"
+
+#~ msgid "The album that first contained this piece"
+#~ msgstr "Das Album, das dieses Stück zuerst enthielt"
+
+#~ msgid "BuschFunk Artists"
+#~ msgstr "BuschFunk Artists"
+
+#, php-format
+#~ msgid "Input with key %s is not defined"
+#~ msgstr "Input-Element %s ist nicht definiert"

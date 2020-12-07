@@ -1,20 +1,20 @@
 <?php
 /**
- * Artists post type and admin interface for managing BuschFunk artists
+ * Plugin for custom integration of Rapidmail Newsletter Singup.
  *
  * @author            Steffen Muecke <mail@quellkunst.de>
  * @copyright         2020 quellkunst multimedia
  * @license           GPL-2.0-or-later
  *
  * @wordpress-plugin
- * Plugin Name:       BuschFunk Artists
- * Description:       Adds all artist-related features: profiles, relations to events, albums and more content.
+ * Plugin Name:       BuschFunk Rapidmail
+ * Description:       Rapidmail API integration for Newsletter Signup.
  * Version:           0.1.0
- * Text Domain:       bufu-artists
+ * Text Domain:       bufu-rapidmail
  * Domain Path:       /languages
  * Requires at least: 5.5
  * Requires PHP:      7.2
- * Author:            Steffen Muecke, quellkunst multimedia
+ * Author:            Steffen Muecke <mail@quellkunst.de>
  * Author URI:        https://quellkunst.de/
  * License:           GPL v2 or later
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.html
@@ -25,10 +25,11 @@ if ( !function_exists( 'add_action' ) ) {
 	exit;
 }
 
-require_once('bufu-artists/Bufu_Artists.php');
+require_once('bufu-rapidmail/Bufu_Rapidmail.php');
 
-$bufuArtistsPluginInstance = new Bufu_Artists();
-$bufuArtistsPluginInstance->initHooks();
+$bufuRapidmailPluginInstance = new Bufu_Rapidmail();
+$bufuRapidmailPluginInstance->initHooks();
+
 
 // ---------------------------------------------------------------------------------------------------------------------
 // ----- theme/public methods ------------------------------------------------------------------------------------------
@@ -36,10 +37,10 @@ $bufuArtistsPluginInstance->initHooks();
 /**
  * get the ThemeHelper class
  *
- * @return Bufu_Artists_ThemeHelper
+ * @return Bufu_Rapidmail_ThemeHelper
  */
-function bufu_artists()
+function bufu_rapidmail()
 {
-	global $bufuArtistsPluginInstance;
-	return $bufuArtistsPluginInstance->getThemeHelper();
+	global $bufuRapidmailPluginInstance;
+	return $bufuRapidmailPluginInstance->getThemeHelper();
 }
