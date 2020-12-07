@@ -65,6 +65,15 @@ class Bufu_Rapidmail_Admin
 			'bufu_rapidmail_settings'
 		);
 		register_setting('bufu_rapidmail', Bufu_Rapidmail::SETTINGS_KEYS['listId']);
+
+		add_settings_field(
+			Bufu_Rapidmail::SETTINGS_KEYS['showApiErrors'],
+			__('Show API errors?', 'bufu-rapidmail'),
+			[$this, 'render_showApiErrors'],
+			'bufu_rapidmail',
+			'bufu_rapidmail_settings'
+		);
+		register_setting('bufu_rapidmail', Bufu_Rapidmail::SETTINGS_KEYS['showApiErrors']);
 	}
 
 	/**
@@ -162,6 +171,17 @@ class Bufu_Rapidmail_Admin
 			echo '<option value="0">' . sprintf(__('Please provide valid credentials in the fields above and press `%s`', 'bufu-rapidmail'), __('Save changes', 'bufu-rapidmail')) . '</option>';
 		}
 
+		echo '</select>';
+	}
+
+	public function render_showApiErrors()
+	{
+		$id = Bufu_Rapidmail::SETTINGS_KEYS['showApiErrors'];
+		$value = get_option($id, 'no');
+
+		echo '<select name="'. $id .'" id="'. $id .'">';
+		echo '<option value="no"'.  ($value === 'no' ?  ' selected="selected"' : '') .'>' . __('No', 'bufu-rapidmail') . '</option>';
+		echo '<option value="yes"'. ($value === 'yes' ? ' selected="selected"' : '') .'>' . __('Yes', 'bufu-rapidmail') . '</option>';
 		echo '</select>';
 	}
 

@@ -38,6 +38,7 @@ class Bufu_Rapidmail_Client
 			'username' => get_option(Bufu_Rapidmail::SETTINGS_KEYS['username'], ''),
 			'password' => get_option(Bufu_Rapidmail::SETTINGS_KEYS['password'], ''),
 			'listId'   => intval(get_option(Bufu_Rapidmail::SETTINGS_KEYS['listId'], 0)),
+			'showApiErrors' => (get_option(Bufu_Rapidmail::SETTINGS_KEYS['showApiErrors'], 'no') === 'yes'),
 		];
 	}
 
@@ -109,12 +110,17 @@ class Bufu_Rapidmail_Client
 			return true;
 		}
 
-		// make error messages available to the outside
-		if ($result instanceof WP_Error) {
-			$this->lastErrors = [$result->get_error_message()];
-		}
-		else if (is_array($result) && array_key_exists('detail', $result)) {
-			$this->lastErrors = [$result['detail']];
+		$this->lastErrors = [__('Sorry, an error occurred while signing you up', 'bufu-rapidmail')];
+
+		// make error messages available to the outside?
+		$showErrors = $this->getSettings()['showApiErrors'];
+		if ($showErrors) {
+			if ($result instanceof WP_Error) {
+				$this->lastErrors[] = $result->get_error_message();
+			}
+			else if (is_array($result) && array_key_exists('detail', $result)) {
+				$this->lastErrors[] = $result['detail'];
+			}
 		}
 
 		return false;

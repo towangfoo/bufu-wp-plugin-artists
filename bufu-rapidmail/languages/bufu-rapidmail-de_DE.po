@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-12-07 11:00+0100\n"
-"PO-Revision-Date: 2020-12-07 11:34+0100\n"
+"POT-Creation-Date: 2020-12-07 12:04+0100\n"
+"PO-Revision-Date: 2020-12-07 12:05+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -27,101 +27,113 @@ msgstr "API Passwort"
 msgid "Recipient list"
 msgstr "Empfängerliste"
 
-#: Bufu_Rapidmail_Admin.php:76 Bufu_Rapidmail_Admin.php:77
+#: Bufu_Rapidmail_Admin.php:71
+msgid "Show API errors?"
+msgstr "API-Fehlermeldungen anzeigen?"
+
+#: Bufu_Rapidmail_Admin.php:85 Bufu_Rapidmail_Admin.php:86
 msgid "Rapidmail"
 msgstr "Rapidmail"
 
-#: Bufu_Rapidmail_Admin.php:94
+#: Bufu_Rapidmail_Admin.php:103
 #, php-format
 msgid "Settings %s Rapidmail"
 msgstr "Einstellungen %s Rapidmail"
 
-#: Bufu_Rapidmail_Admin.php:99 Bufu_Rapidmail_Admin.php:162
+#: Bufu_Rapidmail_Admin.php:108 Bufu_Rapidmail_Admin.php:171
 msgid "Save changes"
 msgstr "Änderungen speichern"
 
-#: Bufu_Rapidmail_Admin.php:120
+#: Bufu_Rapidmail_Admin.php:129
 msgid "Valid credentials"
 msgstr "Gültige Zugangsdaten"
 
-#: Bufu_Rapidmail_Admin.php:123
+#: Bufu_Rapidmail_Admin.php:132
 msgid "Invalid credentials"
 msgstr "Ungültige Zugangsdaten"
 
-#: Bufu_Rapidmail_Admin.php:153
+#: Bufu_Rapidmail_Admin.php:162
 msgid "Please choose"
 msgstr "Bitte wählen"
 
-#: Bufu_Rapidmail_Admin.php:162
+#: Bufu_Rapidmail_Admin.php:171
 #, php-format
 msgid "Please provide valid credentials in the fields above and press `%s`"
 msgstr "Bitte geben Sie gültige Zugangsdaten für die API an und drücken dann `%s`"
 
-#: Bufu_Rapidmail_Client.php:88
+#: Bufu_Rapidmail_Admin.php:183
+msgid "No"
+msgstr "Nein"
+
+#: Bufu_Rapidmail_Admin.php:184
+msgid "Yes"
+msgstr "Ja"
+
+#: Bufu_Rapidmail_Client.php:83
 #, php-format
 msgid "Missing required subscriber field `%s`"
 msgstr ""
 
-#: Bufu_Rapidmail_Form.php:48
+#: Bufu_Rapidmail_Client.php:113 Bufu_Rapidmail_Form.php:204
+msgid "Sorry, an error occurred while signing you up"
+msgstr "Entschuldigung, bei der Anmeldung trat ein Fehler auf"
+
+#: Bufu_Rapidmail_Form.php:56
 msgid "Sign up"
 msgstr "Anmelden"
 
-#: Bufu_Rapidmail_Form.php:84
+#: Bufu_Rapidmail_Form.php:100
 msgid "First name"
 msgstr "Vorname"
 
-#: Bufu_Rapidmail_Form.php:88
+#: Bufu_Rapidmail_Form.php:103
 msgid "Last name"
 msgstr "Nachname"
 
-#: Bufu_Rapidmail_Form.php:92
+#: Bufu_Rapidmail_Form.php:106
 msgid "Email address"
 msgstr "Emailadresse"
 
-#: Bufu_Rapidmail_Form.php:96
+#: Bufu_Rapidmail_Form.php:109
 msgid "I want to hear about:"
 msgstr "Mich interessieren folgende Themen:"
 
-#: Bufu_Rapidmail_Form.php:98
+#: Bufu_Rapidmail_Form.php:111
 msgid "News"
 msgstr "News"
 
-#: Bufu_Rapidmail_Form.php:101
+#: Bufu_Rapidmail_Form.php:114
 msgid "Medien Print"
 msgstr "Medien Print"
 
-#: Bufu_Rapidmail_Form.php:102
+#: Bufu_Rapidmail_Form.php:115
 msgid "Medien Radio"
 msgstr "Medien Radio"
 
-#: Bufu_Rapidmail_Form.php:103
+#: Bufu_Rapidmail_Form.php:116
 msgid "Medien Fernsehen"
 msgstr "Medien Fernsehen"
 
-#: Bufu_Rapidmail_Form.php:104
+#: Bufu_Rapidmail_Form.php:117
 msgid "Veranstalter Kirchen"
 msgstr "Veranstalter Kirchen"
 
-#: Bufu_Rapidmail_Form.php:105
+#: Bufu_Rapidmail_Form.php:118
 msgid "Veranstalter"
 msgstr "Veranstalter"
 
-#: Bufu_Rapidmail_Form.php:150
+#: Bufu_Rapidmail_Form.php:163
 #, php-format
 msgid "Missing value for %s"
 msgstr "%s fehlt"
 
-#: Bufu_Rapidmail_Form.php:156
+#: Bufu_Rapidmail_Form.php:169
 msgid "Invalid email address"
 msgstr "Ungültige Emailadresse"
 
-#: Bufu_Rapidmail_Form.php:161
+#: Bufu_Rapidmail_Form.php:174
 msgid "Select at least one topic"
 msgstr "Mind. ein Thema auswählen"
-
-#: Bufu_Rapidmail_Form.php:191
-msgid "Sorry, an error occurred while signing you up"
-msgstr "Entschuldigung, bei der Anmeldung trat ein Fehler auf"
 
 #: templates/form.php:23
 msgid "Thanks for subscribing to our newsletter. And welcome onboard!"

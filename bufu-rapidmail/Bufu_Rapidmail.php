@@ -16,6 +16,7 @@ class Bufu_Rapidmail
 		'username' => 'bufu_rapidmail_apiv3_username',
 		'password' => 'bufu_rapidmail_apiv3_password',
 		'listId'   => 'bufu_rapidmail_apiv3_recipientlist',
+		'showApiErrors' => 'bufu_rapidmail_apiv3_showapierrors',
 	];
 
 	/**
