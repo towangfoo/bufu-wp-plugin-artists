@@ -4,3 +4,8 @@
     padding: 1rem;
     margin-bottom: 0.3rem;
 }
+
+/** Tribe_Events hides the filter nav in its styles, but we need it for our custom filters **/
+.events-cal #post-query-submit {
+    display: inherit !important;
+}
