@@ -29,7 +29,7 @@ class Bufu_Artists_ThemeHelper
 	 */
 	public function getArtistsSelectOptions()
 	{
-		if (!$this->_artistsSelectOptions) {
+		if (!is_array($this->_artistsSelectOptions)) {
 			$this->_artistsSelectOptions = $this->bufuArtists->getAdminInputs()->getAllArtistsSelectOptions();
 		}
 		return $this->_artistsSelectOptions;

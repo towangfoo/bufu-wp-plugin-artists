@@ -67,6 +67,10 @@ class Bufu_Artists {
 		add_action( 'manage_edit-tribe_events_sortable_columns', [$this, 'hook_register_sortable_columns'] );
 		add_filter( 'posts_clauses', [$this, 'filter_posts_clauses'], 1000, 2 ); // we need to be last on this filter (i.e. after the-events-calendar plugin)
 
+		// filter by artist in admin list pages
+		add_filter( 'parse_query', [$this, 'filter_admin_posts_filterby'] );
+		add_action( 'restrict_manage_posts', [$this, 'hook_admin_posts_add_filterby'] );
+
 		// add filter for custom date formatting settings
 		add_filter( 'tribe_events_event_schedule_details_formatting', [$this, 'filter_tribe_events_event_schedule_details_formatting'] );
 
@@ -279,6 +283,7 @@ class Bufu_Artists {
 		if ( $column === 'artist' ) {
 			$artistId = get_post_meta($postId, '_bufu_artist_selectArtist', true);
 			$artistList = $this->getThemeHelper()->getArtistsSelectOptions();
+
 			if (array_key_exists($artistId, $artistList)) {
 				echo "<a href=\"/wp-admin/post.php?post={$artistId}&action=edit\">{$artistList[$artistId]}</a>";
 			}
@@ -417,6 +422,52 @@ class Bufu_Artists {
 		$columns['release']   = 'release';
 
 		return $columns;
+	}
+
+	/**
+	 * Add custom filters to query for admin posts list
+	 */
+	public function filter_admin_posts_filterby( WP_Query $query )
+	{
+		global $pagenow;
+		if ( is_admin() && $pagenow === 'edit.php' && $query->is_main_query() && isset($_GET['bufu_filterby_artist']) && $_GET['bufu_filterby_artist'] != '' ) {
+            $query->query_vars['meta_key']   = '_bufu_artist_selectArtist';
+            $query->query_vars['meta_value'] = intval($_GET['bufu_filterby_artist']);
+		}
+
+		return $query;
+	}
+
+	/**
+	 * Render UI for custom admin posts list filters
+	 */
+	public function hook_admin_posts_add_filterby()
+	{
+	    $availableForTypes = [self::$postTypeNameAlbum, self::$postTypeNameEvent];
+
+		$type = 'post';
+		if (isset($_GET['post_type'])) {
+			$type = $_GET['post_type'];
+		}
+
+		if (in_array($type, $availableForTypes)) {
+			$options = $this->getThemeHelper()->getArtistsSelectOptions();
+			$current_v = isset($_GET['bufu_filterby_artist']) ? intval($_GET['bufu_filterby_artist']) : '';
+			?>
+			<select name="bufu_filterby_artist" placeholder="<?php echo sprintf(__('Filter by %s', 'bufu-artists'), _n('Artist', 'Artists', 1, 'bufu-artists')) ?>">
+				<option value=""><?php _e('All artists', 'bufu-artists') ?> ...</option>
+				<?php foreach ($options as $value => $label) {
+					printf
+					(
+						'<option value="%s"%s>%s</option>',
+						$value,
+						$value === $current_v ? ' selected="selected"' : '',
+						$label
+					);
+				} ?>
+			</select>
+			<?php
+		}
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------

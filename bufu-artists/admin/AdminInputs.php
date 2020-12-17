@@ -210,10 +210,13 @@ class AdminInputs
 		// query for your post type
 		$query  = new WP_Query([
 			'post_type'      => $this->getPostTypeArtist(),
-			'posts_per_page' => -1
+			'nopaging'       => true,
+			'orderby'        => 'meta_value',
+			'meta_key'	     => '_bufu_artist_sortBy',
+			'order'          => 'ASC',
 		]);
 
-		$items = $query->posts;
+		$items = $query->get_posts();
 		if (!is_array($items)) {
 			return [];
 		}
