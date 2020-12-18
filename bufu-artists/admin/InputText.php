@@ -43,6 +43,11 @@ class InputText extends AbstractInput implements InputInterface
 	 */
 	public function render()
 	{
+		$options = $this->getOptions();
+		if (array_key_exists('infotext', $options)) {
+			echo "<p class='infotext'>{$options['infotext']}</p>";
+		}
+
 		echo $this->getHtml();
 	}
 
@@ -55,6 +60,11 @@ class InputText extends AbstractInput implements InputInterface
 		$min  = $this->getMinimumRequiredLinesForMultiple();
 		$max  = $this->getMaximumLinesForMultiple();
 		$curr = count($this->getValue());
+
+		$options = $this->getOptions();
+		if (array_key_exists('infotext', $options)) {
+			echo "<p class='infotext'>{$options['infotext']}</p>";
+		}
 
 		echo '<div class="multiple">';
 		for ($this->multipleIndex = 0; $this->multipleIndex < max($min, $curr); $this->multipleIndex ++) {
@@ -90,7 +100,12 @@ class InputText extends AbstractInput implements InputInterface
 		$type   = $options['type'];
 		$disabled = ($isTemplate) ? ' disabled="disabled"' : '';
 
-		$html = "<input type=\"{$type}\" name=\"{$name}\" value=\"{$value}\" {$disabled} />";
+		$class = '';
+		if (array_key_exists('input_class', $options)) {
+			$class = " class=\"{$options['input_class']}\"";
+		}
+
+		$html = "<input type=\"{$type}\" name=\"{$name}\" value=\"{$value}\"{$class}{$disabled} />";
 
 		return $html;
 	}

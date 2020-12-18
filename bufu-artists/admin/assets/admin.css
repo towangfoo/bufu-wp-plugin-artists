@@ -5,6 +5,11 @@
     margin-bottom: 0.3rem;
 }
 
+.postbox input.d-wide {
+    display: inline-block;
+    width: 80%;
+}
+
 /** Tribe_Events hides the filter nav in its styles, but we need it for our custom filters **/
 .events-cal #post-query-submit {
     display: inherit !important;

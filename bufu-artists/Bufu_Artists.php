@@ -1,5 +1,6 @@
 <?php
 
+require_once 'Bufu_Artists_Scraper.php';
 require_once 'Bufu_Artists_ThemeHelper.php';
 require_once 'admin/AdminInputs.php';
 require_once 'widgets/Bufu_Widget_EventsByArtist.php';
@@ -24,6 +25,11 @@ class Bufu_Artists {
 	private $themeHelper;
 
 	/**
+	 * @var Bufu_Artists_Scraper
+	 */
+	private $scraper;
+
+	/**
 	 * Bufu_Artists constructor.
 	 */
 	public function __construct()
@@ -34,7 +40,7 @@ class Bufu_Artists {
 				'album'  => self::$postTypeNameAlbum,
 				'event'  => self::$postTypeNameEvent,
 			]
-		]);
+		], $this);
 	}
 
 	/**
@@ -493,6 +499,19 @@ class Bufu_Artists {
 		return $this->adminInputs;
 	}
 
+	/**
+	 * Extract product data from their page in the store
+     * @var array
+	 */
+	public function scrapeFeaturedProductsFromStore(array $urls)
+	{
+	    if (!$this->scraper) {
+	        $this->scraper = new Bufu_Artists_Scraper();
+        }
+
+        $this->scraper->loadProducts($urls);
+	}
+
 	// -----------------------------------------------------------------------------------------------------------------
 	// ----- private methods -------------------------------------------------------------------------------------------
 
@@ -532,6 +551,11 @@ class Bufu_Artists {
 			'single'       => true,
 			'description'  => __('Shop link image', 'bufu-artists'),
 			'show_in_rest' => false,
+		]);
+		register_post_meta('post', '_bufu_artist_featuredProducts', [
+			'single'       => true,
+			'description'  => __('Featured products from the store', 'bufu-artists'),
+			'show_in_rest' => true,
 		]);
 	}
 

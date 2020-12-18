@@ -17,12 +17,18 @@ class AdminInputs
 	private $config = [];
 
 	/**
+	 * @var Bufu_Artists
+	 */
+	private $mainClass;
+
+	/**
 	 * AdminInputs constructor.
 	 * @param array $config
 	 */
-	public function __construct(array $config)
+	public function __construct(array $config, Bufu_Artists $mainClass)
 	{
 		$this->config = $config;
+		$this->mainClass = $mainClass;
 	}
 
 	/**
@@ -86,6 +92,9 @@ class AdminInputs
 			foreach ($this->getInputFieldsFrontPage() as $k => $i) {
 				$name = $this->getInputName($k, $i);
 				update_post_meta($post->ID, $name, $_POST[$name]);
+				if ($name === '_bufu_artist_featuredProducts') {
+					$this->mainClass->scrapeFeaturedProductsFromStore($_POST[$name]);
+				}
 			}
 		}
 
@@ -339,6 +348,15 @@ class AdminInputs
 				'multiple' => true,
 				'min'      => 3,
 				'max'      => 6,
+			],
+			'featuredProducts' => [
+				'type'     => 'url',
+				'title'    => __('Featured products from the store', 'bufu-artists'),
+				'infotext' => sprintf(__('Enter or paste the full product URL from the store. At least %d products required.', 'bufu-artists'), 3),
+				'input_class' => 'd-wide',
+				'multiple' => true,
+				'min'      => 3,
+				'max'      => 30,
 			],
 		];
 	}
