@@ -220,4 +220,27 @@ class Bufu_Artists_ThemeHelper
 		}
 		echo '</ul>';
 	}
+
+	/**
+	 * Load product data from file.
+	 * @return array|null
+	 */
+	public function loadFeaturedStoreProducts()
+	{
+		$pwd  = dirname(__FILE__);
+		$file = $pwd . DIRECTORY_SEPARATOR . 'var/products.json';
+
+		if (!file_exists($file)) {
+			return null;
+		}
+
+		$data = file_get_contents($file);
+		$result = json_decode($data, true);
+
+		if (json_last_error() !== JSON_ERROR_NONE) {
+			return null;
+		}
+
+		return $result;
+	}
 }

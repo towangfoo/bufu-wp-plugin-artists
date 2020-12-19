@@ -356,7 +356,7 @@ class AdminInputs
 				'input_class' => 'd-wide',
 				'multiple' => true,
 				'min'      => 3,
-				'max'      => 30,
+				'max'      => 12,
 			],
 		];
 	}
