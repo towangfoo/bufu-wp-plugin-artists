@@ -9,12 +9,12 @@
  * @wordpress-plugin
  * Plugin Name:       BuschFunk Rapidmail
  * Description:       Rapidmail API integration for Newsletter Signup.
- * Version:           0.1.0
+ * Version:           1.0.0
  * Text Domain:       bufu-rapidmail
  * Domain Path:       /languages
  * Requires at least: 5.5
  * Requires PHP:      7.2
- * Author:            Steffen Muecke <mail@quellkunst.de>
+ * Author:            Steffen Muecke, quellkunst multimedia
  * Author URI:        https://quellkunst.de/
  * License:           GPL v2 or later
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.html
