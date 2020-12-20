@@ -577,7 +577,7 @@ class Bufu_Artists {
 				'singular_name' => _n('Artist', 'Artists', 1, 'bufu-artists')
 			],
 			'description'       => __('Manage an artist\'s portfolio information', 'bufu-artists'),
-			'rewrite'     		=> [ 'slug' => 'artists' ],
+			'rewrite'     		=> [ 'slug' => 'kuenstler' ],
 			'public'            => true,
 			'publicly_queryable'=> true,
 			'has_archive'       => true,
@@ -644,7 +644,7 @@ class Bufu_Artists {
 				'singular_name' => _n('Album', 'Albums', 1, 'bufu-artists')
 			],
 			'description'       => __('Manage an album', 'bufu-artists'),
-			'rewrite'     		=> [ 'slug' => 'albums' ],
+			'rewrite'     		=> [ 'slug' => 'alben' ],
 			'public'            => true,
 			'publicly_queryable'=> true,
 			'has_archive'       => true,
