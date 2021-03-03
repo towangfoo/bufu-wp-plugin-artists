@@ -243,4 +243,22 @@ class Bufu_Artists_ThemeHelper
 
 		return $result;
 	}
+
+	/**
+	 * Load artist data from custom meta field.
+	 * @param WP_Post $post
+	 * @return null|WP_Post
+	 */
+	public function loadArtistFromCustomMeta(WP_Post $post)
+	{
+		$selectedArtistId = get_post_meta($post->ID, '_bufu_artist_selectArtist', true);
+		if ($selectedArtistId) {
+			$artist = get_post((int) $selectedArtistId);
+			if ($artist && $artist->post_type === 'bufu_artist') {
+				return $artist;
+			}
+		}
+
+		return null;
+	}
 }
