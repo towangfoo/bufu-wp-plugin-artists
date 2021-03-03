@@ -5,6 +5,7 @@ require_once 'Bufu_Artists_ThemeHelper.php';
 require_once 'admin/AdminInputs.php';
 require_once 'widgets/Bufu_Widget_EventsByArtist.php';
 require_once 'widgets/Bufu_Widget_ArtistsWall.php';
+require_once 'widgets/Bufu_Widget_ArtistsSearch.php';
 
 class Bufu_Artists {
 
@@ -202,6 +203,10 @@ class Bufu_Artists {
 		$artistsWallWidget = new Bufu_Widget_ArtistsWall();
 		$artistsWallWidget->setThemeHelper($this->getThemeHelper());
 		register_widget( $artistsWallWidget );
+
+		$artistSearchWidget = new Bufu_Widget_ArtistsSearch();
+		$artistSearchWidget->setThemeHelper($this->getThemeHelper());
+		register_widget( $artistSearchWidget );
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
