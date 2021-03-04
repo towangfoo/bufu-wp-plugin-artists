@@ -176,6 +176,7 @@ class Bufu_Artists_ThemeHelper
 		if ($order === 'release') {
 			$params['orderby']  = 'meta_value';
 			$params['meta_key'] = '_bufu_artist_albumRelease';
+			$params['order']    = 'DESC';
 		}
 		else {
 			$params['orderby']  = 'title';
