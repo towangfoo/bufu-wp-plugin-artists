@@ -3,6 +3,7 @@
 require_once 'Bufu_Artists_Scraper.php';
 require_once 'Bufu_Artists_ThemeHelper.php';
 require_once 'admin/AdminInputs.php';
+require_once 'admin/ArtistsSettingsPage.php';
 require_once 'widgets/Bufu_Widget_EventsByArtist.php';
 require_once 'widgets/Bufu_Widget_ArtistsWall.php';
 require_once 'widgets/Bufu_Widget_ArtistsSearch.php';
@@ -31,6 +32,16 @@ class Bufu_Artists {
 	private $scraper;
 
 	/**
+	 * @var ArtistsSettingsPage
+	 */
+	private $adminSettingsPage;
+
+	/**
+	 * @var bool
+	 */
+	private $queryWithArtistStartingLettersModified = false;
+
+	/**
 	 * Bufu_Artists constructor.
 	 */
 	public function __construct()
@@ -42,6 +53,8 @@ class Bufu_Artists {
 				'event'  => self::$postTypeNameEvent,
 			]
 		], $this);
+
+//		$this->adminSettingsPage = new ArtistsSettingsPage();
 	}
 
 	/**
@@ -88,6 +101,8 @@ class Bufu_Artists {
 
 		// add plugin assets
 		add_action( 'admin_enqueue_scripts', [$this, 'hook_admin_enqueue_scripts'] );
+
+//		$this->adminSettingsPage->initHooks();
 	}
 
 
@@ -140,7 +155,7 @@ class Bufu_Artists {
 	 * @return void
 	 */
 	public function hook_admin_init()
-	{
+    {
 
 	}
 
@@ -344,6 +359,13 @@ class Bufu_Artists {
 		if ( is_archive() && is_main_query() ) {
 			$this->modifyQuery_archive_sortArtistPosts($query);
 			$this->modifyQuery_artists_WhereProfileIsVisible($query);
+
+			// only apply to artist archive queries on the public site
+			if ( $query->query['post_type'] === self::$postTypeNameArtist && isset($_GET['l']) && !empty($_GET['l']) ) {
+                $query->set('bufu_artist-starts-with', $_GET['l']);
+                add_filter( 'posts_where', [$this, 'filter_artists_starting_with_letter'], 10, 2 );
+			}
+
 		}
 	}
 
@@ -447,6 +469,29 @@ class Bufu_Artists {
 		}
 
 		return $query;
+	}
+
+	public function filter_artists_starting_with_letter($where, WP_Query $query)
+	{
+	    $letter = strtoupper($query->get('bufu_artist-starts-with'));
+
+		if ($this->queryWithArtistStartingLettersModified || !preg_match('/^[A-Z]$/', $letter)) {
+		    return $where;
+		}
+
+	    global $wpdb;
+
+		$escaped = $wpdb->esc_like($letter);
+
+        $where .= ' AND (';
+        $where .= $wpdb->posts . '.post_title LIKE \''. $escaped .'%\'';
+        $where .= ' OR ';
+        $where .= $wpdb->posts . '.post_title LIKE \'% '. $escaped .'%\'';
+        $where .= ')';
+
+        $this->queryWithArtistStartingLettersModified = true;
+
+        return $where;
 	}
 
 	/**
@@ -701,7 +746,7 @@ class Bufu_Artists {
 	 */
 	private function addTaxonomyArtistCategories()
 	{
-		register_taxonomy(self::$postTypeNameArtist . "_tx", [ self::$postTypeNameArtist ], [
+		register_taxonomy(self::$postTypeNameArtist . "_tx_cat", [ self::$postTypeNameArtist ], [
 			"hierarchical" 		=> true,
 			"label" 			=> _n('Artist Category', 'Artists Categories', 2, 'bufu-artists'),
 			"singular_label" 	=> _n('Artist Category', 'Artists Categories', 1, 'bufu-artists'),
@@ -783,12 +828,15 @@ class Bufu_Artists {
 	}
 
 	/**
+     * Sort artist posts by custom field, but not when displaying search results
 	 * @param WP_Query $query
 	 */
 	private function modifyQuery_archive_sortArtistPosts(WP_Query $query)
 	{
 		$postType = $query->query['post_type'];
-		if ( $postType === self::$postTypeNameArtist ) {
+		$searchString = $query->query['s'];
+
+		if ( $postType === self::$postTypeNameArtist && empty($searchString) ) {
 			$query->set('orderby', 'meta_value');
 			$query->set('meta_key', '_bufu_artist_sortBy');
 			$query->set('order', 'ASC');
@@ -809,7 +857,9 @@ class Bufu_Artists {
 
 		$queryMeta = $query->get('meta_query');
 		if (!is_array($queryMeta)) {
-			$queryMeta = [];
+			$queryMeta = [
+				'relation' => 'AND'
+            ];
 		}
 
 		// add custom meta filter

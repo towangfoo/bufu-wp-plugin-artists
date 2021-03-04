@@ -261,4 +261,43 @@ class Bufu_Artists_ThemeHelper
 
 		return null;
 	}
+
+	/**
+	 * Get the current letter to filter artist list with, from query params.
+	 * @return null|string
+	 */
+	public function getCurrentArtistLetterFilter()
+	{
+		$letterFilter = isset($_GET['l']) ? $_GET['l'] : null;
+		// ignore anything that is not a single letter
+		if ($letterFilter && !preg_match('/^[a-z]$/', $letterFilter)) {
+			$letterFilter = null;
+		}
+
+		return $letterFilter;
+	}
+
+	/**
+	 * Get the starting letters of all words in artist names
+	 * @return array
+	 */
+	public function getArtistLetterOptions()
+	{
+		$artists = $this->getArtistsSelectOptions();
+
+		$letters = [];
+		foreach ($artists as $n) {
+			$nn = explode(" ", $n);
+			foreach ($nn as $i) {
+				$i0 = mb_substr($i, 0, 1);
+				$i0lc = strtolower($i0);
+				if (!in_array($i0lc, $letters) && preg_match('/^[A-Z]$/', $i0)) {
+					$letters[] = $i0lc;
+				}
+			}
+		}
+		sort($letters);
+
+		return $letters;
+	}
 }
