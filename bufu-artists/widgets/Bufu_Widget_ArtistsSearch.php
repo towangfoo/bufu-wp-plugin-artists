@@ -5,11 +5,6 @@
  */
 class Bufu_Widget_ArtistsSearch extends WP_Widget
 {
-    /**
-     * @var Bufu_Artists_ThemeHelper
-     */
-    private $themeHelper;
-
 	function __construct() {
 		parent::__construct(
 			// Base ID of your widget
@@ -21,14 +16,6 @@ class Bufu_Widget_ArtistsSearch extends WP_Widget
 			// Widget description
 			array( 'description' => __( 'Search only within artist posts', 'bufu-artists' ), )
 		);
-	}
-
-	/**
-	 * @param Bufu_Artists_ThemeHelper $themeHelper
-	 */
-	public function setThemeHelper(Bufu_Artists_ThemeHelper $themeHelper)
-	{
-        $this->themeHelper = $themeHelper;
 	}
 
 	/**

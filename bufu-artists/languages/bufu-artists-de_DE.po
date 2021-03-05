@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-04 19:46+0100\n"
-"PO-Revision-Date: 2021-03-04 19:47+0100\n"
+"POT-Creation-Date: 2021-03-05 21:20+0100\n"
+"PO-Revision-Date: 2021-03-05 21:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -15,8 +15,8 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e;_n:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: Bufu_Artists.php:271 Bufu_Artists.php:425 Bufu_Artists.php:441
-#: Bufu_Artists.php:513 Bufu_Artists.php:626 Bufu_Artists.php:627
+#: Bufu_Artists.php:274 Bufu_Artists.php:428 Bufu_Artists.php:444
+#: Bufu_Artists.php:516 Bufu_Artists.php:629 Bufu_Artists.php:630
 #: admin/AdminInputs.php:287 admin/AdminInputs.php:315
 #: widgets/Bufu_Widget_ArtistsWall.php:109
 msgid "Artist"
@@ -24,105 +24,105 @@ msgid_plural "Artists"
 msgstr[0] "Künstler"
 msgstr[1] "Künstler"
 
-#: Bufu_Artists.php:426 admin/AdminInputs.php:293
+#: Bufu_Artists.php:429 admin/AdminInputs.php:293
 msgid "Release date"
 msgstr "Release-Datum"
 
-#: Bufu_Artists.php:427 admin/AdminInputs.php:297
+#: Bufu_Artists.php:430 admin/AdminInputs.php:297
 msgid "Release Label"
 msgstr "Release Label / Publisher"
 
-#: Bufu_Artists.php:513
+#: Bufu_Artists.php:516
 #, php-format
 msgid "Filter by %s"
 msgstr "Nach %s filtern"
 
-#: Bufu_Artists.php:514
+#: Bufu_Artists.php:517
 msgid "All artists"
 msgstr "Alle Künstler"
 
-#: Bufu_Artists.php:571 Bufu_Artists.php:719
+#: Bufu_Artists.php:574 Bufu_Artists.php:722
 msgid "The related artist"
 msgstr "Der Künstler/Autor/Interpret"
 
-#: Bufu_Artists.php:580
+#: Bufu_Artists.php:583
 msgid "Show links to child pages"
 msgstr "Zeige Links zu untergeordneten Seiten"
 
-#: Bufu_Artists.php:587 admin/AdminInputs.php:346
+#: Bufu_Artists.php:590 admin/AdminInputs.php:346
 msgid "Featured artists"
 msgstr "Hervorgehobene Künstler"
 
-#: Bufu_Artists.php:592 admin/AdminInputs.php:331
+#: Bufu_Artists.php:595 admin/AdminInputs.php:331
 msgid "Artists slider images"
 msgstr "Künstler Slider Bilder"
 
-#: Bufu_Artists.php:597 admin/AdminInputs.php:338
+#: Bufu_Artists.php:600 admin/AdminInputs.php:338
 msgid "Concerts link image"
 msgstr "Konzertbereich Bild"
 
-#: Bufu_Artists.php:602 admin/AdminInputs.php:342
+#: Bufu_Artists.php:605 admin/AdminInputs.php:342
 msgid "Shop link image"
 msgstr "Shopbereich Bereich"
 
-#: Bufu_Artists.php:607 admin/AdminInputs.php:354
+#: Bufu_Artists.php:610 admin/AdminInputs.php:354
 msgid "Featured products from the store"
 msgstr "Hervorgehobene Produkte aus dem Konsum"
 
-#: Bufu_Artists.php:619 Bufu_Artists.php:686
+#: Bufu_Artists.php:622 Bufu_Artists.php:689
 #, php-format
 msgid "Post type already exists: `%s`"
 msgstr "Der Post-Type `%s` existiert bereits"
 
-#: Bufu_Artists.php:629
+#: Bufu_Artists.php:632
 msgid "Manage an artist's portfolio information"
 msgstr "Dieses Plugin wird benötigt, um Künstlerprofile zu verwalten"
 
-#: Bufu_Artists.php:654
+#: Bufu_Artists.php:657
 msgid "An artist's personal website"
 msgstr "Website des Künstlers"
 
-#: Bufu_Artists.php:660
+#: Bufu_Artists.php:663
 msgid "Internal sort string"
 msgstr "Interner Sortierwert"
 
-#: Bufu_Artists.php:666 admin/AdminInputs.php:264
+#: Bufu_Artists.php:669 admin/AdminInputs.php:264
 msgid "Profile stage image"
 msgstr "Profilbühne Bild"
 
-#: Bufu_Artists.php:672 admin/AdminInputs.php:269
+#: Bufu_Artists.php:675 admin/AdminInputs.php:269
 msgid "Display profile page"
 msgstr "Profilseite anzeigen"
 
-#: Bufu_Artists.php:693 Bufu_Artists.php:694
+#: Bufu_Artists.php:696 Bufu_Artists.php:697
 msgid "Album"
 msgid_plural "Albums"
 msgstr[0] "Album"
 msgstr[1] "Alben"
 
-#: Bufu_Artists.php:696
+#: Bufu_Artists.php:699
 msgid "Manage an album"
 msgstr "Album verwalten"
 
-#: Bufu_Artists.php:725
+#: Bufu_Artists.php:728
 msgid "The album release date"
 msgstr "Das Release-Datum"
 
-#: Bufu_Artists.php:731
+#: Bufu_Artists.php:734
 msgid "At which label was the album released"
 msgstr "Auf welchem Label wurde das Album veröffentlicht"
 
-#: Bufu_Artists.php:737 admin/AdminInputs.php:301
+#: Bufu_Artists.php:740 admin/AdminInputs.php:301
 msgid "Product URL"
 msgstr "Produkt URL"
 
-#: Bufu_Artists.php:751 Bufu_Artists.php:752
+#: Bufu_Artists.php:754 Bufu_Artists.php:755
 msgid "Artist Category"
 msgid_plural "Artists Categories"
 msgstr[0] "Künstlerkategorie"
 msgstr[1] "Künstlerkategorien"
 
-#: Bufu_Artists.php:773
+#: Bufu_Artists.php:776
 #, php-format
 msgid "Error in plugin %s: %s"
 msgstr "Fehler im Plugin %s: %s"
@@ -213,25 +213,26 @@ msgstr "Bild wählen"
 msgid "Not selected"
 msgstr "Nicht ausgewählt"
 
-#: widgets/Bufu_Widget_ArtistsSearch.php:19
-#: widgets/Bufu_Widget_ArtistsSearch.php:78
-#: widgets/Bufu_Widget_ArtistsSearch.php:85
+#: widgets/Bufu_Widget_ArtistsSearch.php:14
+#: widgets/Bufu_Widget_ArtistsSearch.php:65
+#: widgets/Bufu_Widget_ArtistsSearch.php:72
 msgid "Search in artists"
 msgstr "Suche in Künstlern"
 
-#: widgets/Bufu_Widget_ArtistsSearch.php:22
+#: widgets/Bufu_Widget_ArtistsSearch.php:17
 msgid "Search only within artist posts"
 msgstr "Nur in den Künstlerprofilen suchen"
 
-#: widgets/Bufu_Widget_ArtistsSearch.php:45
+#: widgets/Bufu_Widget_ArtistsSearch.php:32
 msgid "Search"
 msgstr "Suchen"
 
-#: widgets/Bufu_Widget_ArtistsSearch.php:90
+#: widgets/Bufu_Widget_ArtistsSearch.php:77
+#: widgets/Bufu_Widget_PostArchive.php:92
 msgid "Title"
 msgstr "Titel"
 
-#: widgets/Bufu_Widget_ArtistsSearch.php:94
+#: widgets/Bufu_Widget_ArtistsSearch.php:81
 msgid "Placeholder"
 msgstr "Platzhalter"
 
@@ -272,6 +273,50 @@ msgstr "Tickets bestellen"
 #: widgets/Bufu_Widget_EventsByArtist.php:100
 msgid "Events"
 msgstr "Events"
+
+#: widgets/Bufu_Widget_PostArchive.php:14
+msgid "Configurable Post Archive"
+msgstr "Konfigurierbares Archiv"
+
+#: widgets/Bufu_Widget_PostArchive.php:17
+msgid "Show a post archive with various options"
+msgstr "Ein Archiv mit weiteren Typen zur Auswahl"
+
+#: widgets/Bufu_Widget_PostArchive.php:66
+msgid "Post Archive"
+msgstr "Mitteilungsarchiv"
+
+#: widgets/Bufu_Widget_PostArchive.php:97
+msgid "Post Type"
+msgstr "Post Type"
+
+#: widgets/Bufu_Widget_PostArchive.php:102
+msgid "Type"
+msgstr "Typ"
+
+#: widgets/Bufu_Widget_PostArchive.php:104
+msgid "Yearly"
+msgstr "Jährlich"
+
+#: widgets/Bufu_Widget_PostArchive.php:105
+msgid "Monthly"
+msgstr "Monatlich"
+
+#: widgets/Bufu_Widget_PostArchive.php:106
+msgid "Weekly"
+msgstr "Wöchentlich"
+
+#: widgets/Bufu_Widget_PostArchive.php:107
+msgid "Posts ordered by date"
+msgstr "Alle Posts nach Datum sortiert"
+
+#: widgets/Bufu_Widget_PostArchive.php:108
+msgid "Posts ordered by title"
+msgstr "Alle Posts nach Titel sortiert"
+
+#: widgets/Bufu_Widget_PostArchive.php:114
+msgid "Include post count"
+msgstr "Beitragsanzahl anzeigen"
 
 #~ msgid "Starts with letter"
 #~ msgstr "Beginnt mit Buchstabe"
