@@ -44,7 +44,8 @@ class Bufu_Widget_PostArchive extends WP_Widget
 			'post_type'       => $postType,
             'show_post_count' => $showCounters,
             'echo'            => false,
-            'before'          =>'<li class="nav-item">',
+            'format'          => 'custom',
+            'before'          => '<li class="nav-item">',
             'after'           => '</li>',
         ]);
 		echo '</ul>';

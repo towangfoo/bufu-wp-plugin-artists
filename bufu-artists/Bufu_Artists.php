@@ -8,6 +8,7 @@ require_once 'widgets/Bufu_Widget_EventsByArtist.php';
 require_once 'widgets/Bufu_Widget_ArtistsWall.php';
 require_once 'widgets/Bufu_Widget_ArtistsSearch.php';
 require_once 'widgets/Bufu_Widget_PostArchive.php';
+require_once 'widgets/Bufu_Widget_SubpageList.php';
 
 class Bufu_Artists {
 
@@ -225,6 +226,9 @@ class Bufu_Artists {
 
 		$postArchiveWidget = new Bufu_Widget_PostArchive();
 		register_widget( $postArchiveWidget );
+
+		$chroniclesWidget = new Bufu_Widget_SubpageList();
+		register_widget( $chroniclesWidget );
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
