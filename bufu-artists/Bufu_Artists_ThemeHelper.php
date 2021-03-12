@@ -41,9 +41,10 @@ class Bufu_Artists_ThemeHelper
 	 * @param WP_Post|null $artist
 	 * @param int $num
 	 * @param DateTime|null $from
+	 * @param string $categorySlug
 	 * @return WP_Post[]
 	 */
-	public function loadNextConcerts(WP_Post $artist = null, $num = 10, \DateTime $from = null)
+	public function loadNextConcerts(WP_Post $artist = null, $num = 10, \DateTime $from = null, $categorySlug = null)
 	{
 		if ( !$from ) {
 			$from = new \DateTime();
@@ -55,6 +56,10 @@ class Bufu_Artists_ThemeHelper
 
 		if ( $artist instanceof WP_Post && $artist->ID > 0 ) {
 			$query->where('meta_equals', '_bufu_artist_selectArtist', $artist->ID ); // works despite the obvious API inconsistency
+		}
+
+		if ($categorySlug) {
+			$query->where('term_slug_in', 'tribe_events_cat',  [$categorySlug]);
 		}
 
 		$query->order_by('event_date', "ASC")
