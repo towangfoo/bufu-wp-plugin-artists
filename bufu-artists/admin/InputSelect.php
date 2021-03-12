@@ -81,6 +81,8 @@ class InputSelect extends AbstractInput implements InputInterface
 		$options = $this->getOptions();
 		$multiple = $this->isMultiple();
 
+		$addEmptyOption = isset($options['add_empty_option']) ? (bool) $options['add_empty_option'] : true;
+
 		$name = $this->getName();
 		if ($multiple) {
 			$name .= '[]';
@@ -99,7 +101,10 @@ class InputSelect extends AbstractInput implements InputInterface
 
 		// render
 		$html  = "<select name=\"{$name}\"{$disabled}>";
-		$html .= "<option>{$emptyOption}</option>";
+		if ($addEmptyOption) {
+			$html .= "<option>{$emptyOption}</option>";
+		}
+
 		foreach ($valueOptions as $val => $label) {
 			if (is_int($currentValue)) {
 				$val = intval($val, 10);

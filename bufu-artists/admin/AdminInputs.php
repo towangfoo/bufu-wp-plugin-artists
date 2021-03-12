@@ -60,6 +60,18 @@ class AdminInputs
 				}
 			}
 		}
+		else if ('page' === $thePostType) {
+			foreach ($this->getInputFieldsPages() as $key => $options) {
+				$name = $this->getInputName($key, $options);
+				$input = $this->createInput($name, $options);
+				if ($input instanceof WP_Error) {
+					$inputErrors[] = $input;
+				}
+				else {
+					$inputReferences[] = $input;
+				}
+			}
+		}
 		else if (array_key_exists($thePostType, $inputs)) {
 			foreach ($inputs[$thePostType] as $key => $options) {
 				$name = $this->getInputName($key, $options);
@@ -95,6 +107,14 @@ class AdminInputs
 				if ($name === '_bufu_artist_featuredProducts') {
 					$this->mainClass->scrapeFeaturedProductsFromStore($_POST[$name]);
 				}
+			}
+		}
+
+		// only handle pages
+		else if ($post->post_type === 'page') {
+			foreach ($this->getInputFieldsPages() as $k => $i) {
+				$name = $this->getInputName($k, $i);
+				update_post_meta($post->ID, $name, $_POST[$name]);
 			}
 		}
 
@@ -357,6 +377,22 @@ class AdminInputs
 				'multiple' => true,
 				'min'      => 3,
 				'max'      => 12,
+			],
+		];
+	}
+
+	private function getInputFieldsPages()
+	{
+		return [
+			'pageShowChildren' => [
+				'post_type' => 'page',
+				'type'      => 'select',
+				'title'     => __('Show children pages?', 'bufu-artists'),
+				'add_empty_option' => false,
+				'value_options' => [
+					'0' => __('No',  'bufu-artists'),
+					'1' => __('Yes', 'bufu-artists'),
+				],
 			],
 		];
 	}
