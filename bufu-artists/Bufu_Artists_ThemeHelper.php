@@ -141,7 +141,8 @@ class Bufu_Artists_ThemeHelper
 	public function loadRecentPosts($num, $categorySlug = null)
 	{
 		$params = [
-			'numberposts' => $num,
+			'posts_per_page' => $num,
+			'nopaging'    => false,
 			'orderby'     => 'date',
 			'order'       => 'DESC',
 			'post_type'   => 'post',
@@ -151,7 +152,9 @@ class Bufu_Artists_ThemeHelper
 			$params['category_name'] = $categorySlug;
 		}
 
-		return get_posts($params);
+		$query = new WP_Query($params);
+
+		return $query->get_posts();
 	}
 
 	/**
