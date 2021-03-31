@@ -283,7 +283,9 @@ class Bufu_Artists {
 	public function hook_tribe_filter_bar_context_locations( array $locations )
 	{
 		// Read the filter selected values, if any, from the URL request vars.
-		$locations['bufu_artist_filter'] = [ 'read' => [ Tribe__Context::REQUEST_VAR => 'bufuartist' ], ];
+		$locations['bufu_artist_filter'] = [
+            'read' => [ Tribe__Context::REQUEST_VAR => 'tribe_bufu_artist_filter' ]
+        ];
 
 		return $locations;
 	}

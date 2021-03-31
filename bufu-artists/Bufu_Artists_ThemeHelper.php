@@ -100,7 +100,7 @@ class Bufu_Artists_ThemeHelper
 	}
 
 	/**
-	 * Get a lst of all visible artists.
+	 * Get a list of all visible artists.
 	 * @return WP_Post[]
 	 */
 	public function loadAllVisibleArtists($random = false)
