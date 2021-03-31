@@ -309,7 +309,7 @@ class AdminInputs
 //				'context' => 'side'
 			],
 			'albumRelease' => [
-				'type'  => 'date',
+				'type'  => 'text',
 				'title' => __('Release date', 'bufu-artists'),
 			],
 			'albumLabel' => [
