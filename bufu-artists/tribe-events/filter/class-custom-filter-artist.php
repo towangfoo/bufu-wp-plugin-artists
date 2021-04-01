@@ -18,10 +18,13 @@ class Artist_Custom_Filter extends Tribe__Events__Filterbar__Filter {
 	 * @return array<string,string> A map of the available values relating values to their human-readable form.
 	 */
 	protected function get_values() {
+
+		$isPastDisplayMode = 'past' === $this->context->get( 'event_display_mode', false );
+
 		$values = [];
-		foreach (bufu_artists()->getArtistsSelectOptions() as $id => $name) {
+		foreach (bufu_artists()->getArtistsSelectOptionsHavingConcerts( !$isPastDisplayMode ) as $id => $name) {
 			$values[] = [
-				'name' => $name,
+				'name'  => $name,
 				'value' => $id,
 			];
 		}
@@ -36,13 +39,9 @@ class Artist_Custom_Filter extends Tribe__Events__Filterbar__Filter {
 	 * Specifically, this filter will JOIN on the post meta table to use the events start time and all-day information.
 	 */
 	protected function setup_join_clause() {
-		add_filter( 'posts_join', [ 'Tribe__Events__Query', 'posts_join' ], 10, 2 );
-
 		global $wpdb;
 
-		// Use a LEFT JOIN here to have `null` `post_id` results we'll be able to look up in the WHERE clause.
-		$this->joinClause .= " LEFT JOIN {$wpdb->postmeta} AS bufu_artist " .
-			"ON ( {$wpdb->posts}.ID = bufu_artist.post_id AND bufu_artist.meta_key = '_bufu_artists_selectArtist' )";
+		$this->joinClause .= " LEFT JOIN {$wpdb->postmeta} AS bufu_artist ON {$wpdb->posts}.ID = bufu_artist.post_id";
 	}
 
 	/**
@@ -56,9 +55,10 @@ class Artist_Custom_Filter extends Tribe__Events__Filterbar__Filter {
 	protected function setup_where_clause() {
 		global $wpdb;
 
-		$clause = $wpdb->prepare( 'bufu_artist.meta_value = %s', $this->currentValue );
+		$clause1 = $wpdb->prepare( 'bufu_artist.meta_key = %s', '_bufu_artists_selectArtist' );
+		$clause2 = $wpdb->prepare( 'bufu_artist.meta_value = %s', $this->currentValue );
 
-		$this->whereClause .= ' AND (' . $clause . ')';
+		$this->whereClause .= ' AND (' . $clause1 . ' AND '. $clause2 .')';
 	}
 
 }

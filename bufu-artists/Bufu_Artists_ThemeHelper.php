@@ -18,6 +18,12 @@ class Bufu_Artists_ThemeHelper
 	 */
 	private $_artistsSelectOptions;
 
+	/**
+	 * Instance cache
+	 * @var array
+	 */
+	private $_artistsSelectOptionsHavingConcerts;
+
 	public function __construct(Bufu_Artists $mainClass)
 	{
 		$this->bufuArtists = $mainClass;
@@ -34,6 +40,51 @@ class Bufu_Artists_ThemeHelper
 		}
 		return $this->_artistsSelectOptions;
 	}
+
+	/**
+	 * Get a list of artist names for use as select options, with the ID as the array key.
+	 * This only gets artists that have events related to them.
+	 * @param bool $todayOrInTheFuture when true, only include artists with concerts starting today or in the future
+	 * @return array
+	 */
+	public function getArtistsSelectOptionsHavingConcerts($todayOrInTheFuture = true)
+	{
+		if (!is_array($this->_artistsSelectOptionsHavingConcerts)) {
+			global $wpdb;
+
+			$postTypeEvent = Bufu_Artists::$postTypeNameEvent;
+
+			/** @var $queryPartInTheFuture array['<join clause>', '<where clause>'] */
+			$queryPartInTheFuture = ['', ''];
+
+			if ($todayOrInTheFuture) {
+				$dt = new \DateTime();
+				$dt->setTime(0,0,0);
+				$now = $dt->format('Y-m-d H:i:s');
+
+				$queryPartInTheFuture = [
+					"LEFT JOIN {$wpdb->postmeta} as EventMeta2 ON Event.ID = EventMeta2.post_id",
+					"AND EventMeta2.meta_key = '_EventStartDate' AND CAST(EventMeta2.meta_value as DATETIME) > '{$now}'"
+				];
+			}
+
+			$query = "SELECT DISTINCT EventMeta1.meta_value FROM {$wpdb->posts} as Event LEFT JOIN {$wpdb->postmeta} as EventMeta1 ON Event.ID = EventMeta1.post_id {$queryPartInTheFuture[0]} WHERE Event.post_type = '{$postTypeEvent}' {$queryPartInTheFuture[1]} AND EventMeta1.meta_key = '_bufu_artist_selectArtist'";
+
+			$artistIdsFromDB = $wpdb->get_results( $query );
+			$artistIds = array_map( function($v) { return (int) $v->meta_value; }, $artistIdsFromDB );
+
+			$artists = [];
+			foreach ($this->getArtistsSelectOptions() as $id => $name) {
+				if (in_array($id, $artistIds)) {
+					$artists[$id] = $name;
+				}
+			}
+
+			$this->_artistsSelectOptionsHavingConcerts = $artists;
+		}
+		return $this->_artistsSelectOptionsHavingConcerts;
+	}
+
 
 	/**
 	 * Get a list of next upcoming concerts.
