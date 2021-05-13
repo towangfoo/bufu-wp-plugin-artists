@@ -267,7 +267,7 @@ class AdminInputs
 			$artistName = $post->post_title;
 		}
 		else {
-			$artistName = __("this artist", 'bufu-artist');
+			$artistName = __("this artist", 'bufu-artists');
 		}
 
 		return [
@@ -288,7 +288,7 @@ class AdminInputs
 				'type'      => 'checkbox',
 				'title'     => __('Display profile page', 'bufu-artists'),
 				'context'   => 'side',
-				'labelText' => sprintf(__('Display a profile page for %s', 'bufu-artist'), $artistName),
+				'labelText' => sprintf(__('Display a profile page for %s', 'bufu-artists'), $artistName),
 				'value_on'  => 'yes',
 				'value_off' => 'no',
 			],
