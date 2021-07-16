@@ -82,8 +82,8 @@
                         <input type="checkbox" id="<?php echo $elId ?>" name="<?php echo $formSettings['element_namespace'] ?>[interest][]" value="<?php echo esc_attr($v) ?>"<?php if ((in_array($v, $fields['interest2']['default']) && !is_array($validationValues)) || (is_array($validationValues) && isset($validationValues['interest'])) && in_array($v, $validationValues['interest'])) : ?> checked="checked"<?php endif; ?>> <?php echo esc_html($l) ?>
                     </label>
 				<?php endforeach; ?>
-				<?php if (is_array($validationErrors) && isset($validationErrors['interest'])) : ?>
-                    <div class="invalid-feedback d-block"><?php echo esc_html($validationErrors['interest']) ?></div>
+				<?php if (is_array($validationErrors) && isset($validationErrors['interest2'])) : ?>
+                    <div class="invalid-feedback d-block"><?php echo esc_html($validationErrors['interest2']) ?></div>
 				<?php endif; ?>
             </div>
         </div>
