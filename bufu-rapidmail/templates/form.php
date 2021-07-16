@@ -70,6 +70,25 @@
 			</div>
 		</div>
 	</div>
+    <?php if ($options['show_interest2']) : ?>
+    <div class="form-row">
+        <div class="col-12">
+            <div class="form-group interest-segments">
+                <p class="segments-label"><?php echo $fields['interest2']['label'] ?></p>
+				<?php foreach ($fields['interest2']['options'] as $v => $l) :
+					$elId = $formSettings['element_namespace'] . '-' . 'interest' . '-' . $v;
+					?>
+                    <label for="<?php echo $elId ?>">
+                        <input type="checkbox" id="<?php echo $elId ?>" name="<?php echo $formSettings['element_namespace'] ?>[interest][]" value="<?php echo esc_attr($v) ?>"<?php if ((in_array($v, $fields['interest2']['default']) && !is_array($validationValues)) || (is_array($validationValues) && isset($validationValues['interest'])) && in_array($v, $validationValues['interest'])) : ?> checked="checked"<?php endif; ?>> <?php echo esc_html($l) ?>
+                    </label>
+				<?php endforeach; ?>
+				<?php if (is_array($validationErrors) && isset($validationErrors['interest'])) : ?>
+                    <div class="invalid-feedback d-block"><?php echo esc_html($validationErrors['interest']) ?></div>
+				<?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 
 	<button type="submit" class="btn btn-primary"><?php echo esc_html($options['submit_button_label']) ?></button>
 </form>

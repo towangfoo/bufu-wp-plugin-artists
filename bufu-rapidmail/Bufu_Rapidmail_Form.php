@@ -109,15 +109,23 @@ class Bufu_Rapidmail_Form
 				'label' => __('I want to hear about:', 'bufu-rapidmail'),
 				'options' => [
 					'news'         => __('News', 'bufu-rapidmail'),
-					'schoene'      => 'Gerhard Schöne',     // artist name, no translation needed
-					'gundermann'   => 'Gerhard Gundermann', // artist name, no translation needed
+					'schoene'      => 'Gerhard Schöne',      // artist name, no translation needed
+					'gundermann'   => 'Gerhard Gundermann',  // artist name, no translation needed
+					'reiser'       => 'Rio Reiser',          // artist name, no translation needed
+					'scherben'     => 'Ton Steine Scherben', // artist name, no translation needed
+				],
+				'default' => ['news', 'schoene', 'gundermann', 'reiser', 'scherben']
+			],
+			'interest2'  => [
+				'label' => __('I am looking for press or event organizer information:', 'bufu-rapidmail'),
+				'options' => [
 					'print'        => __('Medien Print', 'bufu-rapidmail'),
 					'radio'        => __('Medien Radio', 'bufu-rapidmail'),
 					'fernsehen'    => __('Medien Fernsehen', 'bufu-rapidmail'),
 					'kirchen'      => __('Veranstalter Kirchen', 'bufu-rapidmail'),
 					'veranstalter' => __('Veranstalter', 'bufu-rapidmail'),
 				],
-				'default' => ['news', 'schoene', 'gundermann']
+				'default' => [ ]
 			],
 		];
 	}
