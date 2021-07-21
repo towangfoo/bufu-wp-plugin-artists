@@ -2,8 +2,9 @@
 
 use Tribe\Events\Filterbar\Views\V2\Filters\Context_Filter;
 
-class Artist_Custom_Filter extends Tribe__Events__Filterbar__Filter {
+class Artist_Custom_Filter extends \Tribe__Events__Filterbar__Filter {
 
+	// Trait required for filters to correctly work with Views V2 code
 	use Context_Filter;
 
 	/*
@@ -11,6 +12,8 @@ class Artist_Custom_Filter extends Tribe__Events__Filterbar__Filter {
      * Available options are `select`, `multiselect`, `checkbox`, `radio`, `range`.
      */
 	public $type = 'select';
+
+	private $_joinAlias = 'BufuArtistPostMeta';
 
 	/**
 	 * Returns the available values this filter will display on the front-end, when the user clicks on it.
@@ -41,7 +44,10 @@ class Artist_Custom_Filter extends Tribe__Events__Filterbar__Filter {
 	protected function setup_join_clause() {
 		global $wpdb;
 
-		$this->joinClause .= " LEFT JOIN {$wpdb->postmeta} AS bufu_artist ON {$wpdb->posts}.ID = bufu_artist.post_id";
+		add_filter( 'posts_join', array( 'Tribe__Events__Query', 'posts_join' ), 10, 2 );
+
+		$and1 = $wpdb->prepare( "{$this->_joinAlias}.meta_key = %s", '_bufu_artist_selectArtist' );
+		$this->joinClause .= " LEFT JOIN {$wpdb->postmeta} AS {$this->_joinAlias} ON ( {$this->_joinAlias}.post_id = {$wpdb->posts}.ID AND {$and1} )";
 	}
 
 	/**
@@ -55,10 +61,8 @@ class Artist_Custom_Filter extends Tribe__Events__Filterbar__Filter {
 	protected function setup_where_clause() {
 		global $wpdb;
 
-		$clause1 = $wpdb->prepare( 'bufu_artist.meta_key = %s', '_bufu_artists_selectArtist' );
-		$clause2 = $wpdb->prepare( 'bufu_artist.meta_value = %s', $this->currentValue );
-
-		$this->whereClause .= ' AND (' . $clause1 . ' AND '. $clause2 .')';
+		$and1 = $wpdb->prepare( "{$this->_joinAlias}.meta_value = %s", $this->currentValue );
+		$this->whereClause .= " AND {$and1}";
 	}
 
 }

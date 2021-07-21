@@ -266,6 +266,14 @@ class Bufu_Artists {
 		}
 	}
 
+	/**
+	 * @var string the slug name used for the custom artist filter in TEC filterbar.
+	 */
+	private $_customArtistFilterSlug = 'bufu_artist_filter';
+
+	/**
+	 * Create instance of custom filter for TEC filterbar.
+	 */
 	public function hook_tribe_filter_bar_create_filters()
 	{
 		if ( ! class_exists( 'Tribe__Events__Filterbar__Filter' ) ) {
@@ -274,24 +282,33 @@ class Bufu_Artists {
 
 		include_once __DIR__ . '/tribe-events/filter/class-custom-filter-artist.php';
 
-		new Artist_Custom_Filter(
+		new \Artist_Custom_Filter(
 			_n('Artist', 'Artists', 2, 'bufu-artists'),
-			'bufu_artist_filter'
+			$this->_customArtistFilterSlug
 		);
 	}
 
+	/**
+     * For TEC Views v2, integrate into Context and make query params accessible.
+	 * @param array $locations
+	 * @return array
+	 */
 	public function hook_tribe_filter_bar_context_locations( array $locations )
 	{
+		if ( ! class_exists( 'Tribe__Events__Filterbar__Filter' ) ) {
+			return $locations;
+		}
+
 		// Read the filter selected values, if any, from the URL request vars.
-		$locations['bufu_artist_filter'] = [
-            'read' => [ Tribe__Context::REQUEST_VAR => 'tribe_bufu_artist_filter' ]
+		$locations[$this->_customArtistFilterSlug] = [
+            'read' => [ \Tribe__Context::REQUEST_VAR => 'tribe_' . $this->_customArtistFilterSlug ]
         ];
 
 		return $locations;
 	}
 
 	/**
-	 * Add custom filter to filter bar, allowing to filter events by artist.
+	 * Map our  custom filter to TEC filterbar.
 	 * @param array $map
 	 * @return array
 	 */
@@ -303,7 +320,7 @@ class Bufu_Artists {
 
 		include_once __DIR__ . '/tribe-events/filter/class-custom-filter-artist.php';
 
-		$map['bufu_artist_filter'] = 'Artist_Custom_Filter';
+		$map[$this->_customArtistFilterSlug] = 'Artist_Custom_Filter';
 
 		return $map;
 	}
