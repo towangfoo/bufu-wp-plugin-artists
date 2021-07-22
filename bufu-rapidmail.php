@@ -9,7 +9,7 @@
  * @wordpress-plugin
  * Plugin Name:       BuschFunk Rapidmail
  * Description:       Rapidmail API integration for Newsletter Signup.
- * Version:           1.0.0-rc2
+ * Version:           1.0.0
  * Text Domain:       bufu-rapidmail
  * Domain Path:       /languages
  * Requires at least: 5.5
