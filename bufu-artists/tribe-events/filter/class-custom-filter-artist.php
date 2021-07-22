@@ -44,8 +44,6 @@ class Artist_Custom_Filter extends \Tribe__Events__Filterbar__Filter {
 	protected function setup_join_clause() {
 		global $wpdb;
 
-		add_filter( 'posts_join', array( 'Tribe__Events__Query', 'posts_join' ), 10, 2 );
-
 		$and1 = $wpdb->prepare( "{$this->_joinAlias}.meta_key = %s", '_bufu_artist_selectArtist' );
 		$this->joinClause .= " LEFT JOIN {$wpdb->postmeta} AS {$this->_joinAlias} ON ( {$this->_joinAlias}.post_id = {$wpdb->posts}.ID AND {$and1} )";
 	}
