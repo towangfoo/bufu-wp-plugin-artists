@@ -98,8 +98,8 @@ class Bufu_Artists {
 
 		// add custom filter for artists to tribe filter bar
 		add_action( 'tribe_events_filters_create_filters', [$this, 'hook_tribe_filter_bar_create_filters'] );
-		add_filter( 'tribe_context_locations', [$this, 'hook_tribe_filter_bar_context_locations'] );
-		add_filter( 'tribe_events_filter_bar_context_to_filter_map', [$this, 'hook_tribe_filter_bar_map'] );
+		add_filter( 'tribe_context_locations', [$this, 'filter_tribe_filter_bar_context_locations'] );
+		add_filter( 'tribe_events_filter_bar_context_to_filter_map', [$this, 'filter_tribe_filter_bar_map'] );
 
 		// add plugin assets
 		add_action( 'admin_enqueue_scripts', [$this, 'hook_admin_enqueue_scripts'] );
@@ -293,7 +293,7 @@ class Bufu_Artists {
 	 * @param array $locations
 	 * @return array
 	 */
-	public function hook_tribe_filter_bar_context_locations( array $locations )
+	public function filter_tribe_filter_bar_context_locations( array $locations )
 	{
 		if ( ! class_exists( 'Tribe__Events__Filterbar__Filter' ) ) {
 			return $locations;
@@ -312,7 +312,7 @@ class Bufu_Artists {
 	 * @param array $map
 	 * @return array
 	 */
-	public function hook_tribe_filter_bar_map( array $map )
+	public function filter_tribe_filter_bar_map( array $map )
 	{
 		if ( ! class_exists( 'Tribe__Events__Filterbar__Filter' ) ) {
 			return $map;
