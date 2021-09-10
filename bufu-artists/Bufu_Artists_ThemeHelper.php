@@ -360,4 +360,32 @@ class Bufu_Artists_ThemeHelper
 
 		return $letters;
 	}
+
+	/**
+	 * Get the name of an artist from the ID passed via a GET query parameter.
+	 * @param string $paramName
+	 * @return array|null
+	 */
+	public function getArtistNameFromQueryParamArtistId($paramName)
+	{
+		if (! array_key_exists($paramName, $_GET)) {
+			return null;
+		}
+
+		$artists = $this->getArtistsSelectOptions();
+
+		$id = intval($_GET[$paramName][0]);
+		if (! is_integer($id)) {
+			return null;
+		}
+
+		if (array_key_exists($id, $artists)) {
+			return [
+				'id'   => $id,
+				'name' => $artists[$id]
+			];
+		} else {
+			return null;
+		}
+	}
 }
