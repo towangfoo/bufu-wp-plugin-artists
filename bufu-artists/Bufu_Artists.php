@@ -15,6 +15,8 @@ class Bufu_Artists {
 	public static $postTypeNameArtist = 'bufu_artist';
 	public static $postTypeNameAlbum  = 'bufu_album';
 	public static $postTypeNameEvent  = 'tribe_events';
+	public static $postTypeNameInterview = 'bufu_interview';
+	public static $postTypeNameReview = 'bufu_review';
 
 	private static $translationSlug = 'bufu-artists';
 
@@ -53,6 +55,8 @@ class Bufu_Artists {
 				'artist' => self::$postTypeNameArtist,
 				'album'  => self::$postTypeNameAlbum,
 				'event'  => self::$postTypeNameEvent,
+                'interview' => self::$postTypeNameInterview,
+                'review' => self::$postTypeNameReview,
 			]
 		], $this);
 
@@ -78,14 +82,20 @@ class Bufu_Artists {
 
 		// hook into tribe_events_calendar on saving events (data migration)
 		// @TODO: remove later, when production is stable
-		add_action( 'tribe_events_event_save', [$this, 'hook_tribe_events_event_save'] );
+//		add_action( 'tribe_events_event_save', [$this, 'hook_tribe_events_event_save'] );
 
 		// display custom columns in admin post lists
 		add_filter( 'manage_bufu_album_posts_columns', [$this, 'filter_manage_bufu_album_posts_columns'] );
+		add_filter( 'manage_bufu_interview_posts_columns', [$this, 'filter_manage_bufu_interview_posts_columns'] );
+		add_filter( 'manage_bufu_review_posts_columns', [$this, 'filter_manage_bufu_review_posts_columns'] );
 		add_filter( 'manage_tribe_events_posts_columns', [$this, 'filter_manage_tribe_events_posts_columns'] );
 		add_action( 'manage_bufu_album_posts_custom_column', [$this, 'hook_manage_posts_custom_column'], 10, 2 );
+		add_action( 'manage_bufu_interview_posts_custom_column', [$this, 'hook_manage_posts_custom_column'], 10, 2 );
+		add_action( 'manage_bufu_review_posts_custom_column', [$this, 'hook_manage_posts_custom_column'], 10, 2 );
 		add_action( 'manage_tribe_events_posts_custom_column', [$this, 'hook_manage_posts_custom_column'], 10, 2 );
 		add_action( 'manage_edit-bufu_album_sortable_columns', [$this, 'hook_register_sortable_columns'], 10, 2 );
+		add_action( 'manage_edit-bufu_interview_sortable_columns', [$this, 'hook_register_sortable_columns'], 10, 2 );
+		add_action( 'manage_edit-bufu_review_sortable_columns', [$this, 'hook_register_sortable_columns'], 10, 2 );
 		add_action( 'manage_edit-tribe_events_sortable_columns', [$this, 'hook_register_sortable_columns'] );
 		add_filter( 'posts_clauses', [$this, 'filter_posts_clauses'], 1000, 2 ); // we need to be last on this filter (i.e. after the-events-calendar plugin)
 
@@ -127,6 +137,20 @@ class Bufu_Artists {
 
 		// register custom post type for albums
 		$err = $this->addCustomPostTypeAlbum();
+		if ($err instanceof WP_Error) {
+			echo $this->getErrorMessage($err);
+			return;
+		}
+
+		// register custom post type for interviews
+		$err = $this->addCustomPostTypeInterview();
+		if ($err instanceof WP_Error) {
+			echo $this->getErrorMessage($err);
+			return;
+		}
+
+		// register custom post type for reviews
+		$err = $this->addCustomPostTypeReview();
 		if ($err instanceof WP_Error) {
 			echo $this->getErrorMessage($err);
 			return;
@@ -234,37 +258,37 @@ class Bufu_Artists {
 	// -----------------------------------------------------------------------------------------------------------------
 	// ----- hooks into Tribe Events / Filter Bar plugins  -------------------------------------------------------------
 
-	/**
-	 * Called, when a tribe_event is being saved through the v1 REST API.
-	 * This should only happen upon data migration.
-	 * The v1 API does not handle meta fields in the UPDATE call, so this is done here.
-	 * @param int $eventId
-	 */
-	public function hook_tribe_events_event_save($eventId)
-	{
-		$wp   = $this->getGlobalWP();
-		$data = $_POST;
-
-		// check that we got the event id
-		if (!is_int($eventId) || $eventId < 1) {
-			return;
-		}
-
-		// check that the request was made through the REST v1 API
-		if (strpos($wp->request, 'wp-json/tribe/events/v1') !== 0) {
-			return;
-		}
-
-		// check for meta data in $_POST
-		if (!is_array($data) || !array_key_exists('meta', $data)) {
-			return;
-		}
-
-		// save
-		foreach ($data['meta'] as $f => $v) {
-			update_post_meta($eventId, $f, $v);
-		}
-	}
+//	/**
+//	 * Called, when a tribe_event is being saved through the v1 REST API.
+//	 * This should only happen upon data migration.
+//	 * The v1 API does not handle meta fields in the UPDATE call, so this is done here.
+//	 * @param int $eventId
+//	 */
+//	public function hook_tribe_events_event_save($eventId)
+//	{
+//		$wp   = $this->getGlobalWP();
+//		$data = $_POST;
+//
+//		// check that we got the event id
+//		if (!is_int($eventId) || $eventId < 1) {
+//			return;
+//		}
+//
+//		// check that the request was made through the REST v1 API
+//		if (strpos($wp->request, 'wp-json/tribe/events/v1') !== 0) {
+//			return;
+//		}
+//
+//		// check for meta data in $_POST
+//		if (!is_array($data) || !array_key_exists('meta', $data)) {
+//			return;
+//		}
+//
+//		// save
+//		foreach ($data['meta'] as $f => $v) {
+//			update_post_meta($eventId, $f, $v);
+//		}
+//	}
 
 	/**
 	 * @var string the slug name used for the custom artist filter in TEC filterbar.
@@ -326,7 +350,7 @@ class Bufu_Artists {
 	}
 
 	/**
-	 * Populate custom columns in post list for bufu_album anf tribe_events
+	 * Populate custom columns in post list for bufu_album ans tribe_events
 	 * @param $column
 	 * @param $postId
 	 */
@@ -348,6 +372,15 @@ class Bufu_Artists {
 		}
 		elseif ( $column === 'publisher' ) {
 			echo get_post_meta($postId, '_bufu_artist_albumLabel', true);
+		}
+        elseif ( $column === 'interview_source' ) {
+			echo get_post_meta($postId, '_bufu_artist_interview_source', true);
+		}
+        elseif ( $column === 'review_source' ) {
+			echo get_post_meta($postId, '_bufu_artist_review_source', true);
+		}
+        elseif ( $column === 'review_author' ) {
+			echo get_post_meta($postId, '_bufu_artist_review_author', true);
 		}
 	}
 	
@@ -460,6 +493,42 @@ class Bufu_Artists {
 	}
 
 	/**
+	 * Custom columns for list of interviews
+	 */
+	public function filter_manage_bufu_interview_posts_columns( $columns )
+	{
+		$columns = [
+			'cb'        => $columns['cb'],
+			'title'     => $columns['title'],
+			'artist'    => _n('Artist', 'Artists', 1, 'bufu-artists'),
+			'interview_source' => __('Source information', 'bufu-artists'),
+			'comments'  => $columns['comments'],
+			'date'      => $columns['date'],
+		];
+
+		return $columns;
+	}
+
+	/**
+	 * Custom columns for list of reviews
+	 */
+	public function filter_manage_bufu_review_posts_columns( $columns )
+	{
+		$columns = [
+			'cb'        => $columns['cb'],
+			'title'     => $columns['title'],
+			'artist'    => _n('Artist', 'Artists', 1, 'bufu-artists'),
+			'review_source'    => __('Source information', 'bufu-artists'),
+			'review_author' => __('Author information', 'bufu-artists'),
+			'comments'  => $columns['comments'],
+//			'author'    => $columns['author'],
+			'date'      => $columns['date'],
+		];
+
+		return $columns;
+	}
+
+	/**
 	 * Custom columns for list of events
 	 */
 	public function filter_manage_tribe_events_posts_columns( $columns )
@@ -477,8 +546,11 @@ class Bufu_Artists {
 	public function hook_register_sortable_columns( $columns )
 	{
 		$columns['artist']    = 'artist_name';
-		$columns['publisher'] = 'publisher';
-		$columns['release']   = 'release';
+		$columns['publisher'] = 'publisher'; // in albums only
+		$columns['release']   = 'release';   // in albums only
+		$columns['interview_source'] = 'interview_source';   // in interviews only
+		$columns['review_source'] = 'review_source';   // in reviews only
+		$columns['review_author'] = 'review_author';   // in reviews only
 
 		return $columns;
 	}
@@ -525,7 +597,7 @@ class Bufu_Artists {
 	 */
 	public function hook_admin_posts_add_filterby()
 	{
-	    $availableForTypes = [self::$postTypeNameAlbum, self::$postTypeNameEvent];
+	    $availableForTypes = [self::$postTypeNameAlbum, self::$postTypeNameEvent, self::$postTypeNameInterview, self::$postTypeNameReview];
 
 		$type = 'post';
 		if (isset($_GET['post_type'])) {
@@ -763,6 +835,118 @@ class Bufu_Artists {
 			'description'  => __('Product URL', 'bufu-artists'),
 			'show_in_rest' => true,
 		]);
+
+		return ($postType instanceof WP_Error) ? $postType : null;
+	}
+
+	/**
+	 * Add custom post type for interviews.
+	 * @return WP_Error|null
+	 */
+	private function addCustomPostTypeInterview()
+	{
+		if (post_type_exists(self::$postTypeNameInterview)) {
+			return new WP_Error(sprintf(__('Post type already exists: `%s`', 'bufu-artists'), self::$postTypeNameInterview));
+		}
+
+		$postType = register_post_type(self::$postTypeNameInterview, [
+			'labels' => [
+				'name'          => _n('Interview', 'Interviews', 2, 'bufu-artists'),
+				'singular_name' => _n('Interview', 'Interviews', 1, 'bufu-artists')
+			],
+			'description'       => __('Manage interviews', 'bufu-artists'),
+			'rewrite'     		=> [ 'slug' => 'interviews' ],
+			'public'            => true,
+			'publicly_queryable'=> true,
+			'has_archive'       => true,
+			'show_ui'           => true,
+			'show_in_nav_menus' => false,
+			'show_in_rest'      => true,
+			'rest_base'         => self::$postTypeNameInterview,
+			'supports'          => [
+				'title',
+				'editor',
+				'comments',
+				'revisions',
+				'author',
+				'excerpt',
+				'page-attributes',
+				'thumbnail',
+			],
+			'capability_type'	=> 'post',
+			'hierarchical' 		=> false,
+		]);
+
+		register_post_meta(self::$postTypeNameInterview, '_bufu_artist_selectArtist', [
+			'single'       => true,
+			'description'  => __('The related artist', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+
+		register_post_meta(self::$postTypeNameInterview, '_bufu_artist_interview_source', [
+			'single'       => true,
+			'description'  => __('Source information', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+
+		return ($postType instanceof WP_Error) ? $postType : null;
+	}
+
+	/**
+	 * Add custom post type for reviews.
+	 * @return WP_Error|null
+	 */
+	private function addCustomPostTypeReview()
+	{
+		if (post_type_exists(self::$postTypeNameReview)) {
+			return new WP_Error(sprintf(__('Post type already exists: `%s`', 'bufu-artists'), self::$postTypeNameReview));
+		}
+
+		$postType = register_post_type(self::$postTypeNameReview, [
+			'labels' => [
+				'name'          => _n('Review', 'Reviews', 2, 'bufu-artists'),
+				'singular_name' => _n('Review', 'Reviews', 1, 'bufu-artists')
+			],
+			'description'       => __('Manage reviews', 'bufu-artists'),
+			'rewrite'     		=> [ 'slug' => 'reviews' ],
+			'public'            => true,
+			'publicly_queryable'=> true,
+			'has_archive'       => true,
+			'show_ui'           => true,
+			'show_in_nav_menus' => false,
+			'show_in_rest'      => true,
+			'rest_base'         => self::$postTypeNameReview,
+			'supports'          => [
+				'title',
+				'editor',
+				'comments',
+				'revisions',
+				'author',
+				'excerpt',
+				'page-attributes',
+				'thumbnail',
+			],
+			'capability_type'	=> 'post',
+			'hierarchical' 		=> false,
+		]);
+
+		register_post_meta(self::$postTypeNameReview, '_bufu_artist_selectArtist', [
+			'single'       => true,
+			'description'  => __('The related artist', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+
+		register_post_meta(self::$postTypeNameReview, '_bufu_artist_review_source', [
+			'single'       => true,
+			'description'  => __('Source information', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+		register_post_meta(self::$postTypeNameReview, '_bufu_artist_review_author', [
+			'single'       => true,
+			'description'  => __('Author information', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+
 
 		return ($postType instanceof WP_Error) ? $postType : null;
 	}

@@ -42,6 +42,8 @@ class AdminInputs
 			$this->getPostTypeArtist() => $this->getInputFieldsArtist(),
 			$this->getPostTypeAlbum()  => $this->getInputFieldsAlbum(),
 			$this->getPostTypeEvent()  => $this->getInputFieldsEvent(),
+			$this->getPostTypeInterview()  => $this->getInputFieldsinterview(),
+			$this->getPostTypeReview() => $this->getInputFieldsReview(),
 		];
 
 		$inputErrors     = [];
@@ -137,6 +139,22 @@ class AdminInputs
 		// only handle event-typed posts
 		else if ($post->post_type === $this->getPostTypeEvent()) {
 			foreach ($this->getInputFieldsEvent() as $k => $i) {
+				$name = $this->getInputName($k, $i);
+				update_post_meta($post->ID, $name, $_POST[$name]);
+			}
+		}
+
+		// only handle interview-typed posts
+		else if ($post->post_type === $this->getPostTypeInterview()) {
+			foreach ($this->getInputFieldsInterview() as $k => $i) {
+				$name = $this->getInputName($k, $i);
+				update_post_meta($post->ID, $name, $_POST[$name]);
+			}
+		}
+
+		// only handle review-typed posts
+		else if ($post->post_type === $this->getPostTypeReview()) {
+			foreach ($this->getInputFieldsReview() as $k => $i) {
 				$name = $this->getInputName($k, $i);
 				update_post_meta($post->ID, $name, $_POST[$name]);
 			}
@@ -340,6 +358,48 @@ class AdminInputs
 	}
 
 	/**
+	 * Define the custom inputs used on the interview post type.
+	 * @return array
+	 */
+	private function getInputFieldsInterview()
+	{
+		return [
+			'selectArtist' => [
+				'type'    => 'select',
+				'title'   => _n('Artist', 'Artists', 1, 'bufu-artists'),
+				'value_options' => $this->getAllArtistsSelectOptions(),
+			],
+			'interview_source' => [
+				'type'    => 'text',
+				'title'   => __('Source information', 'bufu-artists'),
+			]
+		];
+	}
+
+	/**
+	 * Define the custom inputs used on the review post type.
+	 * @return array
+	 */
+	private function getInputFieldsReview()
+	{
+		return [
+			'selectArtist' => [
+				'type'    => 'select',
+				'title'   => _n('Artist', 'Artists', 1, 'bufu-artists'),
+				'value_options' => $this->getAllArtistsSelectOptions(),
+			],
+			'review_source' => [
+				'type'    => 'text',
+				'title'   => __('Source information', 'bufu-artists'),
+			],
+			'review_author' => [
+				'type'    => 'text',
+				'title'   => __('Author information', 'bufu-artists'),
+			]
+		];
+	}
+
+	/**
 	 * Define the custom inputs used on the front page.
 	 * @return array
 	 */
@@ -422,6 +482,24 @@ class AdminInputs
 	private function getPostTypeEvent()
 	{
 		return $this->config['post_type']['event'];
+	}
+
+	/**
+	 * Get the post type identifier for interview
+	 * @return string
+	 */
+	private function getPostTypeInterview()
+	{
+		return $this->config['post_type']['interview'];
+	}
+
+	/**
+	 * Get the post type identifier for review
+	 * @return string
+	 */
+	private function getPostTypeReview()
+	{
+		return $this->config['post_type']['review'];
 	}
 
 	/**

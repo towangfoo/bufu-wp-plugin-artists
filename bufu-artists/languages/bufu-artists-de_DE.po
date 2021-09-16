@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-07-20 12:27+0200\n"
-"PO-Revision-Date: 2021-07-20 12:27+0200\n"
+"POT-Creation-Date: 2021-09-16 12:38+0200\n"
+"PO-Revision-Date: 2021-09-16 12:39+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -15,114 +15,146 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e;_n:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: Bufu_Artists.php:278 Bufu_Artists.php:434 Bufu_Artists.php:450
-#: Bufu_Artists.php:522 Bufu_Artists.php:635 Bufu_Artists.php:636
-#: admin/AdminInputs.php:307 admin/AdminInputs.php:335
-#: widgets/Bufu_Widget_ArtistsWall.php:109
+#: Bufu_Artists.php:310 Bufu_Artists.php:484 Bufu_Artists.php:503
+#: Bufu_Artists.php:520 Bufu_Artists.php:536 Bufu_Artists.php:611
+#: Bufu_Artists.php:724 Bufu_Artists.php:725 admin/AdminInputs.php:325
+#: admin/AdminInputs.php:353 admin/AdminInputs.php:369
+#: admin/AdminInputs.php:388 widgets/Bufu_Widget_ArtistsWall.php:109
 msgid "Artist"
 msgid_plural "Artists"
 msgstr[0] "Künstler"
 msgstr[1] "Künstler"
 
-#: Bufu_Artists.php:435 admin/AdminInputs.php:313
+#: Bufu_Artists.php:485 admin/AdminInputs.php:331
 msgid "Release date"
 msgstr "Release-Datum"
 
-#: Bufu_Artists.php:436 admin/AdminInputs.php:317
+#: Bufu_Artists.php:486 admin/AdminInputs.php:335
 msgid "Release Label"
 msgstr "Release Label / Publisher"
 
-#: Bufu_Artists.php:522
+#: Bufu_Artists.php:504 Bufu_Artists.php:521 Bufu_Artists.php:888
+#: Bufu_Artists.php:941 admin/AdminInputs.php:374 admin/AdminInputs.php:393
+msgid "Source information"
+msgstr "Quellenangabe"
+
+#: Bufu_Artists.php:522 Bufu_Artists.php:946 admin/AdminInputs.php:397
+msgid "Author information"
+msgstr "Autorenangabe"
+
+#: Bufu_Artists.php:611
 #, php-format
 msgid "Filter by %s"
 msgstr "Nach %s filtern"
 
-#: Bufu_Artists.php:523
+#: Bufu_Artists.php:612
 msgid "All artists"
 msgstr "Alle Künstler"
 
-#: Bufu_Artists.php:580 Bufu_Artists.php:728
+#: Bufu_Artists.php:669 Bufu_Artists.php:817 Bufu_Artists.php:882
+#: Bufu_Artists.php:935
 msgid "The related artist"
 msgstr "Der Künstler/Autor/Interpret"
 
-#: Bufu_Artists.php:589
+#: Bufu_Artists.php:678
 msgid "Show links to child pages"
 msgstr "Zeige Links zu untergeordneten Seiten"
 
-#: Bufu_Artists.php:596 admin/AdminInputs.php:366
+#: Bufu_Artists.php:685 admin/AdminInputs.php:426
 msgid "Featured artists"
 msgstr "Hervorgehobene Künstler"
 
-#: Bufu_Artists.php:601 admin/AdminInputs.php:351
+#: Bufu_Artists.php:690 admin/AdminInputs.php:411
 msgid "Artists slider images"
 msgstr "Künstler Slider Bilder"
 
-#: Bufu_Artists.php:606 admin/AdminInputs.php:358
+#: Bufu_Artists.php:695 admin/AdminInputs.php:418
 msgid "Concerts link image"
 msgstr "Konzertbereich Bild"
 
-#: Bufu_Artists.php:611 admin/AdminInputs.php:362
+#: Bufu_Artists.php:700 admin/AdminInputs.php:422
 msgid "Shop link image"
 msgstr "Shopbereich Bereich"
 
-#: Bufu_Artists.php:616 admin/AdminInputs.php:374
+#: Bufu_Artists.php:705 admin/AdminInputs.php:434
 msgid "Featured products from the store"
 msgstr "Hervorgehobene Produkte aus dem Konsum"
 
-#: Bufu_Artists.php:628 Bufu_Artists.php:695
+#: Bufu_Artists.php:717 Bufu_Artists.php:784 Bufu_Artists.php:849
+#: Bufu_Artists.php:902
 #, php-format
 msgid "Post type already exists: `%s`"
 msgstr "Der Post-Type `%s` existiert bereits"
 
-#: Bufu_Artists.php:638
+#: Bufu_Artists.php:727
 msgid "Manage an artist's portfolio information"
 msgstr "Dieses Plugin wird benötigt, um Künstlerprofile zu verwalten"
 
-#: Bufu_Artists.php:663
+#: Bufu_Artists.php:752
 msgid "An artist's personal website"
 msgstr "Website des Künstlers"
 
-#: Bufu_Artists.php:669
+#: Bufu_Artists.php:758
 msgid "Internal sort string"
 msgstr "Interner Sortierwert"
 
-#: Bufu_Artists.php:675 admin/AdminInputs.php:284
+#: Bufu_Artists.php:764 admin/AdminInputs.php:302
 msgid "Profile stage image"
 msgstr "Profilbühne Bild"
 
-#: Bufu_Artists.php:681 admin/AdminInputs.php:289
+#: Bufu_Artists.php:770 admin/AdminInputs.php:307
 msgid "Display profile page"
 msgstr "Profilseite anzeigen"
 
-#: Bufu_Artists.php:702 Bufu_Artists.php:703
+#: Bufu_Artists.php:791 Bufu_Artists.php:792
 msgid "Album"
 msgid_plural "Albums"
 msgstr[0] "Album"
 msgstr[1] "Alben"
 
-#: Bufu_Artists.php:705
+#: Bufu_Artists.php:794
 msgid "Manage an album"
 msgstr "Album verwalten"
 
-#: Bufu_Artists.php:734
+#: Bufu_Artists.php:823
 msgid "The album release date"
 msgstr "Das Release-Datum"
 
-#: Bufu_Artists.php:740
+#: Bufu_Artists.php:829
 msgid "At which label was the album released"
 msgstr "Auf welchem Label wurde das Album veröffentlicht"
 
-#: Bufu_Artists.php:746 admin/AdminInputs.php:321
+#: Bufu_Artists.php:835 admin/AdminInputs.php:339
 msgid "Product URL"
 msgstr "Produkt URL"
 
-#: Bufu_Artists.php:760 Bufu_Artists.php:761
+#: Bufu_Artists.php:854 Bufu_Artists.php:855
+msgid "Interview"
+msgid_plural "Interviews"
+msgstr[0] "Interview"
+msgstr[1] "Interviews"
+
+#: Bufu_Artists.php:857
+msgid "Manage interviews"
+msgstr "Interviews verwalten"
+
+#: Bufu_Artists.php:907 Bufu_Artists.php:908
+msgid "Review"
+msgid_plural "Reviews"
+msgstr[0] "Rezension"
+msgstr[1] "Rezensionen"
+
+#: Bufu_Artists.php:910
+msgid "Manage reviews"
+msgstr "Rezensionen verwalten"
+
+#: Bufu_Artists.php:961 Bufu_Artists.php:962
 msgid "Artist Category"
 msgid_plural "Artists Categories"
 msgstr[0] "Künstlerkategorie"
 msgstr[1] "Künstlerkategorien"
 
-#: Bufu_Artists.php:782
+#: Bufu_Artists.php:983
 #, php-format
 msgid "Error in plugin %s: %s"
 msgstr "Fehler im Plugin %s: %s"
@@ -139,32 +171,32 @@ msgstr "Entfernen"
 msgid "Add item"
 msgstr "Hinzufügen"
 
-#: admin/AdminInputs.php:202
+#: admin/AdminInputs.php:220
 msgid "Choose or Upload Image"
 msgstr "Bild wählen oder hochladen"
 
-#: admin/AdminInputs.php:203
+#: admin/AdminInputs.php:221
 msgid "Use this image"
 msgstr "Bild verwenden"
 
-#: admin/AdminInputs.php:270
+#: admin/AdminInputs.php:288
 msgid "this artist"
 msgstr "Dieser Künstler"
 
-#: admin/AdminInputs.php:276
+#: admin/AdminInputs.php:294
 msgid "Artist website"
 msgstr "Website des Künstlers"
 
-#: admin/AdminInputs.php:280
+#: admin/AdminInputs.php:298
 msgid "Sort string"
 msgstr "Sortierwert (für Künstlerliste)"
 
-#: admin/AdminInputs.php:291
+#: admin/AdminInputs.php:309
 #, php-format
 msgid "Display a profile page for %s"
 msgstr "Zeige die Profilseite von %s an"
 
-#: admin/AdminInputs.php:375
+#: admin/AdminInputs.php:435
 #, php-format
 msgid ""
 "Enter or paste the full product URL from the store. At least %d products "
@@ -173,24 +205,24 @@ msgstr ""
 "Fügen Sie die komplette URL der Produktseite im Konsum ein. Das Layout "
 "benötigt mind. %d Produkte."
 
-#: admin/AdminInputs.php:390
+#: admin/AdminInputs.php:450
 msgid "Show children pages?"
 msgstr "Zeige Links zu untergeordneten Seiten?"
 
-#: admin/AdminInputs.php:393
+#: admin/AdminInputs.php:453
 msgid "No"
 msgstr "Nein"
 
-#: admin/AdminInputs.php:394
+#: admin/AdminInputs.php:454
 msgid "Yes"
 msgstr "Ja"
 
-#: admin/AdminInputs.php:484
+#: admin/AdminInputs.php:562
 #, php-format
 msgid "Missing required option: `%s`"
 msgstr "Missing required option: `%s`"
 
-#: admin/AdminInputs.php:505
+#: admin/AdminInputs.php:583
 #, php-format
 msgid "Unknown input type: `%s`"
 msgstr "Unknown input type: `%s`"
