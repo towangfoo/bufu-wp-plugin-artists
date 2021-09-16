@@ -7,6 +7,8 @@ require_once 'admin/ArtistsSettingsPage.php';
 require_once 'widgets/Bufu_Widget_EventsByArtist.php';
 require_once 'widgets/Bufu_Widget_ArtistsWall.php';
 require_once 'widgets/Bufu_Widget_ArtistsSearch.php';
+require_once 'widgets/Bufu_Widget_InterviewsByArtist.php';
+require_once 'widgets/Bufu_Widget_ReviewsByArtist.php';
 require_once 'widgets/Bufu_Widget_PostArchive.php';
 require_once 'widgets/Bufu_Widget_SubpageList.php';
 
@@ -253,6 +255,14 @@ class Bufu_Artists {
 
 		$chroniclesWidget = new Bufu_Widget_SubpageList();
 		register_widget( $chroniclesWidget );
+
+		$interviewsWidget = new Bufu_Widget_InterviewsByArtist();
+		$interviewsWidget->setThemeHelper($this->getThemeHelper());
+		register_widget( $interviewsWidget );
+
+		$reviewsWidget = new Bufu_Widget_ReviewsByArtist();
+		$reviewsWidget->setThemeHelper($this->getThemeHelper());
+		register_widget( $reviewsWidget );
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------

@@ -388,4 +388,60 @@ class Bufu_Artists_ThemeHelper
 			return null;
 		}
 	}
+
+	/**
+	 * Load a list of interviews related to the given artist.
+	 * @param $artistId
+	 * @param int $limit
+	 * @return WP_Post[]
+	 */
+	public function loadInterviews( WP_Post $artist, $limit = 10)
+	{
+		$params = [
+			'post_type'      => Bufu_Artists::$postTypeNameInterview,
+			'post_status'    => 'publish',
+			'nopaging'       => true,
+			'meta_query'     => [
+				[
+					'key'		=> '_bufu_artist_selectArtist',
+					'value'		=> $artist->ID,
+					'compare'	=> '=',
+				]
+			],
+			'orderby' => 'date',
+			'order'   => 'ASC',
+			'limit'   => $limit
+		];
+
+		$query = new WP_Query($params);
+		return $query->get_posts();
+	}
+
+	/**
+	 * Load a list of reviews related to the given artist.
+	 * @param $artistId
+	 * @param int $limit
+	 * @return WP_Post[]
+	 */
+	public function loadReviews( WP_Post $artist, $limit = 10)
+	{
+		$params = [
+			'post_type'   => Bufu_Artists::$postTypeNameReview,
+			'post_status' => 'publish',
+			'nopaging'    => true,
+			'meta_query'  => [
+				[
+					'key'		=> '_bufu_artist_selectArtist',
+					'value'		=> $artist->ID,
+					'compare'	=> '=',
+				]
+			],
+			'orderby' => 'date',
+			'order'   => 'ASC',
+			'limit'   => $limit
+		];
+
+		$query = new WP_Query($params);
+		return $query->get_posts();
+	}
 }
