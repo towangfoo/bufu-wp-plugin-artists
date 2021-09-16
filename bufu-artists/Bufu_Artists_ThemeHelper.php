@@ -409,7 +409,7 @@ class Bufu_Artists_ThemeHelper
 				]
 			],
 			'orderby' => 'date',
-			'order'   => 'ASC',
+			'order'   => 'DESC',
 			'limit'   => $limit
 		];
 
@@ -437,7 +437,7 @@ class Bufu_Artists_ThemeHelper
 				]
 			],
 			'orderby' => 'date',
-			'order'   => 'ASC',
+			'order'   => 'DESC',
 			'limit'   => $limit
 		];
 

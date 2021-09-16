@@ -66,7 +66,7 @@ class Bufu_Widget_InterviewsByArtist extends WP_Widget
 
 		foreach ($interviews as $interview) {
 		    /** @var $interview WP_Post */
-			$itemUrl    = get_page_link( $interview );
+			$itemUrl    = get_permalink( $interview );
 			$itemSource = get_post_meta( $interview->ID, '_bufu_artist_interview_source' , true);
 
 			echo '<li class="nav-item">';
