@@ -956,6 +956,11 @@ class Bufu_Artists {
 			'description'  => __('Author information', 'bufu-artists'),
 			'show_in_rest' => true,
 		]);
+		register_post_meta(self::$postTypeNameReview, '_bufu_artist_review_type', [
+			'single'       => true,
+			'description'  => __('Review type', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
 
 
 		return ($postType instanceof WP_Error) ? $postType : null;

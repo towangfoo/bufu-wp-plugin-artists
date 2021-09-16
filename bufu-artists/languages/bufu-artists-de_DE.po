@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-09-16 14:36+0200\n"
-"PO-Revision-Date: 2021-09-16 15:18+0200\n"
+"POT-Creation-Date: 2021-09-16 21:37+0200\n"
+"PO-Revision-Date: 2021-09-16 21:37+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -17,28 +17,28 @@ msgstr ""
 
 #: Bufu_Artists.php:320 Bufu_Artists.php:494 Bufu_Artists.php:513
 #: Bufu_Artists.php:530 Bufu_Artists.php:546 Bufu_Artists.php:621
-#: Bufu_Artists.php:734 Bufu_Artists.php:735 admin/AdminInputs.php:325
-#: admin/AdminInputs.php:353 admin/AdminInputs.php:369
-#: admin/AdminInputs.php:388 widgets/Bufu_Widget_ArtistsWall.php:109
+#: Bufu_Artists.php:734 Bufu_Artists.php:735 admin/AdminInputs.php:317
+#: admin/AdminInputs.php:345 admin/AdminInputs.php:361
+#: admin/AdminInputs.php:380 widgets/Bufu_Widget_ArtistsWall.php:109
 msgid "Artist"
 msgid_plural "Artists"
 msgstr[0] "Künstler"
 msgstr[1] "Künstler"
 
-#: Bufu_Artists.php:495 admin/AdminInputs.php:331
+#: Bufu_Artists.php:495 admin/AdminInputs.php:323
 msgid "Release date"
 msgstr "Release-Datum"
 
-#: Bufu_Artists.php:496 admin/AdminInputs.php:335
+#: Bufu_Artists.php:496 admin/AdminInputs.php:327
 msgid "Release Label"
 msgstr "Release Label / Publisher"
 
 #: Bufu_Artists.php:514 Bufu_Artists.php:531 Bufu_Artists.php:898
-#: Bufu_Artists.php:951 admin/AdminInputs.php:374 admin/AdminInputs.php:393
+#: Bufu_Artists.php:951 admin/AdminInputs.php:366 admin/AdminInputs.php:385
 msgid "Source information"
 msgstr "Quellenangabe"
 
-#: Bufu_Artists.php:532 Bufu_Artists.php:956 admin/AdminInputs.php:397
+#: Bufu_Artists.php:532 Bufu_Artists.php:956 admin/AdminInputs.php:389
 msgid "Author information"
 msgstr "Autorenangabe"
 
@@ -98,11 +98,11 @@ msgstr "Website des Künstlers"
 msgid "Internal sort string"
 msgstr "Interner Sortierwert"
 
-#: Bufu_Artists.php:774 admin/AdminInputs.php:302
+#: Bufu_Artists.php:774 admin/AdminInputs.php:294
 msgid "Profile stage image"
 msgstr "Profilbühne Bild"
 
-#: Bufu_Artists.php:780 admin/AdminInputs.php:307
+#: Bufu_Artists.php:780 admin/AdminInputs.php:299
 msgid "Display profile page"
 msgstr "Profilseite anzeigen"
 
@@ -124,7 +124,7 @@ msgstr "Das Release-Datum"
 msgid "At which label was the album released"
 msgstr "Auf welchem Label wurde das Album veröffentlicht"
 
-#: Bufu_Artists.php:845 admin/AdminInputs.php:339
+#: Bufu_Artists.php:845 admin/AdminInputs.php:331
 msgid "Product URL"
 msgstr "Produkt URL"
 
@@ -150,13 +150,17 @@ msgstr[1] "Rezensionen"
 msgid "Manage reviews"
 msgstr "Rezensionen verwalten"
 
-#: Bufu_Artists.php:971 Bufu_Artists.php:972
+#: Bufu_Artists.php:961 admin/AdminInputs.php:393
+msgid "Review type"
+msgstr "Art der Rezension"
+
+#: Bufu_Artists.php:976 Bufu_Artists.php:977
 msgid "Artist Category"
 msgid_plural "Artists Categories"
 msgstr[0] "Künstlerkategorie"
 msgstr[1] "Künstlerkategorien"
 
-#: Bufu_Artists.php:993
+#: Bufu_Artists.php:998
 #, php-format
 msgid "Error in plugin %s: %s"
 msgstr "Fehler im Plugin %s: %s"
@@ -173,30 +177,38 @@ msgstr "Entfernen"
 msgid "Add item"
 msgstr "Hinzufügen"
 
-#: admin/AdminInputs.php:220
+#: admin/AdminInputs.php:212
 msgid "Choose or Upload Image"
 msgstr "Bild wählen oder hochladen"
 
-#: admin/AdminInputs.php:221
+#: admin/AdminInputs.php:213
 msgid "Use this image"
 msgstr "Bild verwenden"
 
-#: admin/AdminInputs.php:288
+#: admin/AdminInputs.php:280
 msgid "this artist"
 msgstr "Dieser Künstler"
 
-#: admin/AdminInputs.php:294
+#: admin/AdminInputs.php:286
 msgid "Artist website"
 msgstr "Website des Künstlers"
 
-#: admin/AdminInputs.php:298
+#: admin/AdminInputs.php:290
 msgid "Sort string"
 msgstr "Sortierwert (für Künstlerliste)"
 
-#: admin/AdminInputs.php:309
+#: admin/AdminInputs.php:301
 #, php-format
 msgid "Display a profile page for %s"
 msgstr "Zeige die Profilseite von %s an"
+
+#: admin/AdminInputs.php:395
+msgid "CD"
+msgstr "CD"
+
+#: admin/AdminInputs.php:396
+msgid "Concert"
+msgstr "Konzert"
 
 #: admin/AdminInputs.php:435
 #, php-format
@@ -395,6 +407,9 @@ msgstr "Zeige Links zu allen Unterseiten einer ausgewählten Seite"
 #: widgets/Bufu_Widget_SubpageList.php:86
 msgid "Parent page"
 msgstr "Übergeordnete Seite"
+
+#~ msgid "Review Type"
+#~ msgstr "Art der Rezension"
 
 #~ msgid "Starts with letter"
 #~ msgstr "Beginnt mit Buchstabe"

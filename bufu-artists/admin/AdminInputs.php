@@ -167,34 +167,26 @@ class AdminInputs
 	 */
 	public function registerCustomMetaFieldsForApi()
 	{
-		// artist
-		$postType = $this->getPostTypeArtist();
-		foreach ($this->getInputFieldsArtist() as $k => $f) {
-			$name = $this->getInputName($k, $f);
-			register_rest_field($postType, $name, [
-				'get_callback' => function($object, $field) {
-					$post_meta = get_post_meta($object['id']);
-					return $post_meta[$field][0];
-				},
-				'update_callback' => function($value, $object, $field) {
-					return ($value) ? update_post_meta($object->ID, $field, $value) : false;
-				}
-			]);
-		}
+		$typeDefinitions = [
+			$this->getPostTypeArtist() => $this->getInputFieldsArtist(),
+			$this->getPostTypeAlbum()  => $this->getInputFieldsAlbum(),
+			$this->getPostTypeInterview()  => $this->getInputFieldsInterview(),
+			$this->getPostTypeReview()  => $this->getInputFieldsReview(),
+		];
 
-		// lyrics
-		$postType = $this->getPostTypeAlbum();
-		foreach ($this->getInputFieldsAlbum() as $k => $f) {
-			$name = $this->getInputName($k, $f);
-			register_rest_field($postType, $name, [
-				'get_callback' => function($object, $field) {
-					$post_meta = get_post_meta($object['id']);
-					return $post_meta[$field][0];
-				},
-				'update_callback' => function($value, $object, $field) {
-					return ($value) ? update_post_meta($object->ID, $field, $value) : false;
-				}
-			]);
+		foreach ($typeDefinitions as $postType => $fields) {
+			foreach ($fields as $k => $f) {
+				$name = $this->getInputName($k, $f);
+				register_rest_field($postType, $name, [
+					'get_callback' => function($object, $field) {
+						$post_meta = get_post_meta($object['id']);
+						return $post_meta[$field][0];
+					},
+					'update_callback' => function($value, $object, $field) {
+						return ($value) ? update_post_meta($object->ID, $field, $value) : false;
+					}
+				]);
+			}
 		}
 	}
 
@@ -395,6 +387,14 @@ class AdminInputs
 			'review_author' => [
 				'type'    => 'text',
 				'title'   => __('Author information', 'bufu-artists'),
+			],
+			'review_type' => [
+				'type'    => 'select',
+				'title'   => __('Review type', 'bufu-artists'),
+				'value_options' => [
+					'cd'      => __('CD', 'bufu-artists'),
+					'konzert' => __('Concert', 'bufu-artists'),
+				]
 			]
 		];
 	}
