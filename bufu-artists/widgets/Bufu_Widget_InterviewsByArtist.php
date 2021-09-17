@@ -1,9 +1,11 @@
 <?php
 
+require_once 'Bufu_Widget_ThemeHelperInterface.php';
+
 /**
  * Widget to show interviews related to an artist.
  */
-class Bufu_Widget_InterviewsByArtist extends WP_Widget
+class Bufu_Widget_InterviewsByArtist extends WP_Widget implements Bufu_Widget_ThemeHelperInterface
 {
     /**
      * @var Bufu_Artists_ThemeHelper
@@ -94,6 +96,10 @@ class Bufu_Widget_InterviewsByArtist extends WP_Widget
 		else {
 			$title = _n( 'Interview', 'Interviews', 2, 'bufu-artists' );
 		}
+
+		// There could also be an option 'limit' to set the maximum number of items shown in the list.
+        // The option is passed in the widget call arguments.
+        // Omitted as a configurable option, will get set to constant 10
 
 		?>
 		<p>

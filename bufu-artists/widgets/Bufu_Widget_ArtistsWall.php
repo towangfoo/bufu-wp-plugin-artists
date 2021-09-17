@@ -1,9 +1,11 @@
 <?php
 
+require_once 'Bufu_Widget_ThemeHelperInterface.php';
+
 /**
  * Widget to show events related to an artist.
  */
-class Bufu_Widget_ArtistsWall extends WP_Widget
+class Bufu_Widget_ArtistsWall extends WP_Widget implements Bufu_Widget_ThemeHelperInterface
 {
     /**
      * @var Bufu_Artists_ThemeHelper

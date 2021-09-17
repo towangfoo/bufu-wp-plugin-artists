@@ -4,6 +4,7 @@ require_once 'Bufu_Artists_Scraper.php';
 require_once 'Bufu_Artists_ThemeHelper.php';
 require_once 'admin/AdminInputs.php';
 require_once 'admin/ArtistsSettingsPage.php';
+require_once 'widgets/Bufu_Widget_ThemeHelperInterface.php';
 require_once 'widgets/Bufu_Widget_EventsByArtist.php';
 require_once 'widgets/Bufu_Widget_ArtistsWall.php';
 require_once 'widgets/Bufu_Widget_ArtistsSearch.php';
@@ -12,6 +13,12 @@ require_once 'widgets/Bufu_Widget_ReviewsByArtist.php';
 require_once 'widgets/Bufu_Widget_PostArchive.php';
 require_once 'widgets/Bufu_Widget_SubpageList.php';
 
+/**
+ * Class Bufu_Artists.
+ * The main class that provides all hooks into WP and ties the plugin's functionality together.
+ *
+ * @TODO Needs refactoring into separate classes for improved feature scope
+ */
 class Bufu_Artists {
 
 	public static $postTypeNameArtist = 'bufu_artist';
@@ -40,7 +47,7 @@ class Bufu_Artists {
 	/**
 	 * @var ArtistsSettingsPage
 	 */
-	private $adminSettingsPage;
+//	private $adminSettingsPage;
 
 	/**
 	 * @var bool
@@ -235,34 +242,32 @@ class Bufu_Artists {
 	}
 
 	/**
-	 * When initializing widgets.
+	 * When initializing widgets, register widgets provided by this plugin.
 	 */
 	public function hook_widgets_init()
 	{
-		$eventsWidget = new Bufu_Widget_EventsByArtist();
-		$eventsWidget->setThemeHelper($this->getThemeHelper());
-		register_widget( $eventsWidget );
+	    $widgetClasses = [
+			Bufu_Widget_EventsByArtist::class,
+			Bufu_Widget_ArtistsWall::class,
+			Bufu_Widget_ArtistsSearch::class,
+			Bufu_Widget_PostArchive::class,
+			Bufu_Widget_SubpageList::class,
+			Bufu_Widget_InterviewsByArtist::class,
+			Bufu_Widget_ReviewsByArtist::class,
+        ];
 
-		$artistsWallWidget = new Bufu_Widget_ArtistsWall();
-		$artistsWallWidget->setThemeHelper($this->getThemeHelper());
-		register_widget( $artistsWallWidget );
+	    foreach ($widgetClasses as $w) {
+	        $widget = new $w();
+	        if (! ($widget instanceof WP_Widget) ) {
+	            continue;
+            }
 
-		$artistSearchWidget = new Bufu_Widget_ArtistsSearch();
-		register_widget( $artistSearchWidget );
+	        if ( $widget instanceof Bufu_Widget_ThemeHelperInterface ) {
+				$widget->setThemeHelper($this->getThemeHelper());
+            }
 
-		$postArchiveWidget = new Bufu_Widget_PostArchive();
-		register_widget( $postArchiveWidget );
-
-		$chroniclesWidget = new Bufu_Widget_SubpageList();
-		register_widget( $chroniclesWidget );
-
-		$interviewsWidget = new Bufu_Widget_InterviewsByArtist();
-		$interviewsWidget->setThemeHelper($this->getThemeHelper());
-		register_widget( $interviewsWidget );
-
-		$reviewsWidget = new Bufu_Widget_ReviewsByArtist();
-		$reviewsWidget->setThemeHelper($this->getThemeHelper());
-		register_widget( $reviewsWidget );
+			register_widget( $widget );
+        }
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -360,7 +365,7 @@ class Bufu_Artists {
 	}
 
 	/**
-	 * Populate custom columns in post list for bufu_album ans tribe_events
+	 * Populate custom columns in post list for bufu_album and tribe_events
 	 * @param $column
 	 * @param $postId
 	 */
@@ -485,6 +490,8 @@ class Bufu_Artists {
 
 	/**
 	 * Custom columns for list of albums
+	 * @param $columns
+	 * @return array
 	 */
 	public function filter_manage_bufu_album_posts_columns( $columns )
 	{
@@ -504,6 +511,8 @@ class Bufu_Artists {
 
 	/**
 	 * Custom columns for list of interviews
+	 * @param $columns
+	 * @return array
 	 */
 	public function filter_manage_bufu_interview_posts_columns( $columns )
 	{
@@ -521,6 +530,8 @@ class Bufu_Artists {
 
 	/**
 	 * Custom columns for list of reviews
+	 * @param $columns
+	 * @return array
 	 */
 	public function filter_manage_bufu_review_posts_columns( $columns )
 	{
@@ -540,6 +551,8 @@ class Bufu_Artists {
 
 	/**
 	 * Custom columns for list of events
+	 * @param $columns
+	 * @return mixed
 	 */
 	public function filter_manage_tribe_events_posts_columns( $columns )
 	{
@@ -567,6 +580,8 @@ class Bufu_Artists {
 
 	/**
 	 * Add custom filters to query for admin posts list
+	 * @param WP_Query $query
+	 * @return WP_Query
 	 */
 	public function filter_admin_posts_filterby( WP_Query $query )
 	{
@@ -1097,6 +1112,10 @@ class Bufu_Artists {
 		$query->set('meta_query', $queryMeta);
 	}
 
+	/**
+     * Add related artist to a post, if the selectArtist meta field is available.
+	 * @param WP_Post $post
+	 */
 	private function addRelationsToPost(WP_Post $post)
 	{
 		$selectedArtistId = get_post_meta($post->ID, '_bufu_artist_selectArtist', true);
