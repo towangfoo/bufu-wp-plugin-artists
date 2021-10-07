@@ -48,10 +48,16 @@ class Bufu_Widget_EventsByArtist extends WP_Widget implements Bufu_Widget_ThemeH
 			$args['limit'] = 10;
         }
 
-		$events = $this->themeHelper->loadNextConcerts($artist, $args['limit']);
+        $hasMoreEvents = false;
+		$events = $this->themeHelper->loadNextConcerts($artist, $args['limit'] + 1);
 
-		if (count($events) < 1) {
+		$num = count($events);
+		if ( $num < 1 ) {
 		    return;
+        }
+        else if ( $num > $args['limit'] ) {
+		    $hasMoreEvents = true;
+		    $events = current(array_chunk($events, $args['limit'])); // use only the first n items
         }
 
 		$title = apply_filters( 'widget_title', $instance['title'] );
@@ -66,7 +72,7 @@ class Bufu_Widget_EventsByArtist extends WP_Widget implements Bufu_Widget_ThemeH
 		$dateFormat = get_option( 'date_format' );
 		$tz = get_option( 'timezone_string' );
 
-		foreach ($events as $event) {
+		foreach ( $events as $event ) {
 			$startDate = new \DateTime( $event->start_date, new \DateTimeZone($tz) );
 			$dateFormatted =  wp_date( $dateFormat, $startDate->getTimestamp() );
 			$venue = $event->venues[0];
@@ -79,10 +85,20 @@ class Bufu_Widget_EventsByArtist extends WP_Widget implements Bufu_Widget_ThemeH
 			echo '<span class="city">'. esc_html( $venue->city ) .'</span>';
 			echo '</a>';
 			if ( $ticketUrl ) {
-				echo '<a href="'. $ticketUrl .'" target="_blank" class="tickets">'. __("Order tickets", 'bufu-theme') .'</a>';
+				echo '<a href="'. $ticketUrl .'" target="_blank" class="tickets">'. __("Order tickets", 'bufu-artists') .'</a>';
 			}
 			echo '</li>';
 		}
+
+		if ( $hasMoreEvents ) {
+		    $eventsListBaseUrl = tribe_get_listview_link();
+			$eventsListUrl  = "{$eventsListBaseUrl}?tribe_bufu_artist_filter%5B0%5D={$artist->ID}";
+
+			echo '<li class="nav-item">';
+			echo '<a href="'. $eventsListUrl .'">';
+			echo '<span class="show-more">'. __("Show more events", 'bufu-artists') .' &raquo;</span>';
+			echo '</a>';
+        }
 
 		echo '</ul>';
 
