@@ -30,6 +30,18 @@ class Bufu_Artists {
 	private static $translationSlug = 'bufu-artists';
 
 	/**
+     * The name of the custom field that stores the relation to an artist for various post types.
+	 * @var string
+	 */
+	private static $selectArtistRelationCustomFieldName = '_bufu_artist_selectArtist';
+
+	/**
+     * The name of a CSV data field mapped to the artist name / ID.
+	 * @var string
+	 */
+	private static $csvImportFieldMappingNameArtist = 'bufu_related_artist';
+
+	/**
 	 * @var AdminInputs
 	 */
 	private $adminInputs;
@@ -89,10 +101,6 @@ class Bufu_Artists {
 		// hook into query creation using filters
 		add_filter( 'pre_get_posts', [$this, 'filter_pre_get_posts'] );
 
-		// hook into tribe_events_calendar on saving events (data migration)
-		// @TODO: remove later, when production is stable
-//		add_action( 'tribe_events_event_save', [$this, 'hook_tribe_events_event_save'] );
-
 		// display custom columns in admin post lists
 		add_filter( 'manage_bufu_album_posts_columns', [$this, 'filter_manage_bufu_album_posts_columns'] );
 		add_filter( 'manage_bufu_interview_posts_columns', [$this, 'filter_manage_bufu_interview_posts_columns'] );
@@ -119,6 +127,15 @@ class Bufu_Artists {
 		add_action( 'tribe_events_filters_create_filters', [$this, 'hook_tribe_filter_bar_create_filters'] );
 		add_filter( 'tribe_context_locations', [$this, 'filter_tribe_filter_bar_context_locations'] );
 		add_filter( 'tribe_events_filter_bar_context_to_filter_map', [$this, 'filter_tribe_filter_bar_map'] );
+
+		// add artist selection to events calendar import field mapping
+		add_filter( 'tribe_events_importer_event_column_names', [$this, 'filter_tribe_events_importer_event_column_names_mapping'] );
+		add_filter( 'tribe_events_csv_import_event_additional_fields', [$this, 'filter_tribe_events_csv_import_event_additional_fields'] );
+
+		// handle bufu artist import field, when inserting/updating events via import
+        add_filter( 'tribe_events_event_insert_args', [$this, 'filter_tribe_events_importer_event_args_add_custom'] );
+		add_filter( 'tribe_events_event_update_args', [$this, 'filter_tribe_events_importer_event_args_add_custom'] );
+		add_action( 'tribe_events_update_meta', [$this, 'hook_tribe_events_importer_event_update_meta'], 10, 2 );
 
 		// add plugin assets
 		add_action( 'admin_enqueue_scripts', [$this, 'hook_admin_enqueue_scripts'] );
@@ -273,38 +290,6 @@ class Bufu_Artists {
 	// -----------------------------------------------------------------------------------------------------------------
 	// ----- hooks into Tribe Events / Filter Bar plugins  -------------------------------------------------------------
 
-//	/**
-//	 * Called, when a tribe_event is being saved through the v1 REST API.
-//	 * This should only happen upon data migration.
-//	 * The v1 API does not handle meta fields in the UPDATE call, so this is done here.
-//	 * @param int $eventId
-//	 */
-//	public function hook_tribe_events_event_save($eventId)
-//	{
-//		$wp   = $this->getGlobalWP();
-//		$data = $_POST;
-//
-//		// check that we got the event id
-//		if (!is_int($eventId) || $eventId < 1) {
-//			return;
-//		}
-//
-//		// check that the request was made through the REST v1 API
-//		if (strpos($wp->request, 'wp-json/tribe/events/v1') !== 0) {
-//			return;
-//		}
-//
-//		// check for meta data in $_POST
-//		if (!is_array($data) || !array_key_exists('meta', $data)) {
-//			return;
-//		}
-//
-//		// save
-//		foreach ($data['meta'] as $f => $v) {
-//			update_post_meta($eventId, $f, $v);
-//		}
-//	}
-
 	/**
 	 * @var string the slug name used for the custom artist filter in TEC filterbar.
 	 */
@@ -372,7 +357,7 @@ class Bufu_Artists {
 	public function hook_manage_posts_custom_column( $column, $postId )
 	{
 		if ( $column === 'artist' ) {
-			$artistId = get_post_meta($postId, '_bufu_artist_selectArtist', true);
+			$artistId = get_post_meta($postId, self::$selectArtistRelationCustomFieldName, true);
 			$artistList = $this->getThemeHelper()->getArtistsSelectOptions();
 
 			if (array_key_exists($artistId, $artistList)) {
@@ -489,6 +474,94 @@ class Bufu_Artists {
 	}
 
 	/**
+     * Add Artist name mapping option to column mapping definitions dropdown in events importer.
+	 * @param array $mapping
+	 * @return array
+	 */
+	public function filter_tribe_events_importer_event_column_names_mapping(array $mapping = [])
+	{
+	    // add artist name option at the top of the list
+        $newMapping = array_merge([
+            self::$csvImportFieldMappingNameArtist => __( 'Artist name or ID', 'bufu-artists' ),
+        ], $mapping);
+
+        return $newMapping;
+	}
+
+	/**
+     * Add Artist name mapping field to recognized additional fields in events importer.
+     * This makes the importer consider the additional CSV data column, when it is added to the import mapping.
+     * The method filter_tribe_events_importer_event_args_add_custom() can then transform the value into the correct meta field value.
+	 * @param array $fields
+	 * @return array
+	 */
+	public function filter_tribe_events_csv_import_event_additional_fields(array $fields = [])
+	{
+        return array_merge($fields, [
+            self::$csvImportFieldMappingNameArtist => 'bufu_artist (afaict, the value part is irrelevant)'
+        ]);
+    }
+
+	/**
+	 * Add relation to artist in custom meta field upon finalizing the postargs on event import.
+     * This method is called both on create and on update.
+     * Get the artist name or ID from import source and add the custom meta field with the artist ID.
+     * If the artist name is given, do an additional lookup for the ID.
+     * It also sets some common defaults.
+	 * @param array $args
+	 * @return array
+	 */
+	public function filter_tribe_events_importer_event_args_add_custom (array $args = [])
+	{
+        if ( array_key_exists(self::$csvImportFieldMappingNameArtist, $args) ) {
+            $artistId = null;
+            $artistNameOrId = $args[self::$csvImportFieldMappingNameArtist];
+            if (preg_match('/^\d+$/', $artistNameOrId)) {
+                $artistId = intval($artistNameOrId, 10);
+            }
+            else {
+                // do a lookup by name
+                $list = array_flip($this->getThemeHelper()->getArtistsSelectOptions());
+                if ( array_key_exists($artistNameOrId, $list) ) {
+                    $artistId = (int) $list[$artistNameOrId];
+                }
+            }
+
+            if (is_int($artistId) && $artistId > 0) {
+				// set the custom meta field, unset the import mapping field
+				$args[self::$selectArtistRelationCustomFieldName] = $artistId;
+				unset($args[self::$csvImportFieldMappingNameArtist]);
+
+            }
+        }
+
+        // set common defaults
+        $args['comment_status'] = 'open'; // allow comments
+        $args['EventShowMap']   = '1';    // show map link
+
+        return $args;
+	}
+
+	/**
+     * We need to update our custom meta data manually.
+     * The custom data fields are set in filter_tribe_events_importer_event_args_add_custom()
+	 * @param $eventId
+	 * @param array $data
+	 */
+	public function hook_tribe_events_importer_event_update_meta( $eventId, array $data = [] )
+	{
+        $customKeysToUpdate = [
+			self::$selectArtistRelationCustomFieldName
+        ];
+
+        foreach ($customKeysToUpdate as $k) {
+            if (array_key_exists($k, $data)) {
+				update_post_meta($eventId, $k, $data[$k]);
+            }
+        }
+	}
+
+	/**
 	 * Custom columns for list of albums
 	 * @param $columns
 	 * @return array
@@ -587,7 +660,7 @@ class Bufu_Artists {
 	{
 		global $pagenow;
 		if ( is_admin() && $pagenow === 'edit.php' && $query->is_main_query() && isset($_GET['bufu_filterby_artist']) && $_GET['bufu_filterby_artist'] != '' ) {
-            $query->query_vars['meta_key']   = '_bufu_artist_selectArtist';
+            $query->query_vars['meta_key']   = self::$selectArtistRelationCustomFieldName;
             $query->query_vars['meta_value'] = intval($_GET['bufu_filterby_artist']);
 		}
 
@@ -689,7 +762,7 @@ class Bufu_Artists {
 	// ----- private methods -------------------------------------------------------------------------------------------
 
 	private function addCustomMetaForTribeEvents() {
-		register_post_meta('tribe_events', '_bufu_artist_selectArtist', [
+		register_post_meta('tribe_events', self::$selectArtistRelationCustomFieldName, [
 			'single'       => true,
 			'description'  => __('The related artist', 'bufu-artists'),
 			'show_in_rest' => true,
@@ -705,7 +778,7 @@ class Bufu_Artists {
 	}
 
 	private function addCustomMetaForFrontPage() {
-		register_post_meta('post', '_bufu_artist_selectArtist', [
+		register_post_meta('post', self::$selectArtistRelationCustomFieldName, [
 			'single'       => true,
 			'description'  => __('Featured artists', 'bufu-artists'),
 			'show_in_rest' => true,
@@ -837,7 +910,7 @@ class Bufu_Artists {
 			'hierarchical' 		=> false,
 		]);
 
-		register_post_meta(self::$postTypeNameAlbum, '_bufu_artist_selectArtist', [
+		register_post_meta(self::$postTypeNameAlbum, self::$selectArtistRelationCustomFieldName, [
 			'single'       => true,
 			'description'  => __('The related artist', 'bufu-artists'),
 			'show_in_rest' => true,
@@ -902,7 +975,7 @@ class Bufu_Artists {
 			'hierarchical' 		=> false,
 		]);
 
-		register_post_meta(self::$postTypeNameInterview, '_bufu_artist_selectArtist', [
+		register_post_meta(self::$postTypeNameInterview, self::$selectArtistRelationCustomFieldName, [
 			'single'       => true,
 			'description'  => __('The related artist', 'bufu-artists'),
 			'show_in_rest' => true,
@@ -955,7 +1028,7 @@ class Bufu_Artists {
 			'hierarchical' 		=> false,
 		]);
 
-		register_post_meta(self::$postTypeNameReview, '_bufu_artist_selectArtist', [
+		register_post_meta(self::$postTypeNameReview, self::$selectArtistRelationCustomFieldName, [
 			'single'       => true,
 			'description'  => __('The related artist', 'bufu-artists'),
 			'show_in_rest' => true,
@@ -1118,7 +1191,7 @@ class Bufu_Artists {
 	 */
 	private function addRelationsToPost(WP_Post $post)
 	{
-		$selectedArtistId = get_post_meta($post->ID, '_bufu_artist_selectArtist', true);
+		$selectedArtistId = get_post_meta($post->ID, self::$selectArtistRelationCustomFieldName, true);
 		if ($selectedArtistId) {
 			$artist = get_post((int) $selectedArtistId);
 			if ($artist && $artist->post_type === self::$postTypeNameArtist) {
