@@ -398,7 +398,7 @@ class Bufu_Artists {
 		if ( is_admin() && is_main_query() ) {
 			if ('artist_name' === $query->get('orderby')) {
 				// when using the sort-by `artist` feature in post list column (e.g. albums and events)
-				// set a flag in the query - see self::filter_join_clauses() for implementation
+				// set a flag in the query - see self::filter_post_clauses() for implementation
 				$query->set('bufu_artist_join_artist_sortBy', true);
 			}
 			elseif ('publisher' === $query->get('orderby')) {
@@ -537,7 +537,7 @@ class Bufu_Artists {
 
         // set common defaults
         $args['comment_status'] = 'open'; // allow comments
-        $args['EventShowMap']   = '1';    // show map link
+        $args['EventShowMap']   = '1';    // show map
 
         return $args;
 	}
