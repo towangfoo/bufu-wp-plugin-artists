@@ -43,6 +43,7 @@ class AdminInputs
 			$this->getPostTypeAlbum()  => $this->getInputFieldsAlbum(),
 			$this->getPostTypeEvent()  => $this->getInputFieldsEvent(),
 			$this->getPostTypeInterview()  => $this->getInputFieldsinterview(),
+			$this->getPostTypePlaylist() => $this->getInputFieldsPlaylist(),
 			$this->getPostTypeReview() => $this->getInputFieldsReview(),
 		];
 
@@ -138,6 +139,14 @@ class AdminInputs
 
 		// only handle event-typed posts
 		else if ($post->post_type === $this->getPostTypeEvent()) {
+			foreach ($this->getInputFieldsEvent() as $k => $i) {
+				$name = $this->getInputName($k, $i);
+				update_post_meta($post->ID, $name, $_POST[$name]);
+			}
+		}
+
+		// only handle playlist-typed posts
+		else if ($post->post_type === $this->getPostTypePlaylist()) {
 			foreach ($this->getInputFieldsEvent() as $k => $i) {
 				$name = $this->getInputName($k, $i);
 				update_post_meta($post->ID, $name, $_POST[$name]);
@@ -334,7 +343,7 @@ class AdminInputs
 	}
 
 	/**
-	 * Define the custom inputs used on the lyrics post type.
+	 * Define the custom inputs used on the event post type.
 	 * @return array
 	 */
 	private function getInputFieldsEvent()
@@ -348,6 +357,22 @@ class AdminInputs
 			]
 		];
 	}
+
+	/**
+	 * Define the custom inputs used on the playlist post type.
+	 * @return array
+	 */
+	private function getInputFieldsPlaylist()
+	{
+		return [
+			'selectArtist' => [
+				'type'    => 'select',
+				'title'   => _n('Artist', 'Artists', 1, 'bufu-artists'),
+				'value_options' => $this->getAllArtistsSelectOptions(),
+			]
+		];
+	}
+
 
 	/**
 	 * Define the custom inputs used on the interview post type.
@@ -482,6 +507,15 @@ class AdminInputs
 	private function getPostTypeEvent()
 	{
 		return $this->config['post_type']['event'];
+	}
+
+	/**
+	 * Get the post type identifier for playlists
+	 * @return string
+	 */
+	private function getPostTypePlaylist()
+	{
+		return $this->config['post_type']['playlist'];
 	}
 
 	/**

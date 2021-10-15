@@ -444,4 +444,31 @@ class Bufu_Artists_ThemeHelper
 		$query = new WP_Query($params);
 		return $query->get_posts();
 	}
+
+	/**
+	 * Load the playlist related to an artist
+	 * @param WP_Post $artist
+	 * @return WP_Post|null
+	 */
+	public function getAudioPlaylistByArtist( WP_Post $artist )
+	{
+		$params = [
+			'post_type'   => Bufu_Artists::$postTypeAudioPlaylist,
+			'post_status' => 'publish',
+			'nopaging'    => true,
+			'meta_query'  => [
+				[
+					'key'		=> '_bufu_artist_selectArtist',
+					'value'		=> $artist->ID,
+					'compare'	=> '=',
+				]
+			],
+			'orderby' => 'date',
+			'order'   => 'DESC',
+			'limit'   => 1
+		];
+
+		$query = new WP_Query($params);
+		return current($query->get_posts());
+	}
 }

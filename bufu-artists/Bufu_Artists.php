@@ -9,6 +9,7 @@ require_once 'widgets/Bufu_Widget_EventsByArtist.php';
 require_once 'widgets/Bufu_Widget_ArtistsWall.php';
 require_once 'widgets/Bufu_Widget_ArtistsSearch.php';
 require_once 'widgets/Bufu_Widget_InterviewsByArtist.php';
+require_once 'widgets/Bufu_Widget_PlaylistByArtist.php';
 require_once 'widgets/Bufu_Widget_ReviewsByArtist.php';
 require_once 'widgets/Bufu_Widget_PostArchive.php';
 require_once 'widgets/Bufu_Widget_SubpageList.php';
@@ -23,9 +24,12 @@ class Bufu_Artists {
 
 	public static $postTypeNameArtist = 'bufu_artist';
 	public static $postTypeNameAlbum  = 'bufu_album';
-	public static $postTypeNameEvent  = 'tribe_events';
 	public static $postTypeNameInterview = 'bufu_interview';
 	public static $postTypeNameReview = 'bufu_review';
+
+	// post types defined by third-party plugins
+	public static $postTypeNameEvent     = 'tribe_events';
+	public static $postTypeAudioPlaylist = 'cue_playlist';
 
 	private static $translationSlug = 'bufu-artists';
 
@@ -75,9 +79,11 @@ class Bufu_Artists {
 			'post_type' => [
 				'artist' => self::$postTypeNameArtist,
 				'album'  => self::$postTypeNameAlbum,
-				'event'  => self::$postTypeNameEvent,
                 'interview' => self::$postTypeNameInterview,
                 'review' => self::$postTypeNameReview,
+                // third-party
+				'event'    => self::$postTypeNameEvent,
+				'playlist' => self::$postTypeAudioPlaylist,
 			]
 		], $this);
 
@@ -184,6 +190,8 @@ class Bufu_Artists {
 
 		$this->addCustomMetaForTribeEvents();
 
+		$this->addCustomMetaForAudioPlaylist();
+
 		$this->addCustomMetaForFrontPage();
 
 		$this->addCustomMetaForPages();
@@ -270,6 +278,7 @@ class Bufu_Artists {
 			Bufu_Widget_PostArchive::class,
 			Bufu_Widget_SubpageList::class,
 			Bufu_Widget_InterviewsByArtist::class,
+			Bufu_Widget_PlaylistByArtist::class,
 			Bufu_Widget_ReviewsByArtist::class,
         ];
 
@@ -762,7 +771,15 @@ class Bufu_Artists {
 	// ----- private methods -------------------------------------------------------------------------------------------
 
 	private function addCustomMetaForTribeEvents() {
-		register_post_meta('tribe_events', self::$selectArtistRelationCustomFieldName, [
+		register_post_meta(self::$postTypeNameEvent, self::$selectArtistRelationCustomFieldName, [
+			'single'       => true,
+			'description'  => __('The related artist', 'bufu-artists'),
+			'show_in_rest' => true,
+		]);
+	}
+
+	private function addCustomMetaForAudioPlaylist() {
+		register_post_meta(self::$postTypeAudioPlaylist, self::$selectArtistRelationCustomFieldName, [
 			'single'       => true,
 			'description'  => __('The related artist', 'bufu-artists'),
 			'show_in_rest' => true,
