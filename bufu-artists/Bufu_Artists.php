@@ -46,6 +46,13 @@ class Bufu_Artists {
 	private static $csvImportFieldMappingNameArtist = 'bufu_related_artist';
 
 	/**
+	 * The name of a CSV data field mapped to venue name.
+     * This is a bit of a long story. Explanation in {@see filter_tribe_events_importer_venue_column_names_mapping()}.
+	 * @var string
+	 */
+	private static $csvImportFieldMappingVenueName = 'bufu_venue_name';
+
+	/**
 	 * @var AdminInputs
 	 */
 	private $adminInputs;
@@ -134,9 +141,11 @@ class Bufu_Artists {
 		add_filter( 'tribe_context_locations', [$this, 'filter_tribe_filter_bar_context_locations'] );
 		add_filter( 'tribe_events_filter_bar_context_to_filter_map', [$this, 'filter_tribe_filter_bar_map'] );
 
-		// add artist selection to events calendar import field mapping
+		// add artist selection and ID mappings to events calendar import field mapping
 		add_filter( 'tribe_events_importer_event_column_names', [$this, 'filter_tribe_events_importer_event_column_names_mapping'] );
 		add_filter( 'tribe_events_csv_import_event_additional_fields', [$this, 'filter_tribe_events_csv_import_event_additional_fields'] );
+		add_filter( 'tribe_events_importer_venue_column_names', [$this, 'filter_tribe_events_importer_venue_column_names_mapping'] );
+		add_filter( 'tribe_events_importer_venue_array', [$this, 'filter_tribe_events_importer_venue_array'], 10, 4 ); // we need the forth argument, as well as the first two
 
 		// handle bufu artist import field, when inserting/updating events via import
         add_filter( 'tribe_events_event_insert_args', [$this, 'filter_tribe_events_importer_event_args_add_custom'] );
@@ -495,6 +504,69 @@ class Bufu_Artists {
         ], $mapping);
 
         return $newMapping;
+	}
+
+	/**
+	 * Add mapping to ID field in events importer for venue.
+	 * @param array $mapping
+	 * @return array
+	 */
+	public function filter_tribe_events_importer_venue_column_names_mapping(array $mapping = [])
+	{
+	    /**
+	     * We need to match venues by ID in order to use a CSV import as the main data source.
+		 * The plugin does not support a bespoke column for that, and there are no suitable filters.
+		 *
+         * However, there is a loophole:
+		 * The method {@see Tribe__Events__Importer__File_Importer::find_matching_post_id()} interprets numeric titles as a post ID,
+		 * allowing to invoke the update path of the importer implementation.
+		 * There is a filter being called to manipluate the venue date after it has been built in both paths.
+		 * The filter is: ```tribe_events_importer_venue_array``` in {@see Tribe__Events__Importer__File_Importer_Venues::line:157}.
+         *
+		 * So the procedure for matching a venue by ID for updating, and allowing to create new venues is as follows:
+		 *  1. the column venue_name gets mapped to the ID column in the CSV data - by changing the label in the select field, we cover that up
+		 *  2. we add a custom field that maps to the venue name column
+		 *  3. ID lookup takes place, when 0 is given for the ID, the create path is taken
+		 *  4. we set the venue name from our custom field in the filter tribe_events_importer_venue_array
+		 *  5. Celebrations! ID matching is working :)
+         *
+         * Note that in order to detect NEW venues, the ID value in the CSV must be set to 0 (int zero).
+         * So, after an import with new venues an export is required, to get the ID values of the new posts.
+         */
+
+		// add option at the top of the list
+		$newMapping = array_merge([
+			self::$csvImportFieldMappingVenueName => __( 'Venue name', 'bufu-artists' ), // hold venue name in custom field
+		], $mapping);
+
+		$newMapping['venue_name'] = __( 'Post ID', 'bufu-artists' );  // reuse the field for the ID, to use the built-in lookup
+
+		return $newMapping;
+	}
+
+	/**
+     * This filter is called after the CSV importer has built the data array for a venue from CSV data.
+     * We need to re-introduce the venue name, when we have previously stored it in a custom column.
+     * This filter is called on both the create and update path of the importer.
+	 * @param array $venueArray
+	 * @param array $csvData
+     * @param string|int $venueId On create path, $venueId is 0
+     * @param Tribe__Events__Importer__File_Importer_Venues $importer instance of venues importer class
+	 * @return array
+	 */
+	public function filter_tribe_events_importer_venue_array(array $venueArray, array $csvData, $venueId, $importer)
+	{
+	    $venueName = $importer->get_value_by_key($csvData, self::$csvImportFieldMappingVenueName);
+
+	    // re-populate venue name
+        if ( !empty($venueName) )
+	        $venueArray['Venue'] = $venueName;
+
+		// set common defaults
+		$venueArray['ShowMap']     = '1';
+		$venueArray['ShowMapLink'] = '1';
+
+	    return $venueArray;
 	}
 
 	/**
