@@ -53,6 +53,12 @@ class Bufu_Artists {
 	private static $csvImportFieldMappingVenueName = 'bufu_venue_name';
 
 	/**
+     * How many items should be imported in one batch in the events CSV import.
+	 * @var int
+	 */
+	private static $csvImportBatchSize = 50;
+
+	/**
 	 * @var AdminInputs
 	 */
 	private $adminInputs;
@@ -146,6 +152,7 @@ class Bufu_Artists {
 		add_filter( 'tribe_events_csv_import_event_additional_fields', [$this, 'filter_tribe_events_csv_import_event_additional_fields'] );
 		add_filter( 'tribe_events_importer_venue_column_names', [$this, 'filter_tribe_events_importer_venue_column_names_mapping'] );
 		add_filter( 'tribe_events_importer_venue_array', [$this, 'filter_tribe_events_importer_venue_array'], 10, 4 ); // we need the forth argument, as well as the first two
+        add_filter( 'tribe_aggregator_batch_size', [$this, 'filter_tribe_aggregator_import_batch_size'] );
 
 		// handle bufu artist import field, when inserting/updating events via import
         add_filter( 'tribe_events_event_insert_args', [$this, 'filter_tribe_events_importer_event_args_add_custom'] );
@@ -567,6 +574,15 @@ class Bufu_Artists {
 		$venueArray['ShowMapLink'] = '1';
 
 	    return $venueArray;
+	}
+
+	/**
+     * Set the batch size for the aggregator / importer in tribe events plugin.
+	 * @return int
+	 */
+	public function filter_tribe_aggregator_import_batch_size()
+	{
+        return self::$csvImportBatchSize;
 	}
 
 	/**
