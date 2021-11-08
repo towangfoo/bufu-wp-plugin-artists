@@ -153,6 +153,7 @@ class Bufu_Artists {
 		add_filter( 'tribe_events_importer_venue_column_names', [$this, 'filter_tribe_events_importer_venue_column_names_mapping'] );
 		add_filter( 'tribe_events_importer_venue_array', [$this, 'filter_tribe_events_importer_venue_array'], 10, 4 ); // we need the forth argument, as well as the first two
         add_filter( 'tribe_aggregator_batch_size', [$this, 'filter_tribe_aggregator_import_batch_size'] );
+		add_filter( 'tribe_aggregator_small_batch_size', [$this, 'filter_tribe_aggregator_import_batch_size'] );
 
 		// handle bufu artist import field, when inserting/updating events via import
         add_filter( 'tribe_events_event_insert_args', [$this, 'filter_tribe_events_importer_event_args_add_custom'] );
