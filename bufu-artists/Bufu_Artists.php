@@ -108,13 +108,13 @@ class Bufu_Artists {
 	 */
 	public function initHooks()
 	{
-		add_action('add_meta_boxes', [$this, 'hook_admin_add_meta_boxes']);
-		add_action('admin_init', [$this, 'hook_admin_init']);
-		add_action('init', [$this, 'hook_init']);
-		add_action('rest_api_init', [$this, 'hook_rest_api_init']);
-		add_action('plugins_loaded', [$this, 'hook_plugins_loaded']);
-		add_action('save_post', [$this, 'hook_save_post']);
-		add_action('the_post', [$this, 'hook_the_post']);
+		add_action( 'add_meta_boxes', [$this, 'hook_admin_add_meta_boxes'] );
+		add_action( 'admin_init', [$this, 'hook_admin_init'] );
+		add_action( 'init', [$this, 'hook_init'] );
+		add_action( 'rest_api_init', [$this, 'hook_rest_api_init'] );
+		add_action( 'plugins_loaded', [$this, 'hook_plugins_loaded'] );
+		add_action( 'save_post', [$this, 'hook_save_post'] );
+		add_action( 'the_post', [$this, 'hook_the_post'] );
 		add_action( 'widgets_init', [$this, 'hook_widgets_init'] );
 
 		// hook into query creation using filters
@@ -152,6 +152,7 @@ class Bufu_Artists {
 		add_filter( 'tribe_events_csv_import_event_additional_fields', [$this, 'filter_tribe_events_csv_import_event_additional_fields'] );
 		add_filter( 'tribe_events_importer_venue_column_names', [$this, 'filter_tribe_events_importer_venue_column_names_mapping'] );
 		add_filter( 'tribe_events_importer_venue_array', [$this, 'filter_tribe_events_importer_venue_array'], 10, 4 ); // we need the forth argument, as well as the first two
+        // set the batch size for the async/ajax importer to something more reasonable
         add_filter( 'tribe_aggregator_batch_size', [$this, 'filter_tribe_aggregator_import_batch_size'] );
 		add_filter( 'tribe_aggregator_small_batch_size', [$this, 'filter_tribe_aggregator_import_batch_size'] );
 
@@ -532,11 +533,11 @@ class Bufu_Artists {
 		 * The filter is: ```tribe_events_importer_venue_array``` in {@see Tribe__Events__Importer__File_Importer_Venues::line:157}.
          *
 		 * So the procedure for matching a venue by ID for updating, and allowing to create new venues is as follows:
-		 *  1. the column venue_name gets mapped to the ID column in the CSV data - by changing the label in the select field, we cover that up
-		 *  2. we add a custom field that maps to the venue name column
-		 *  3. ID lookup takes place, when 0 is given for the ID, the create path is taken
-		 *  4. we set the venue name from our custom field in the filter tribe_events_importer_venue_array
-		 *  5. Celebrations! ID matching is working :)
+		 *   1. the column venue_name gets mapped to the ID column in the CSV data - by changing the label in the select field, we cover that up
+		 *   2. we add a custom field that maps to the venue name column
+		 *   3. ID lookup takes place; when 0 is given for the ID, the create path is taken
+		 *   4. we set the venue name from our custom field in the filter tribe_events_importer_venue_array
+		 *   5. celebrations! ID matching is working :)
          *
          * Note that in order to detect NEW venues, the ID value in the CSV must be set to 0 (int zero).
          * So, after an import with new venues an export is required, to get the ID values of the new posts.
@@ -765,6 +766,12 @@ class Bufu_Artists {
 		return $query;
 	}
 
+	/**
+     * Modify the WHERE part of a posts lookup query to find posts by beginning letter.
+	 * @param string $where
+	 * @param WP_Query $query
+	 * @return string
+	 */
 	public function filter_artists_starting_with_letter($where, WP_Query $query)
 	{
 	    $letter = strtoupper($query->get('bufu_artist-starts-with'));
@@ -804,7 +811,7 @@ class Bufu_Artists {
 			$options = $this->getThemeHelper()->getArtistsSelectOptions();
 			$current_v = isset($_GET['bufu_filterby_artist']) ? intval($_GET['bufu_filterby_artist']) : '';
 			?>
-			<select name="bufu_filterby_artist" placeholder="<?php echo sprintf(__('Filter by %s', 'bufu-artists'), _n('Artist', 'Artists', 1, 'bufu-artists')) ?>">
+			<select name="bufu_filterby_artist" title="<?php echo sprintf(__('Filter by %s', 'bufu-artists'), _n('Artist', 'Artists', 1, 'bufu-artists')) ?>">
 				<option value=""><?php _e('All artists', 'bufu-artists') ?> ...</option>
 				<?php foreach ($options as $value => $label) {
 					printf
@@ -1190,7 +1197,7 @@ class Bufu_Artists {
 	{
 		$html = '<div class="error"><p>';
 		$html .= sprintf(__('Error in plugin %s: %s', 'bufu-artists'), 'BuschFunk Artists', $err->get_error_message());
-		$html .= '</div></p>';
+		$html .= '</p></div>';
 
 		return $html;
 	}
@@ -1202,15 +1209,6 @@ class Bufu_Artists {
 	private function loadTranslations()
 	{
 		load_muplugin_textdomain(self::$translationSlug, self::$translationSlug . '/languages/');
-	}
-
-	/**
-	 * @return WP
-	 */
-	private function getGlobalWP()
-	{
-		global $wp;
-		return $wp;
 	}
 
 	/**
