@@ -9,7 +9,7 @@
  * @wordpress-plugin
  * Plugin Name:       BuschFunk Artists
  * Description:       Adds all artist-related features: profiles, relations to events, albums and more content.
- * Version:           1.3.2
+ * Version:           1.3.3
  * Text Domain:       bufu-artists
  * Domain Path:       /languages
  * Requires at least: 5.5

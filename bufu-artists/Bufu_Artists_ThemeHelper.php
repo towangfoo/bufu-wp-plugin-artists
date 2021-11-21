@@ -249,36 +249,67 @@ class Bufu_Artists_ThemeHelper
 	/**
 	 * Echo a list of links to children of the passed page.
 	 * @param int|WP_Post $pageId
+	 * @param array $options
 	 */
-	public function echoChildPagesLinks( $pageId )
+	public function echoChildPagesLinks( $pageId, array $options = [] )
 	{
+		$isMobileView = (array_key_exists('mobile', $options))    ? $options['mobile']    : false;
+		$linkLabel    = (array_key_exists('btn_label', $options)) ? $options['btn_label'] : __('Show page children', 'bufu-artists');
+
 		if ( $pageId instanceof WP_Post ) {
 			$pageId = $pageId->ID;
 		}
 
-		$showChildren = get_post_meta( $pageId, '_bufu_artist_pageShowChildren', true );
+		// on mobile, also get children links on children pages
+		$parentId = null;
+		if ( $isMobileView ) {
+			$parentId = wp_get_post_parent_id( $pageId );
+			if ( !is_int($parentId) || $parentId < 1 ) {
+				$parentId = null;
+			}
+		}
+
+		// which ID to use here?
+		$pageOrParentId = ( $parentId ) ? $parentId : $pageId;
+
+		$showChildren = get_post_meta( $pageOrParentId, '_bufu_artist_pageShowChildren', true );
 		if ( $showChildren !== '1' ) {
 			return;
 		}
 
 		$children = get_children([
 			'post_status' => 'publish' ,
-			'post_parent' => $pageId,
-			'orderby' => 'post_title',
-			'order' => 'ASC'
+			'post_parent' => $pageOrParentId,
+			'orderby'     => 'post_title',
+			'order'       => 'ASC'
 		]);
 		if ( count($children) < 1 ) {
 			return;
 		}
 
+		if ( $isMobileView ) {
+			$idHash = md5( $pageId );
+			echo '<div class="d-block d-lg-none page-children-container-mobile">';
+			echo '<button type="button" class="btn btn-link" data-toggle="collapse" data-target="#h'. $idHash .'"><i class="fa fa-list-ul"></i> '. $linkLabel .'</button>';
+			echo '<div class="collapse" id="h'. $idHash .'">';
+		}
 		echo '<ul class="page-children">';
-		foreach ($children as $page) {
+		foreach ( $children as $page ) {
 			/** @var $page WP_Post */
-			echo '<li>';
-			echo '<a href="'. get_permalink($page) .'">' . get_the_title($page) . '</a>';
+			if ( $page->ID === $pageId ) {
+				echo '<li class="active">';
+			}
+			else {
+				echo '<li>';
+			}
+			echo '<a href="'. get_permalink( $page ) .'">'. get_the_title( $page ) .'</a>';
 			echo '</li>';
 		}
 		echo '</ul>';
+		if ( $isMobileView ) {
+			echo '</div>';
+			echo '</div>';
+		}
 	}
 
 	/**
