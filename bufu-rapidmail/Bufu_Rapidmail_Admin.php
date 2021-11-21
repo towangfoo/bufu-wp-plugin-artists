@@ -13,15 +13,15 @@ class Bufu_Rapidmail_Admin
 	 * Bufu_Rapidmail_Admin constructor.
 	 * @param Bufu_Rapidmail_Client $client
 	 */
-	public function __construct(Bufu_Rapidmail_Client $client)
+	public function __construct( Bufu_Rapidmail_Client $client )
 	{
 		$this->client = $client;
 	}
 
 	public function initHooks()
 	{
-		add_action('admin_init', [$this, 'hook_admin_init']);
-		add_action('admin_menu', [$this, 'hook_admin_menu']);
+		add_action( 'admin_init', [$this, 'hook_admin_init'] );
+		add_action( 'admin_menu', [$this, 'hook_admin_menu'] );
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ class Bufu_Rapidmail_Admin
 			'bufu_rapidmail',
 			'bufu_rapidmail_settings'
 		);
-		register_setting('bufu_rapidmail', Bufu_Rapidmail::SETTINGS_KEYS['username']);
+		register_setting( 'bufu_rapidmail', Bufu_Rapidmail::SETTINGS_KEYS['username'] );
 
 		add_settings_field(
 			Bufu_Rapidmail::SETTINGS_KEYS['password'],
@@ -55,7 +55,7 @@ class Bufu_Rapidmail_Admin
 			'bufu_rapidmail',
 			'bufu_rapidmail_settings'
 		);
-		register_setting('bufu_rapidmail', Bufu_Rapidmail::SETTINGS_KEYS['password']);
+		register_setting( 'bufu_rapidmail', Bufu_Rapidmail::SETTINGS_KEYS['password'] );
 
 		add_settings_field(
 			Bufu_Rapidmail::SETTINGS_KEYS['listId'],
@@ -64,7 +64,7 @@ class Bufu_Rapidmail_Admin
 			'bufu_rapidmail',
 			'bufu_rapidmail_settings'
 		);
-		register_setting('bufu_rapidmail', Bufu_Rapidmail::SETTINGS_KEYS['listId']);
+		register_setting( 'bufu_rapidmail', Bufu_Rapidmail::SETTINGS_KEYS['listId'] );
 
 		add_settings_field(
 			Bufu_Rapidmail::SETTINGS_KEYS['showApiErrors'],
@@ -73,7 +73,7 @@ class Bufu_Rapidmail_Admin
 			'bufu_rapidmail',
 			'bufu_rapidmail_settings'
 		);
-		register_setting('bufu_rapidmail', Bufu_Rapidmail::SETTINGS_KEYS['showApiErrors']);
+		register_setting( 'bufu_rapidmail', Bufu_Rapidmail::SETTINGS_KEYS['showApiErrors'] );
 	}
 
 	/**
@@ -105,7 +105,7 @@ class Bufu_Rapidmail_Admin
 			<?php
 				settings_fields( 'bufu_rapidmail' );
 				do_settings_sections( 'bufu_rapidmail' );
-				submit_button(__('Save changes', 'bufu-rapidmail'), 'primary', 'save');
+				submit_button( __('Save changes', 'bufu-rapidmail'), 'primary', 'save' );
 			?>
 			</form>
 		</div>
@@ -121,15 +121,15 @@ class Bufu_Rapidmail_Admin
 		$apiClient = $this->client;
 
 		$id = Bufu_Rapidmail::SETTINGS_KEYS['username'];
-		$value = get_option($id);
+		$value = get_option( $id );
 
-		echo '<input type="text" class="regular-text" value="' . esc_html($value) . '" name="'. $id .'" id="'. $id .'">';
+		echo '<input type="text" class="regular-text" value="' . esc_html( $value ) . '" name="'. $id .'" id="'. $id .'">';
 
-		if ($apiClient && $apiClient->isAuthenticated()) {
-			echo '&nbsp;<img src="' . esc_url(admin_url('images/yes.png' )) . '" alt="' . __('Valid credentials', 'bufu-rapidmail') . '" title="' . __('Valid credentials', 'bufu-rapidmail') . '" />';
+		if ( $apiClient && $apiClient->isAuthenticated() ) {
+			echo '&nbsp;<img src="' . esc_url( admin_url( 'images/yes.png' ) ) . '" alt="' . __('Valid credentials', 'bufu-rapidmail') . '" title="' . __('Valid credentials', 'bufu-rapidmail') . '" />';
 		}
-		elseif ($this->isConfigured()) {
-			echo '&nbsp;<img src="' . esc_url(admin_url('images/no.png' )) . '" alt="' . __('Invalid credentials', 'bufu-rapidmail') . '" title="' . __('Invalid credentials', 'bufu-rapidmail') . '" />';
+		elseif ( $this->isConfigured() ) {
+			echo '&nbsp;<img src="' . esc_url( admin_url( 'images/no.png' ) ) . '" alt="' . __('Invalid credentials', 'bufu-rapidmail') . '" title="' . __('Invalid credentials', 'bufu-rapidmail') . '" />';
 		}
 	}
 
@@ -140,7 +140,7 @@ class Bufu_Rapidmail_Admin
 	public function render_apiPassword()
 	{
 		$id = Bufu_Rapidmail::SETTINGS_KEYS['password'];
-		$value = get_option($id);
+		$value = get_option( $id );
 
 		echo '<input type="password" class="regular-text" value="' . esc_html($value) . '" name="'. $id .'" id="'. $id .'">';
 	}
@@ -154,17 +154,17 @@ class Bufu_Rapidmail_Admin
 		$apiClient = $this->client;
 
 		$id = Bufu_Rapidmail::SETTINGS_KEYS['listId'];
-		$value = intval(get_option($id, 0));
+		$value = intval( get_option($id, 0) );
 
 		echo '<select name="'. $id .'" id="'. $id .'">';
 
-		if ($apiClient && $apiClient->isAuthenticated()) {
+		if ( $apiClient && $apiClient->isAuthenticated() ) {
 			echo '<option value="0">' . __('Please choose', 'bufu-rapidmail') . '...</option>';
 
 			$recipientlists = $apiClient->getRecipientLists();
 
-			foreach ($recipientlists AS $id => $label) {
-				echo '<option value="' . $id . '"' . ($value === $id ? ' selected="selected"' : '') . '>' . esc_html($label) . ' (ID ' . $id . ')</option>';
+			foreach ( $recipientlists AS $id => $label ) {
+				echo '<option value="' . $id . '"' . ( $value === $id ? ' selected="selected"' : '' ) . '>' . esc_html( $label ) . ' (ID ' . $id . ')</option>';
 			}
 		}
 		else {
@@ -177,7 +177,7 @@ class Bufu_Rapidmail_Admin
 	public function render_showApiErrors()
 	{
 		$id = Bufu_Rapidmail::SETTINGS_KEYS['showApiErrors'];
-		$value = get_option($id, 'no');
+		$value = get_option( $id, 'no' );
 
 		echo '<select name="'. $id .'" id="'. $id .'">';
 		echo '<option value="no"'.  ($value === 'no' ?  ' selected="selected"' : '') .'>' . __('No', 'bufu-rapidmail') . '</option>';
@@ -190,9 +190,9 @@ class Bufu_Rapidmail_Admin
 	 */
 	private function isConfigured()
 	{
-		$u = get_option(Bufu_Rapidmail::SETTINGS_KEYS['username']);
-		$p = get_option(Bufu_Rapidmail::SETTINGS_KEYS['password']);
+		$u = get_option( Bufu_Rapidmail::SETTINGS_KEYS['username'] );
+		$p = get_option( Bufu_Rapidmail::SETTINGS_KEYS['password'] );
 
-		return !empty($u) && !empty($p);
+		return !empty( $u ) && !empty( $p );
 	}
 }

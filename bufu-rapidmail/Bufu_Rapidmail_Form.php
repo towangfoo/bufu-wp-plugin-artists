@@ -23,7 +23,7 @@ class Bufu_Rapidmail_Form
 	/**
 	 * Bufu_Rapidmail_ThemeHelper constructor.
 	 */
-	public function __construct(Bufu_Rapidmail_Client $client)
+	public function __construct( Bufu_Rapidmail_Client $client )
 	{
 		$this->client = $client;
 	}
@@ -33,7 +33,7 @@ class Bufu_Rapidmail_Form
 	 */
 	public function initHooks()
 	{
-		add_action('wp_loaded', [$this, 'hook_wp_loaded']);
+		add_action( 'wp_loaded', [$this, 'hook_wp_loaded'] );
 	}
 
 	/**
@@ -41,7 +41,7 @@ class Bufu_Rapidmail_Form
 	 * @param array $options
 	 * @return string
 	 */
-	public function getFormHtml(array $options = [])
+	public function getFormHtml( array $options = [] )
 	{
 		// assign variables used in template
 		$fields = $this->getFormFields();
@@ -81,7 +81,11 @@ class Bufu_Rapidmail_Form
 		$this->processPostDataAndMaybeRedirect();
 
 		// check for $_GET flag used to indicate signup success
-		if (is_array($_GET) && array_key_exists(self::$get_param_redirect_ack, $_GET) && $_GET[self::$get_param_redirect_ack] === self::$get_param_redirect_ack_ok) {
+		if (
+			is_array($_GET) &&
+			array_key_exists(self::$get_param_redirect_ack, $_GET) &&
+			$_GET[self::$get_param_redirect_ack] === self::$get_param_redirect_ack_ok
+		) {
 			$this->showSuccessMessage = true;
 		}
 	}
@@ -137,11 +141,11 @@ class Bufu_Rapidmail_Form
 	 */
 	private function processPostDataAndMaybeRedirect()
 	{
-		if (array_key_exists(self::$post_element_namespace, $_POST) && is_array($_POST[self::$post_element_namespace])) {
+		if ( array_key_exists(self::$post_element_namespace, $_POST) && is_array($_POST[self::$post_element_namespace]) ) {
 			$data = $_POST[self::$post_element_namespace];
-			if ($this->isValid($data) && $this->signup($data)) {
-				if (array_key_exists('target', $data)) {
-					wp_redirect($data['target'], 300);
+			if ( $this->isValid($data) && $this->signup($data) ) {
+				if ( array_key_exists('target', $data) ) {
+					wp_redirect( $data['target'], 300 );
 				}
 
 				$this->showSuccessMessage = true;
@@ -160,29 +164,29 @@ class Bufu_Rapidmail_Form
 	 * @param array $post
 	 * @return bool
 	 */
-	private function isValid(array $post)
+	private function isValid( array $post )
 	{
 		$errors = [];
 
 		// check text inputs for value
 		$fields = $this->getFormFields();
-		foreach (['firstname', 'lastname', 'email'] as $f) {
-			if (!array_key_exists($f, $post) || empty($post[$f])) {
+		foreach ( ['firstname', 'lastname', 'email'] as $f ) {
+			if ( !array_key_exists($f, $post) || empty($post[$f]) ) {
 				$errors[$f] = sprintf(__('Missing value for %s', 'bufu-rapidmail'), $fields[$f]['label']);
 			}
 		}
 
 		// check for valid email
-		if (!is_email($post['email']) && !array_key_exists('email', $errors)) {
+		if ( !is_email($post['email']) && !array_key_exists('email', $errors) ) {
 			$errors['email'] = __('Invalid email address', 'bufu-rapidmail');
 		}
 
 		// check for at least one interest segment
-		if (!array_key_exists('interest', $post) || !is_array($post['interest']) && count($post['interest']) < 1) {
+		if ( !array_key_exists('interest', $post) || !is_array($post['interest']) && count($post['interest']) < 1 ) {
 			$errors['interest'] = __('Select at least one topic', 'bufu-rapidmail');
 		}
 
-		if (count($errors) > 0) {
+		if ( count($errors) > 0 ) {
 			$this->validationErrors = $errors;
 			$this->validationValues = $post;
 			return false;
@@ -196,15 +200,15 @@ class Bufu_Rapidmail_Form
 	 * @param array $data
 	 * @return bool
 	 */
-	private function signup(array $data)
+	private function signup( array $data )
 	{
 		$result = $this->client->subscribe($data);
-		if ($result === true) {
+		if ( $result === true ) {
 			return true;
 		}
 
 		$errors = $this->client->getLastErrors();
-		if (is_array($errors) && count($errors) > 0 ) {
+		if ( is_array($errors) && count($errors) > 0 ) {
 			$this->apiErrors = $errors;
 		}
 		else {

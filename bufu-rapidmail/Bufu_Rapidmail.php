@@ -13,9 +13,9 @@ class Bufu_Rapidmail
 	 * @var array
 	 */
 	const SETTINGS_KEYS = [
-		'username' => 'bufu_rapidmail_apiv3_username',
-		'password' => 'bufu_rapidmail_apiv3_password',
-		'listId'   => 'bufu_rapidmail_apiv3_recipientlist',
+		'username'      => 'bufu_rapidmail_apiv3_username',
+		'password'      => 'bufu_rapidmail_apiv3_password',
+		'listId'        => 'bufu_rapidmail_apiv3_recipientlist',
 		'showApiErrors' => 'bufu_rapidmail_apiv3_showapierrors',
 	];
 
@@ -46,10 +46,10 @@ class Bufu_Rapidmail
 	{
 		$this->client      = new Bufu_Rapidmail_Client();
 
-		$this->admin       = new Bufu_Rapidmail_Admin($this->client);
-		$this->form        = new Bufu_Rapidmail_Form($this->client);
+		$this->admin       = new Bufu_Rapidmail_Admin( $this->client );
+		$this->form        = new Bufu_Rapidmail_Form( $this->client );
 
-		$this->themeHelper = new Bufu_Rapidmail_ThemeHelper($this->form);
+		$this->themeHelper = new Bufu_Rapidmail_ThemeHelper( $this->form );
 	}
 
 	/**
@@ -57,7 +57,7 @@ class Bufu_Rapidmail
 	 */
 	public function initHooks()
 	{
-		add_action('plugins_loaded', [$this, 'hook_plugins_loaded']);
+		add_action( 'plugins_loaded', [$this, 'hook_plugins_loaded'] );
 
 		$this->admin->initHooks();
 		$this->form->initHooks();
@@ -96,6 +96,6 @@ class Bufu_Rapidmail
 	 */
 	private function loadTranslations()
 	{
-		load_muplugin_textdomain(self::$translationSlug, self::$translationSlug . '/languages/');
+		load_muplugin_textdomain( self::$translationSlug, self::$translationSlug . '/languages/' );
 	}
 }

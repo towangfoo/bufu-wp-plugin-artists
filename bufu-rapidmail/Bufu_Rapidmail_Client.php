@@ -21,9 +21,9 @@ class Bufu_Rapidmail_Client
 	 */
 	private function getAdapter()
 	{
-		if (!$this->adapter) {
+		if ( !$this->adapter ) {
 			$settings = $this->getSettings();
-			$this->adapter = new \Rapidmail\Api\Apiv3($settings['username'], $settings['password'], $settings['listId']);
+			$this->adapter = new \Rapidmail\Api\Apiv3( $settings['username'], $settings['password'], $settings['listId'] );
 		}
 
 		return $this->adapter;
@@ -35,9 +35,9 @@ class Bufu_Rapidmail_Client
 	private function getSettings()
 	{
 		return [
-			'username' => get_option(Bufu_Rapidmail::SETTINGS_KEYS['username'], ''),
-			'password' => get_option(Bufu_Rapidmail::SETTINGS_KEYS['password'], ''),
-			'listId'   => intval(get_option(Bufu_Rapidmail::SETTINGS_KEYS['listId'], 0)),
+			'username'      => get_option(Bufu_Rapidmail::SETTINGS_KEYS['username'], ''),
+			'password'      => get_option(Bufu_Rapidmail::SETTINGS_KEYS['password'], ''),
+			'listId'        => intval(get_option(Bufu_Rapidmail::SETTINGS_KEYS['listId'], 0)),
 			'showApiErrors' => (get_option(Bufu_Rapidmail::SETTINGS_KEYS['showApiErrors'], 'no') === 'yes'),
 		];
 	}
@@ -73,26 +73,26 @@ class Bufu_Rapidmail_Client
 	 * @param array $data
 	 * @return bool
 	 */
-	public function subscribe(array $data)
+	public function subscribe( array $data )
 	{
 		$validationErrors = [];
 		$signupData = [];
 
-		foreach (['email', 'firstname', 'lastname', 'interest'] as $f) {
-			if (!array_key_exists($f, $data)) {
-				$validationErrors[] = sprintf(__('Missing required subscriber field `%s`', 'bufu-rapidmail'), $f);
+		foreach ( ['email', 'firstname', 'lastname', 'interest'] as $f ) {
+			if ( !array_key_exists($f, $data) ) {
+				$validationErrors[] = sprintf( __('Missing required subscriber field `%s`', 'bufu-rapidmail'), $f );
 			}
 			$signupData[$f] = $data[$f];
 		}
 
-		if (count($validationErrors) > 0) {
+		if ( count($validationErrors) > 0 ) {
 			$this->lastErrors = $validationErrors;
 			return false;
 		}
 
 		// rename 'interest' to 'extra1' and make values a comma-separated string
 		$signupData['extra1'] = join(",", $signupData['interest']);
-		unset($signupData['interest']);
+		unset( $signupData['interest'] );
 
 		// set status to `active`
 		$signupData['status'] = 'active';
@@ -104,9 +104,9 @@ class Bufu_Rapidmail_Client
 		];
 
 		$listId = $this->getSettings()['listId'];
-		$result = $this->getAdapter()->subscribeRecipient($listId, $signupData, $params);
+		$result = $this->getAdapter()->subscribeRecipient( $listId, $signupData, $params );
 
-		if ($result === true) {
+		if ( $result === true ) {
 			return true;
 		}
 
@@ -114,11 +114,11 @@ class Bufu_Rapidmail_Client
 
 		// make error messages available to the outside?
 		$showErrors = $this->getSettings()['showApiErrors'];
-		if ($showErrors) {
-			if ($result instanceof WP_Error) {
+		if ( $showErrors ) {
+			if ( $result instanceof WP_Error ) {
 				$this->lastErrors[] = $result->get_error_message();
 			}
-			else if (is_array($result) && array_key_exists('detail', $result)) {
+			else if ( is_array($result) && array_key_exists('detail', $result) ) {
 				$this->lastErrors[] = $result['detail'];
 			}
 		}

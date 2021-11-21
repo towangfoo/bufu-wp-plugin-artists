@@ -13,7 +13,7 @@ class Bufu_Rapidmail_ThemeHelper
 	 * Bufu_Rapidmail_ThemeHelper constructor.
 	 * @param Bufu_Rapidmail_Form $form
 	 */
-	public function __construct(Bufu_Rapidmail_Form $form)
+	public function __construct( Bufu_Rapidmail_Form $form )
 	{
 		$this->form = $form;
 	}
@@ -23,8 +23,8 @@ class Bufu_Rapidmail_ThemeHelper
 	 * @param $options array
 	 * @return void
 	 */
-	public function echoSignupForm(array $options = [])
+	public function echoSignupForm( array $options = [] )
 	{
-		echo $this->form->getFormHtml($options);
+		echo $this->form->getFormHtml( $options );
 	}
 }
