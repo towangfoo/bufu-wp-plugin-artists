@@ -140,9 +140,8 @@ class Bufu_Rapidmail_Admin
 	public function render_apiPassword()
 	{
 		$id = Bufu_Rapidmail::SETTINGS_KEYS['password'];
-		$value = get_option( $id );
 
-		echo '<input type="password" class="regular-text" value="' . esc_html($value) . '" name="'. $id .'" id="'. $id .'">';
+		echo '<input type="password" class="regular-text" value="" name="'. $id .'" id="'. $id .'">';
 	}
 
 	/**
