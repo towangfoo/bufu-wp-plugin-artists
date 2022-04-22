@@ -88,7 +88,7 @@ class InputSelect extends AbstractInput implements InputInterface
 			$name .= '[]';
 		}
 
-		$currentValue = ($isTemplate) ? null : ($multiple) ? $this->getValue($this->multipleIndex) : $this->getValue();
+		$currentValue = $isTemplate ? null : ( $multiple ? $this->getValue($this->multipleIndex) : $this->getValue() );
 		if (is_string($currentValue) && preg_match('/^\d+$/', $currentValue)) {
 			$currentValue = intval($currentValue, 10);
 		}
