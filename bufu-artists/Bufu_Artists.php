@@ -161,6 +161,9 @@ class Bufu_Artists {
 		add_filter( 'tribe_events_event_update_args', [$this, 'filter_tribe_events_importer_event_args_add_custom'] );
 		add_action( 'tribe_events_update_meta', [$this, 'hook_tribe_events_importer_event_update_meta'], 10, 2 );
 
+		// add filter to override the number of allowed redirects in plugin 'safe-redirect-manager'
+        add_filter( 'srm_max_redirects', [$this, 'filter_srm_max_redirects'] );
+
 		// add plugin assets
 		add_action( 'admin_enqueue_scripts', [$this, 'hook_admin_enqueue_scripts'] );
 
@@ -793,6 +796,15 @@ class Bufu_Artists {
         $this->queryWithArtistStartingLettersModified = true;
 
         return $where;
+	}
+
+	/**
+	 * Increase the allowed number of redirects in 'save-redirect-manager' plugin.
+	 * @return int
+	 */
+	public function filter_srm_max_redirects()
+	{
+		return 2000;
 	}
 
 	/**
